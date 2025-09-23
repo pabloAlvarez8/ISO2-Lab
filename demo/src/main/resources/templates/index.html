@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>Viviendas</title></head>
+<body>
+<h1>Listado de Viviendas</h1>
+<a href="/viviendas/nueva">Añadir vivienda</a>
+<table border="1">
+    <tr><th>ID</th><th>Dirección</th><th>Precio (€)</th></tr>
+    <tr th:each="v : ${viviendas}">
+        <td th:text="${v.id}"></td>
+        <td th:text="${v.direccion}"></td>
+        <td th:text="${v.precioMensual}"></td>
+    </tr>
+</table>
+</body>
+</html>
