@@ -1,9 +1,7 @@
-package alquiler.demo.repository;
+package alquiler.negocio.repository;
 
-import alquiler.demo.entity.Vivienda;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import alquiler.negocio.entity.Vivienda;
 
-@Repository
 public interface ViviendaRepository extends JpaRepository<Vivienda, Long> {
 }
