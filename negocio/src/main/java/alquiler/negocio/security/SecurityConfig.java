@@ -9,13 +9,19 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Desactiva CSRF para pruebas con Postman
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/users/register").permitAll() // permite registro público
-                .anyRequest().authenticated() // resto protegido
-            );
+                // ✅ permite acceder a CSS, JS, imágenes
+                .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                // ✅ permite acceder al formulario de registro
+                .requestMatchers("/register", "/api/users/register").permitAll()
+                // todo lo demás requiere login
+                .anyRequest().authenticated()
+            )
+            // desactiva CSRF solo para pruebas
+            .csrf(csrf -> csrf.disable());
+
         return http.build();
     }
 }
