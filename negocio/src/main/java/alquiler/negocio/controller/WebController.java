@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class WebController {
@@ -24,10 +25,14 @@ public class WebController {
 
     // POST -> procesa el formulario y vuelve a la misma página
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute User user, Model model) {
+public String registerUser(@ModelAttribute User user, RedirectAttributes redirectAttrs) {
+    if (userService.existsByEmail(user.getEmail())) { // evitar duplicados
+        redirectAttrs.addFlashAttribute("errorMessage", "El usuario ya existe");
+    } else {
         userService.registerUser(user);
-        model.addAttribute("user", new User()); // reinicia el form vacío
-        model.addAttribute("successMessage", "Usuario registrado");
-        return "register"; // vuelve a mostrar register.html
+        redirectAttrs.addFlashAttribute("successMessage", "Usuario registrado correctamente");
     }
+    return "redirect:/register";
+}
+
 }

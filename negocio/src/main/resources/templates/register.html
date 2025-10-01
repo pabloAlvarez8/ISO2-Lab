@@ -13,6 +13,10 @@
             <p th:text="${successMessage}"></p>
         </div>
 
+        <div th:if="${errorMessage}" class="alert alert-danger">
+            <p th:text="${errorMessage}"></p>
+        </div>
+
        <form th:action="@{/register}" th:object="${user}" method="post" class="form-register">
             <input type="text" th:field="*{name}" placeholder="Nombre de usuario" required>
             <input type="email" th:field="*{email}" placeholder="E-mail" required>
