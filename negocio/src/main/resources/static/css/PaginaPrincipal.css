@@ -1,0 +1,90 @@
+* { box-sizing: border-box; }
+body { font-family: Inter, system-ui, Arial; margin:0; color:#222; background:#f6f7fb; }
+
+/* Header */
+header {
+  background:#003580; color:white; padding:14px 20px;
+  display:flex; gap:16px; align-items:center;
+}
+header .logo { font-weight:700; font-size:18px; letter-spacing:0.4px; }
+.search-bar {
+  flex:1;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.search-bar input {
+  padding:10px 12px;
+  border-radius:6px;
+  border:0;
+  flex:1;
+}
+.search-bar button {
+  background:#ffbe00;
+  cursor:pointer;
+  font-weight:600;
+  border:0;
+  border-radius:6px;
+  padding:10px 14px;
+}
+.people-counter {
+  display:flex;
+  align-items:center;
+  background:white;
+  border-radius:6px;
+  padding:0 6px;
+}
+.people-counter button {
+  background:#003580;
+  color:white;
+  border:none;
+  padding:6px 10px;
+  font-size:16px;
+  cursor:pointer;
+  border-radius:4px;
+}
+.people-counter span {
+  min-width:20px;
+  text-align:center;
+  font-weight:bold;
+  margin:0 6px;
+  color:#222;
+}
+
+/* Layout principal */
+main.container {
+  display:grid;
+  grid-template-columns: 300px 1fr 360px;
+  gap:20px;
+  padding:20px;
+  max-width:1200px;
+  margin:18px auto;
+}
+
+/* Filtros */
+.filters { background:#fff; padding:16px; border-radius:10px; box-shadow: 0 6px 18px rgba(20,30,40,0.06); }
+.filters h3 { margin:0 0 10px; font-size:16px; }
+.filter-group { margin-bottom:12px; }
+.filter-group label { display:flex; align-items:center; gap:8px; font-size:14px; }
+
+/* Resultados */
+.results { display:flex; flex-direction:column; gap:12px; }
+.card {
+  display:flex; gap:12px; background:#fff; padding:12px; border-radius:10px; align-items:center;
+  box-shadow: 0 6px 18px rgba(20,30,40,0.04);
+}
+.card img { width:140px; height:90px; object-fit:cover; border-radius:8px; }
+.card .info { flex:1; }
+.card .title { font-weight:700; margin-bottom:6px; }
+.meta { font-size:13px; color:#666; margin-bottom:6px; }
+.card .actions { text-align:right; min-width:140px; }
+.price { font-weight:800; font-size:18px; color:#003580; }
+.btn-book { margin-top:8px; padding:8px 10px; border-radius:8px; background:#0071c2; color:white; border:0; cursor:pointer; }
+
+/* Mapa */
+.map { background:linear-gradient(180deg,#e9eef6,#ffffff); border-radius:10px; padding:10px; display:flex; align-items:center; justify-content:center; color:#666; font-weight:600; }
+
+@media (max-width:1000px) {
+  main.container { grid-template-columns: 1fr; }
+  .map { order:3; }
+}
