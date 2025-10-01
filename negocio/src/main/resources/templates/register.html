@@ -8,18 +8,23 @@
 <body>
     <div class="container">
         <h2>Inicia sesión o registrate</h2>
-        <form action="/api/users/register" method="post" class="form-register">
-           
-            <input type="text" id="username" name="username" placeholder="Nombre de usuario" required>
 
-            <input type="email" id="email" name="email" placeholder="e-mail" required>
+        <div th:if="${successMessage}" class="alert">
+            <p th:text="${successMessage}"></p>
+        </div>
 
-            <input type="password" id="password" name="password" placeholder="Contraseña" required>
-
-            <input type="tel" id="phone" name="phone" placeholder="Telefono" required>
+       <form th:action="@{/register}" th:object="${user}" method="post" class="form-register">
+            <input type="text" th:field="*{name}" placeholder="Nombre de usuario" required>
+            <input type="email" th:field="*{email}" placeholder="E-mail" required>
+            <input type="password" th:field="*{password}" placeholder="Contraseña" required>
+            <input type="tel" th:field="*{phone}" placeholder="Teléfono" required>
 
             <button type="submit">Continuar</button>
         </form>
+
+        
+
     </div>
 </body>
 </html>
+

@@ -14,7 +14,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
+    public ResponseEntity<User> register(@ModelAttribute User user) {
         User newUser = userService.registerUser(user);
         return ResponseEntity.ok(newUser);
     }
