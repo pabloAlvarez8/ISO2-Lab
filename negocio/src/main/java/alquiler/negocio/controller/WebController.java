@@ -19,20 +19,23 @@ public class WebController {
     // GET -> muestra el formulario vacío
     @GetMapping("/register")
     public String showRegisterPage(Model model) {
-        model.addAttribute("user", new User()); // para enlazar con el form
+        if (!model.containsAttribute("user")) {
+            model.addAttribute("user", new User());
+        }
         return "register";
     }
 
+
     // POST -> procesa el formulario y vuelve a la misma página
     @PostMapping("/register")
-public String registerUser(@ModelAttribute User user, RedirectAttributes redirectAttrs) {
-    if (userService.existsByEmail(user.getEmail())) { // evitar duplicados
-        redirectAttrs.addFlashAttribute("errorMessage", "El usuario ya existe");
-    } else {
-        userService.registerUser(user);
-        redirectAttrs.addFlashAttribute("successMessage", "Usuario registrado correctamente");
+    public String registerUser(@ModelAttribute User user, RedirectAttributes redirectAttrs) {
+        if (userService.existsByEmail(user.getEmail())) { // evitar duplicados
+            redirectAttrs.addFlashAttribute("errorMessage", "El usuario ya existe");
+        } else {
+            userService.registerUser(user);
+            redirectAttrs.addFlashAttribute("successMessage", "Usuario registrado correctamente");
+        }
+        return "redirect:/register";
     }
-    return "redirect:/register";
-}
 
 }

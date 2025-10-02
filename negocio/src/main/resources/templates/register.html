@@ -9,11 +9,11 @@
     <div class="container">
         <h2>Inicia sesión o registrate</h2>
 
-        <div th:if="${successMessage}" class="alert">
+        <div th:if="${successMessage != null}" class="alert">
             <p th:text="${successMessage}"></p>
         </div>
 
-        <div th:if="${errorMessage}" class="alert alert-danger">
+        <div th:if="${errorMessage != null}" class="alert alert-danger">
             <p th:text="${errorMessage}"></p>
         </div>
 
@@ -22,7 +22,7 @@
             <input type="email" th:field="*{email}" placeholder="E-mail" required>
             <input type="password" th:field="*{password}" placeholder="Contraseña" required>
             <input type="tel" th:field="*{phone}" placeholder="Teléfono" required>
-
+           
             <button type="submit">Continuar</button>
         </form>
 
