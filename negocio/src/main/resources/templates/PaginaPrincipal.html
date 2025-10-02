@@ -1,104 +1,166 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Mi buscador de alojamientos — estilo Booking (simplificado)</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Mi buscador de alojamientos — estilo Booking (simplificado)</title>
+    <link rel="stylesheet" href="/css/stylePaginaPrincipal.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo">MiBooking</div>
+      <div class="search-bar">
+        <input id="q" type="text" placeholder="Ciudad" />
+        <input id="checkin" type="date" />
+        <input id="checkout" type="date" />
+        <div class="people-counter">
+          <button type="button" id="minusPerson">−</button>
+          <span id="peopleCount">2</span>
+          <button type="button" id="plusPerson">+</button>
+        </div>
+        <button id="searchBtn">Buscar</button>
+      </div>
+      <div>
+        <button
+          class="btn-register"
+          onclick="window.location.href='register'"
+        >
+          Inicia sesion o registrate
+        </button>
+      </div>
+    </header>
 
-<header>
-  <div class="logo">MiBooking</div>
+    <!-- Sidebar fijo fuera del scrollable main -->
+    <aside class="filters" aria-label="Filtros">
+      <h3>Filtrar resultados</h3>
+      <div class="filter-group">
+        <div style="font-size: 13px; margin-bottom: 6px">Tipo</div>
+        <label><input type="checkbox" value="hotel" checked /> Hotel</label>
+        <label
+          ><input type="checkbox" value="apartamento" checked />
+          Apartamento</label
+        >
+      </div>
+      <div class="filter-group">
+        <div style="font-size: 13px; margin-bottom: 6px">Precio máximo (€)</div>
+        <input type="range" min="20" max="400" value="200" />
+        <div style="font-size: 12px; color: #555">
+          Hasta: <span>200</span> €
+        </div>
+      </div>
+      <div class="filter-group">
+        <div style="font-size: 13px; margin-bottom: 6px">Ordenar</div>
+        <select>
+          <option value="recommend">Recomendados</option>
+          <option value="price_asc">Precio (bajo → alto)</option>
+          <option value="price_desc">Precio (alto → bajo)</option>
+          <option value="rating">Puntuación</option>
+        </select>
+      </div>
+    </aside>
 
-  <!-- SEARCH BAR -->
-  <div class="search-bar">
-    <input id="q" type="text" placeholder="Ciudad" />
-    <input id="checkin" type="date" />
-    <input id="checkout" type="date" />
-    <div class="people-counter">
-      <button type="button" id="minusPerson">−</button>
-      <span id="peopleCount">2</span>
-      <button type="button" id="plusPerson">+</button>
+    <!-- Contenedor principal scrollable -->
+    <div class="main-wrapper">
+      <main class="container">
+        <!-- Resultados -->
+        <section>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 10px;
+            "
+          >
+            <div id="resultsCount" style="font-weight: 700">
+              Mostrando 0 alojamientos
+            </div>
+            
+          </div>
+          <div class="results" id="resultsList"></div>
+        </section>
+
+        <!-- Mapa -->
+        <aside class="map" id="map">Placeholder de mapa</aside>
+      </main>
     </div>
-    <button id="searchBtn">Buscar</button>
-  </div>
-</header>
 
-<main class="container">
-  <!-- FILTROS -->
-  <aside class="filters" aria-label="Filtros">
-    <h3>Filtrar resultados</h3>
+    <script>
+      // Datos de ejemplo con ciudad
+      const data = [
+        {
+          id: 1,
+          type: "hotel",
+          ciudad: "Madrid",
+          title: "Hotel Centro Madrid",
+          price: 120,
+          rating: 8.9,
+          img: "https://picsum.photos/320/200?random=1",
+          distance: "0.8 km del centro",
+        },
+        {
+          id: 2,
+          type: "apartamento",
+          ciudad: "Murcia",
+          title: "Apto. Moderno Chamartín",
+          price: 85,
+          rating: 8.1,
+          img: "https://picsum.photos/320/200?random=2",
+          distance: "2.1 km del centro",
+        },
+        {
+          id: 3,
+          type: "hotel",
+          ciudad: "Málaga",
+          title: "Hotel con encanto Lavapiés",
+          price: 200,
+          rating: 9.2,
+          img: "https://picsum.photos/320/200?random=3",
+          distance: "1.3 km del centro",
+        },
+        {
+          id: 4,
+          type: "apartamento",
+          ciudad: "Munich",
+          title: "Estudio centro Malasaña",
+          price: 60,
+          rating: 7.8,
+          img: "https://picsum.photos/320/200?random=4",
+          distance: "0.5 km del centro",
+        },
+        {
+          id: 5,
+          type: "hotel",
+          ciudad: "Valencia",
+          title: "Hotel Playa Valencia",
+          price: 150,
+          rating: 8.5,
+          img: "https://picsum.photos/320/200?random=5",
+          distance: "3.0 km del centro",
+        },
+      ];
 
-    <div class="filter-group">
-      <div style="font-size:13px;margin-bottom:6px;">Tipo</div>
-      <label><input type="checkbox" class="filter-type" value="hotel" checked> Hotel</label>
-      <label><input type="checkbox" class="filter-type" value="apartamento" checked> Apartamento</label>
-    </div>
+      const resultsList = document.getElementById("resultsList");
+      const resultsCount = document.getElementById("resultsCount");
+      const maxPrice = document.getElementById("maxPrice");
+      const maxPriceVal = document.getElementById("maxPriceVal");
+      const sortBy = document.getElementById("sortBy");
+      const currentSort = document.getElementById("currentSort");
+      const searchInput = document.getElementById("q");
 
-    <div class="filter-group">
-      <div style="font-size:13px;margin-bottom:6px;">Precio máximo (€)</div>
-      <input id="maxPrice" type="range" min="20" max="400" value="200" />
-      <div style="font-size:12px;color:#555;">Hasta: <span id="maxPriceVal">200</span> €</div>
-    </div>
-
-    <div class="filter-group">
-      <div style="font-size:13px;margin-bottom:6px;">Ordenar</div>
-      <select id="sortBy">
-        <option value="recommend">Recomendados</option>
-        <option value="price_asc">Precio (bajo → alto)</option>
-        <option value="price_desc">Precio (alto → bajo)</option>
-        <option value="rating">Puntuación</option>
-      </select>
-    </div>
-  </aside>
-
-  <!-- RESULTADOS -->
-  <section>
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-      <div id="resultsCount" style="font-weight:700;">Mostrando 0 alojamientos</div>
-      <div style="font-size:13px;color:#666;">Orden: <span id="currentSort">Recomendados</span></div>
-    </div>
-
-    <div class="results" id="resultsList"></div>
-  </section>
-
-  <!-- MAPA -->
-  <aside class="map" id="map">
-    Placeholder de mapa (aquí iría Google Maps / Leaflet)
-  </aside>
-</main>
-
-<script>
-  // Datos de ejemplo con ciudad
-  const data = [
-    { id:1, type:'hotel', ciudad:'Madrid', title:'Hotel Centro Madrid', price:120, rating:8.9, img:'https://picsum.photos/320/200?random=1', distance:'0.8 km del centro' },
-    { id:2, type:'apartamento', ciudad:'Murcia', title:'Apto. Moderno Chamartín', price:85, rating:8.1, img:'https://picsum.photos/320/200?random=2', distance:'2.1 km del centro' },
-    { id:3, type:'hotel', ciudad:'Málaga', title:'Hotel con encanto Lavapiés', price:200, rating:9.2, img:'https://picsum.photos/320/200?random=3', distance:'1.3 km del centro' },
-    { id:4, type:'apartamento', ciudad:'Munich', title:'Estudio centro Malasaña', price:60, rating:7.8, img:'https://picsum.photos/320/200?random=4', distance:'0.5 km del centro' },
-    { id:5, type:'hotel', ciudad:'Valencia', title:'Hotel Playa Valencia', price:150, rating:8.5, img:'https://picsum.photos/320/200?random=5', distance:'3.0 km del centro' },
-  ];
-
-  const resultsList = document.getElementById('resultsList');
-  const resultsCount = document.getElementById('resultsCount');
-  const maxPrice = document.getElementById('maxPrice');
-  const maxPriceVal = document.getElementById('maxPriceVal');
-  const sortBy = document.getElementById('sortBy');
-  const currentSort = document.getElementById('currentSort');
-  const searchInput = document.getElementById('q');
-
-  function renderList(items){
-    resultsList.innerHTML = '';
-    if(!items.length){
-      resultsList.innerHTML = '<div style="padding:20px;background:#fff;border-radius:10px;text-align:center;">No hay alojamientos que coincidan.</div>';
-      resultsCount.textContent = 'Mostrando 0 alojamientos';
-      return;
-    }
-    resultsCount.textContent = `Mostrando ${items.length} alojamientos`;
-    for(const it of items){
-      const card = document.createElement('article');
-      card.className = 'card';
-      card.innerHTML = `
+      function renderList(items) {
+        resultsList.innerHTML = "";
+        if (!items.length) {
+          resultsList.innerHTML =
+            '<div style="padding:20px;background:#fff;border-radius:10px;text-align:center;">No hay alojamientos que coincidan.</div>';
+          resultsCount.textContent = "Mostrando 0 alojamientos";
+          return;
+        }
+        resultsCount.textContent = `Mostrando ${items.length} alojamientos`;
+        for (const it of items) {
+          const card = document.createElement("article");
+          card.className = "card";
+          card.innerHTML = `
         <img src="${it.img}" alt="${it.title}" />
         <div class="info">
           <div class="title">${it.title}</div>
@@ -110,56 +172,75 @@
           <button class="btn-book" onclick="book(${it.id})">Ver disponibilidad</button>
         </div>
       `;
-      resultsList.appendChild(card);
-    }
-  }
+          resultsList.appendChild(card);
+        }
+      }
 
-  function applyFilters(){
-    const checkedTypes = Array.from(document.querySelectorAll('.filter-type:checked')).map(n=>n.value);
-    const max = +maxPrice.value;
-    const query = searchInput.value.trim().toLowerCase();
+      function applyFilters() {
+        const checkedTypes = Array.from(
+          document.querySelectorAll(".filter-type:checked")
+        ).map((n) => n.value);
+        const max = +maxPrice.value;
+        const query = searchInput.value.trim().toLowerCase();
 
-    let filtered = data.filter(d => 
-      checkedTypes.includes(d.type) && 
-      d.price <= max &&
-      d.ciudad.toLowerCase().includes(query) // filtro por ciudad
-    );
+        let filtered = data.filter(
+          (d) =>
+            checkedTypes.includes(d.type) &&
+            d.price <= max &&
+            d.ciudad.toLowerCase().includes(query) // filtro por ciudad
+        );
 
-    const s = sortBy.value;
-    if(s === 'price_asc') filtered.sort((a,b)=>a.price-b.price);
-    else if(s === 'price_desc') filtered.sort((a,b)=>b.price-a.price);
-    else if(s === 'rating') filtered.sort((a,b)=>b.rating-a.rating);
+        const s = sortBy.value;
+        if (s === "price_asc") filtered.sort((a, b) => a.price - b.price);
+        else if (s === "price_desc") filtered.sort((a, b) => b.price - a.price);
+        else if (s === "rating") filtered.sort((a, b) => b.rating - a.rating);
 
-    currentSort.textContent = sortBy.options[sortBy.selectedIndex].text;
-    renderList(filtered);
-  }
+        currentSort.textContent = sortBy.options[sortBy.selectedIndex].text;
+        renderList(filtered);
+      }
 
-  // inicial
-  renderList(data);
+      // inicial
+      renderList(data);
 
-  // Eventos
-  maxPrice.addEventListener('input', ()=> { maxPriceVal.textContent = maxPrice.value; applyFilters(); });
-  sortBy.addEventListener('change', applyFilters);
-  document.querySelectorAll('.filter-type').forEach(cb => cb.addEventListener('change', applyFilters));
-  searchInput.addEventListener('input', applyFilters);
+      // Eventos
+      maxPrice.addEventListener("input", () => {
+        maxPriceVal.textContent = maxPrice.value;
+        applyFilters();
+      });
+      sortBy.addEventListener("change", applyFilters);
+      document
+        .querySelectorAll(".filter-type")
+        .forEach((cb) => cb.addEventListener("change", applyFilters));
+      searchInput.addEventListener("input", applyFilters);
 
-  // Contador personas
-  const minusBtn = document.getElementById("minusPerson");
-  const plusBtn = document.getElementById("plusPerson");
-  const peopleCountEl = document.getElementById("peopleCount");
-  let count = 2;
-  function updatePeople() { peopleCountEl.textContent = count; }
-  minusBtn.addEventListener("click", () => { if (count > 1) { count--; updatePeople(); } });
-  plusBtn.addEventListener("click", () => { count++; updatePeople(); });
-  updatePeople();
+      // Contador personas
+      const minusBtn = document.getElementById("minusPerson");
+      const plusBtn = document.getElementById("plusPerson");
+      const peopleCountEl = document.getElementById("peopleCount");
+      let count = 2;
+      function updatePeople() {
+        peopleCountEl.textContent = count;
+      }
+      minusBtn.addEventListener("click", () => {
+        if (count > 1) {
+          count--;
+          updatePeople();
+        }
+      });
+      plusBtn.addEventListener("click", () => {
+        count++;
+        updatePeople();
+      });
+      updatePeople();
 
-  // Botón buscar (aplica filtros)
-  document.getElementById('searchBtn').addEventListener('click', applyFilters);
+      // Botón buscar (aplica filtros)
+      document
+        .getElementById("searchBtn")
+        .addEventListener("click", applyFilters);
 
-  function book(id){
-    alert('Abrir página del alojamiento id='+id);
-  }
-</script>
-
-</body>
+      function book(id) {
+        alert("Abrir página del alojamiento id=" + id);
+      }
+    </script>
+  </body>
 </html>

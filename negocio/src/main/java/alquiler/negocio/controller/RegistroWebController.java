@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-public class WebController {
+public class RegistroWebController {
 
     @Autowired
     private UserService userService;
