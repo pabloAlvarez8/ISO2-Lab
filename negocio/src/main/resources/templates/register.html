@@ -7,7 +7,7 @@
 </head>
 <body>
     <div class="container">
-        <h2>Inicia sesión o registrate</h2>
+        <h2>Registrate aquí</h2>
 
         <div th:if="${successMessage != null}" class="alert">
             <p th:text="${successMessage}"></p>
@@ -18,10 +18,15 @@
         </div>
 
        <form th:action="@{/register}" th:object="${user}" method="post" class="form-register">
-            <input type="text" th:field="*{name}" placeholder="Nombre de usuario" required>
-            <input type="email" th:field="*{email}" placeholder="E-mail" required>
+            
+            <input type="text" th:field="*{name}" placeholder="Nombre y apellidos" required>
+
+            <input type="tel" th:field="*{phone}" placeholder="Numero de teléfono" required>
+            
+            <input type="email" th:field="*{email}" placeholder="Correo electronico" required>
+            
             <input type="password" th:field="*{password}" placeholder="Contraseña" required>
-            <input type="tel" th:field="*{phone}" placeholder="Teléfono" required>
+            
            
             <button type="submit">Continuar</button>
         </form>
