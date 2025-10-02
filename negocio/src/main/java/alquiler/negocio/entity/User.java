@@ -19,6 +19,8 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    private String phone; 
+
     private boolean isOwner;
 
     // Getters y Setters
@@ -34,6 +36,9 @@ public class User {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
+     public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+    
     public boolean isOwner() { return isOwner; }
     public void setOwner(boolean owner) { isOwner = owner; }
 }

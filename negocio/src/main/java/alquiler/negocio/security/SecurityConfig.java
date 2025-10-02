@@ -11,16 +11,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            
             .authorizeHttpRequests(auth -> auth
-                // ✅ permite acceder a CSS, JS, imágenes
-                .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                // ✅ permite acceder al formulario de registro
-                .requestMatchers("/register", "/api/users/register").permitAll()
-                // todo lo demás requiere login
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
             )
-            // desactiva CSRF solo para pruebas
-            .csrf(csrf -> csrf.disable());
+
+            .csrf(csrf -> csrf.disable()) //
+            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
         return http.build();
     }
