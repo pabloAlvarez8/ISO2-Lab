@@ -83,11 +83,11 @@
 
     <script>
       const data = [
-        { id: 1, type: "hotel", ciudad: "Madrid", title: "Hotel Centro Madrid", price: 120, rating: 4.5, img: "https://picsum.photos/320/200?random=1", distance: "0.8 km del centro" },
-        { id: 2, type: "apartamento", ciudad: "Murcia", title: "Apto. Moderno Chamartín", price: 85, rating: 4, img: "https://picsum.photos/320/200?random=2", distance: "2.1 km del centro" },
-        { id: 3, type: "hotel", ciudad: "Málaga", title: "Hotel con encanto Lavapiés", price: 200, rating: 4.5, img: "https://picsum.photos/320/200?random=3", distance: "1.3 km del centro" },
-        { id: 4, type: "apartamento", ciudad: "Munich", title: "Estudio centro Malasaña", price: 60, rating: 4, img: "https://picsum.photos/320/200?random=4", distance: "0.5 km del centro" },
-        { id: 5, type: "hotel", ciudad: "Valencia", title: "Hotel Playa Valencia", price: 150, rating: 3.5, img: "https://picsum.photos/320/200?random=5", distance: "3.0 km del centro" },
+        { id: 1, type: "hotel", ciudad: "Madrid", title: "Hotel Centro Madrid", price: 120, rating: 4.5, img: "https://picsum.photos/320/200?random=1", distance: "0.8 km del centro", capacity: 2 },
+        { id: 2, type: "apartamento", ciudad: "Murcia", title: "Apto. Moderno Chamartín", price: 85, rating: 4, img: "https://picsum.photos/320/200?random=2", distance: "2.1 km del centro", capacity: 4 },
+        { id: 3, type: "hotel", ciudad: "Málaga", title: "Hotel con encanto Lavapiés", price: 200, rating: 4.5, img: "https://picsum.photos/320/200?random=3", distance: "1.3 km del centro", capacity: 3 },
+        { id: 4, type: "apartamento", ciudad: "Munich", title: "Estudio centro Malasaña", price: 60, rating: 4, img: "https://picsum.photos/320/200?random=4", distance: "0.5 km del centro", capacity: 2 },
+        { id: 5, type: "hotel", ciudad: "Valencia", title: "Hotel Playa Valencia", price: 150, rating: 3.5, img: "https://picsum.photos/320/200?random=5", distance: "3.0 km del centro", capacity: 5 },
       ];
 
       const resultsList = document.getElementById("resultsList");
@@ -115,7 +115,7 @@
             <div class="info">
               <div class="title">${it.title}</div>
               <div class="meta">⭐ ${it.rating} · ${it.distance}</div>
-              <div style="font-size:13px;color:#555">Tipo: ${it.type} · Ciudad: ${it.ciudad}</div>
+              <div style="font-size:13px;color:#555"> Tipo: ${it.type} · Ciudad: ${it.ciudad} · Capacidad: ${it.capacity} pers. </div>
             </div>
             <div class="actions">
               <div class="price">${it.price} €</div>
@@ -137,7 +137,8 @@
             checkedTypes.includes(d.type) &&
             d.price <= max &&
             d.rating >= minR &&
-            d.ciudad.toLowerCase().includes(query)
+            d.ciudad.toLowerCase().includes(query) &&
+            d.capacity >= count
         );
 
         const s = sortBy.value;
@@ -154,14 +155,15 @@
       maxPrice.addEventListener("input", () => {
         maxPriceVal.textContent = maxPrice.value;
         applyFilters();
+        applyFilters();
       });
       minRating.addEventListener("input", () => {
         minRatingVal.textContent = minRating.value;
         applyFilters();
+        applyFilters();
       });
       sortBy.addEventListener("change", applyFilters);
       document.querySelectorAll(".filter-type").forEach((cb) => cb.addEventListener("change", applyFilters));
-      searchInput.addEventListener("input", applyFilters);
       document.getElementById("searchBtn").addEventListener("click", applyFilters);
 
       // Contador personas
