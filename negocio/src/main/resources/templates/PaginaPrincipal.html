@@ -138,7 +138,7 @@
             d.price <= max &&
             d.rating >= minR &&
             d.ciudad.toLowerCase().includes(query) &&
-            d.capacity >= count
+            d.capacity === count
         );
 
         const s = sortBy.value;
