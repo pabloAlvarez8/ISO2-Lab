@@ -14,7 +14,7 @@
         <input id="checkin" type="date" />
         <input id="checkout" type="date" />
         <div class="people-counter">
-          <button type="button" id="minusPerson">−</button>
+          <button type="button" id="minusPerson">-</button>
           <span id="peopleCount">2</span>
           <button type="button" id="plusPerson">+</button>
         </div>
@@ -35,22 +35,32 @@
       <h3>Filtrar resultados</h3>
       <div class="filter-group">
         <div style="font-size: 13px; margin-bottom: 6px">Tipo</div>
-        <label><input type="checkbox" value="hotel" checked /> Hotel</label>
-        <label
-          ><input type="checkbox" value="apartamento" checked />
-          Apartamento</label
-        >
+        <label>
+          <input type="checkbox" class="filter-type" value="hotel" checked />
+          Hotel
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            class="filter-type"
+            value="apartamento"
+            checked
+          />
+          Apartamento
+        </label>
       </div>
+
       <div class="filter-group">
         <div style="font-size: 13px; margin-bottom: 6px">Precio máximo (€)</div>
-        <input type="range" min="20" max="400" value="200" />
+        <input type="range" id="maxPrice" min="20" max="400" value="200" />
         <div style="font-size: 12px; color: #555">
-          Hasta: <span>200</span> €
+          Hasta: <span id="maxPriceVal">200</span> €
         </div>
       </div>
+
       <div class="filter-group">
         <div style="font-size: 13px; margin-bottom: 6px">Ordenar</div>
-        <select>
+        <select id="sortBy">
           <option value="recommend">Recomendados</option>
           <option value="price_asc">Precio (bajo → alto)</option>
           <option value="price_desc">Precio (alto → bajo)</option>
@@ -75,7 +85,9 @@
             <div id="resultsCount" style="font-weight: 700">
               Mostrando 0 alojamientos
             </div>
-            
+            <div style="font-size: 13px; color: #666">
+              Orden: <span id="currentSort">Recomendados</span>
+            </div>
           </div>
           <div class="results" id="resultsList"></div>
         </section>
