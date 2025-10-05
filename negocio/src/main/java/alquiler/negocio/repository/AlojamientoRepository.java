@@ -1,5 +1,8 @@
 package alquiler.negocio.repository;
 
-public class AlojamientoRepository {
-    
+
+import alquiler.negocio.entity.Alojamiento;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AlojamientoRepository extends JpaRepository<Alojamiento, Long> {
 }
