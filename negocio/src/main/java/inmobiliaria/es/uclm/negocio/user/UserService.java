@@ -1,7 +1,5 @@
-package alquiler.negocio.service;
+package inmobiliaria.es.uclm.negocio.user;
 
-import alquiler.negocio.entity.User;
-import alquiler.negocio.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

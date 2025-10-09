@@ -1,4 +1,4 @@
-package alquiler.negocio.entity;
+package inmobiliaria.es.uclm.negocio.user;
 
 import jakarta.persistence.*;
 

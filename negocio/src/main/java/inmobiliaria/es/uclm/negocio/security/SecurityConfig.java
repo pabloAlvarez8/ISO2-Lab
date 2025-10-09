@@ -1,4 +1,4 @@
-package alquiler.negocio.security;
+package inmobiliaria.es.uclm.negocio.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
