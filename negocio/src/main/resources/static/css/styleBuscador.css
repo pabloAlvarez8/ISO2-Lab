@@ -1,12 +1,22 @@
 * {
   box-sizing: border-box;
 }
+
+/* Evita desbordes horizontales globales y compensa header fijo */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: "Inter", "Helvetica Neue", sans-serif;
-  padding: 48px;
+  /* padding: 48px;  <-- eliminado */
+  padding-top: 120px;     /* hueco para el header fijo */
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-bottom: 48px;
   background-color: #ffffff;
   color: #222;
-  display: flex;
 }
 
 /* Header estilo Airbnb */
@@ -26,7 +36,7 @@ header {
 }
 
 .logo {
-  margin-right: 40px; /* empuja la barra hacia el centro */
+  margin-right: 40px;
   margin-left: 40px;
   font-weight: 700;
   font-size: 22px;
@@ -58,7 +68,7 @@ header {
   border-radius: 20px;
 }
 
-/* botón buscar integrado pero con color */
+/* botón buscar */
 .search-bar button#searchBtn {
   border: none;
   border-radius: 20px;
@@ -67,26 +77,35 @@ header {
   color: white;
   font-weight: 600;
   cursor: pointer;
-
   transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .search-bar button#searchBtn:hover {
-  background-color: #3a70c2; /* un poco más oscuro */
+  background-color: #3a70c2;
 }
 
 .search-bar button#searchBtn:active {
-  background-color: #2c5394; /* más oscuro al presionar */
-  transform: scale(0.95); /* efecto “presionado” */
+  background-color: #2c5394;
+  transform: scale(0.95);
+}
+
+/* Focus visible accesible */
+.search-bar input:focus,
+.filter-group select:focus,
+.people-counter button:focus,
+.btn-register:focus,
+#searchBtn:focus {
+  outline: 2px solid #4b8fe7;
+  outline-offset: 2px;
 }
 
 /* Botón de registro en el header */
 .btn-register {
-  margin-left: 20px;           /* separa de la search bar */
+  margin-left: 20px;
   border: none;
   border-radius: 20px;
   padding: 10px 20px;
-  background-color: transparent;   /* mismo color que buscar */
+  background-color: transparent;
   color: #333;
   font-weight: 600;
   font-size: 13px;
@@ -95,17 +114,17 @@ header {
 }
 
 .btn-register:hover {
-   background: rgba(0,0,0,0.05); 
-   color: #111;  /* más oscuro al pasar */
+  background: rgba(0,0,0,0.05);
+  color: #111;
 }
 
 .btn-register:active {
-  background: rgba(0,0,0,0.1);  /* gris un poco más intenso */
+  background: rgba(0,0,0,0.1);
   border-color: #666;
-  transform: scale(0.97); 
+  transform: scale(0.97);
 }
 
-/* contador de personas como mini pastilla */
+/* contador de personas */
 .people-counter {
   display: flex;
   align-items: center;
@@ -124,44 +143,43 @@ header {
 }
 
 .people-counter button:hover {
-  background-color: rgba(0, 0, 0, 0.05); /* fondo sutil */
-  color: #356ac3; /* color más oscuro */
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #356ac3;
 }
 
 .people-counter button:active {
   background-color: rgba(0, 0, 0, 0.1);
-  color: #2a5196; /* color más intenso */
+  color: #2a5196;
 }
 
 .people-counter span {
   font-weight: 600;
   margin: 0 6px;
 }
-/* Layout principal */
 
+/* Layout principal */
 .main-wrapper {
-  margin-left: 284px; /* espacio para sidebar */
+  margin-left: 284px;   /* espacio para sidebar */
   padding: 24px;
-  overflow-x: auto; /* scroll horizontal cuando sea necesario */
+  overflow-x: visible;  /* antes: auto */
   flex: 1;
 }
+
 main.container {
-  gap: 24px;
-  margin-top: 100px;
-  min-width: max-content; /* espacio para sidebar */
-  width: calc(100% - 300px); /* ancho disponible para main */
-  overflow-x: auto; /* permite scroll horizontal si hay overflow */
-  scroll-behavior: smooth;
+  width: 100%;
+  max-width: 1200px;    /* límite opcional para no “estallar” */
+  margin: 0 auto;       /* centra el contenido */
+  overflow: visible;    /* antes: auto */
 }
 
 /* Filtros */
 .filters {
   position: fixed;
-  flex-shrink: 0; /* siempre visible */
+  flex-shrink: 0;
   top: 100px; /* debajo del header */
   left: 0px;
   width: 260px;
-  height: calc(100vh - 100px); /* altura menos header */
+  height: calc(100vh - 100px);
   background: #ffffff;
   padding: 40px;
   border-radius: 16px;
@@ -213,12 +231,12 @@ main.container {
   transition: all 0.3s ease;
   cursor: pointer;
 }
-.filter-group select:hover,   /* más oscuro al pasar */
+.filter-group select:hover,
 .filter-group select:active {
   border-color: #4b8fe7;
   outline: none;
-  background: #f0f6ff;   /* azul clarito al enfocar */
-  color: #2c5394;   
+  background: #f0f6ff;
+  color: #2c5394;
 }
 
 /* Valor del rango */
@@ -230,11 +248,14 @@ main.container {
 /* Resultados estilo Airbnb */
 .results {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  /* Evita que una sola tarjeta se estire a toda pantalla */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 360px));
+  justify-content: start;     /* alinea columnas al inicio */
+  gap: 16px;
   width: 100%;
-  gap: 10px;
   box-sizing: border-box;
 }
+
 .card {
   background: #f7f7f7;
   border-radius: 16px;
@@ -243,38 +264,49 @@ main.container {
   transition: transform 0.2s ease;
   display: flex;
   flex-direction: column;
-  min-width: 250px; /* evita que se agranden demasiado */
+  /* min-width: 250px;  <-- eliminado */
+  min-width: 0;              /* no provoquen scroll horizontal */
 }
+
 .card:hover {
   transform: scale(1.02);
 }
+
 .card img {
+  display: block;            /* elimina gaps del inline */
   width: 100%;
+  aspect-ratio: 16 / 10;
   object-fit: cover;
 }
+
 .card .info {
   padding: 16px;
 }
+
 .card .title {
   font-size: 16px;
   font-weight: 700;
   margin-bottom: 6px;
 }
+
 .card .meta {
   font-size: 13px;
   color: #717171;
   margin-bottom: 6px;
 }
+
 .card .actions {
   padding: 0 16px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .price {
   font-weight: 700;
   font-size: 16px;
 }
+
 .btn-book {
   background-color: #4b8fe7;
   color: white;
@@ -285,12 +317,11 @@ main.container {
   cursor: pointer;
 }
 
-/* Mapa */
 /* Mapa al final de la página */
 .map {
-  grid-column: 1 / -1; /* ocupa todas las columnas */
+  grid-column: 1 / -1;
   width: 100%;
-  height: 400px; /* altura deseada */
+  height: 400px;
   background: #f7f7f7;
   border-radius: 16px;
   display: flex;
@@ -298,21 +329,33 @@ main.container {
   justify-content: center;
   color: #555;
   font-weight: 600;
-  margin-top: 24px; /* separación del contenido anterior */
+  margin-top: 24px;
 }
 
 /* Responsive */
 @media (max-width: 1000px) {
-  main.container {
-    margin-left: 0; /* eliminar espacio del sidebar */
-    width: 100%; /* ocupa todo el ancho disponible */
-    grid-template-columns: repeat(
-      auto-fill,
-      minmax(280px, 1fr)
-    ); /* solo 1 columna */
+  .main-wrapper {
+    margin-left: 0;          /* el contenido ocupa todo el ancho */
+    padding-left: 0;
+    padding-right: 0;
   }
-  .map {
-    order: 3;
-    margin-top: 20px;
+
+  .filters {
+    position: static;        /* el aside se coloca encima */
+    width: 100%;
+    height: auto;
+    margin-bottom: 16px;
+    padding: 24px;
+  }
+
+  main.container {
+    max-width: none;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .results {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
   }
 }
