@@ -1,5 +1,7 @@
 package inmobiliaria.es.uclm.negocio.alojamiento;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -13,7 +15,7 @@ public class Alojamiento {
     private String direccion;
     private String ciudad;
     private int capacidad;
-    private double precio;
+    private BigDecimal precio;
 
     // 🔹 Nuevo campo para la imagen
     private String fotoUrl;
@@ -31,8 +33,8 @@ public class Alojamiento {
     public int getCapacidad() { return capacidad; }
     public void setCapacidad(int capacidad) { this.capacidad = capacidad; }
 
-    public double getPrecio() { return precio; }
-    public void setPrecio(double precio) { this.precio = precio; }
+    public BigDecimal getPrecio() { return precio; }
+    public void setPrecio(BigDecimal precio) { this.precio = precio; }
 
     public String getFotoUrl() { return fotoUrl; }
     public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }

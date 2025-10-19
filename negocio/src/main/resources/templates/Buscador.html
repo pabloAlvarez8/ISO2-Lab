@@ -125,64 +125,7 @@
     </div>
 
     <script>
-      const data = [
-        {
-          id: 1,
-          type: "hotel",
-          ciudad: "Madrid",
-          title: "Hotel Centro Madrid",
-          price: 120,
-          rating: 4.5,
-          img: "https://picsum.photos/320/200?random=1",
-          distance: 0.8,
-          capacity: 2,
-        },
-        {
-          id: 2,
-          type: "apartamento",
-          ciudad: "Murcia",
-          title: "Apto. Moderno Chamartín",
-          price: 85,
-          rating: 4.0,
-          img: "https://picsum.photos/320/200?random=2",
-          distance: 2.1,
-          capacity: 4,
-        },
-        {
-          id: 3,
-          type: "hotel",
-          ciudad: "Málaga",
-          title: "Hotel con encanto",
-          price: 200,
-          rating: 4.5,
-          img: "https://picsum.photos/320/200?random=3",
-          distance: 1.3,
-          capacity: 3,
-        },
-        {
-          id: 4,
-          type: "apartamento",
-          ciudad: "Munich",
-          title: "Estudio Centro",
-          price: 60,
-          rating: 4.0,
-          img: "https://picsum.photos/320/200?random=4",
-          distance: 0.5,
-          capacity: 2,
-        },
-        {
-          id: 5,
-          type: "hotel",
-          ciudad: "Valencia",
-          title: "Hotel Playa Valencia",
-          price: 150,
-          rating: 3.5,
-          img: "https://picsum.photos/320/200?random=5",
-          distance: 3.0,
-          capacity: 5,
-        },
-      ];
-
+      let alojamientosCargados = []; // Aquí guardaremos los resultados de la base de datos
       // Elements
       const resultsList = document.getElementById("resultsList");
       const resultsCount = document.getElementById("resultsCount");
@@ -205,48 +148,51 @@
       let lastCheckin = "";
       let lastCheckout = "";
 
-  /** Convierte una distancia en km a un texto amigable para el usuario.
- * @param {number} km - La distancia en kilómetros.
- * @returns {string} El texto formateado.
- */
-function formatDistance(km) {
-    // Si la distancia es un número, la formateamos. Si ya es un texto, lo devolvemos tal cual.
-    if (typeof km !== 'number') {
-        return km;
-    }
-    if (km === 0) return "en el centro";
-    if (km < 0.1) return "a 100 m del centro";
-    // .toFixed(1) limita a un decimal, ej: 0.8
-    return `a ${km.toFixed(1)} km del centro`;
-}
+      /** Convierte una distancia en km a un texto amigable para el usuario.
+       * @param {number} km - La distancia en kilómetros.
+       * @returns {string} El texto formateado.
+       */
+      function formatDistance(km) {
+        // Si la distancia es un número, la formateamos. Si ya es un texto, lo devolvemos tal cual.
+        if (typeof km !== "number") {
+          return km;
+        }
+        if (km === 0) return "en el centro";
+        if (km < 0.1) return "a 100 m del centro";
+        // .toFixed(1) limita a un decimal, ej: 0.8
+        return `a ${km.toFixed(1)} km del centro`;
+      }
 
+      /**
+       * Pinta la lista de resultados en el DOM.
+       * @param {Array<Object>} items - El array de alojamientos a mostrar.
+       */
+      function renderList(items) {
+        resultsList.innerHTML = ""; // Limpia la lista anterior
 
-/**
- * Pinta la lista de resultados en el DOM.
- * @param {Array<Object>} items - El array de alojamientos a mostrar.
- */
-function renderList(items) {
-    resultsList.innerHTML = ""; // Limpia la lista anterior
-
-    if (!items || !items.length) {
-        // Muestra un mensaje si no hay resultados
-        resultsList.innerHTML =
+        if (!items || !items.length) {
+          // Muestra un mensaje si no hay resultados
+          resultsList.innerHTML =
             '<div class="no-results-card">No hay alojamientos que coincidan con tu búsqueda.</div>';
-        resultsCount.textContent = "Mostrando 0 alojamientos";
-        return;
-    }
+          resultsCount.textContent = "Mostrando 0 alojamientos";
+          return;
+        }
 
-    resultsCount.textContent = `Mostrando ${items.length} alojamientos`;
+        resultsCount.textContent = `Mostrando ${items.length} alojamientos`;
 
-    for (const it of items) {
-        const card = document.createElement("article");
-        card.className = "card";
-        card.innerHTML = `
+        for (const it of items) {
+          const card = document.createElement("article");
+          card.className = "card";
+          card.innerHTML = `
             <img src="${it.img}" alt="${it.title}" loading="lazy" />
             <div class="info">
                 <div class="title">${it.title}</div>
-                <div class="meta">⭐ ${it.rating} · ${formatDistance(it.distance)}</div>
-                <div class="details">Tipo: ${it.type} · Ciudad: ${it.ciudad} · Capacidad: ${it.capacity} pers.</div>
+                <div class="meta">⭐ ${it.rating} · ${formatDistance(
+            it.distance
+          )}</div>
+                <div class="details">Tipo: ${it.type} · Ciudad: ${
+            it.ciudad
+          } · Capacidad: ${it.capacity} pers.</div>
             </div>
             <div class="actions">
                 <div class="price">${it.price} €</div>
@@ -257,34 +203,61 @@ function renderList(items) {
                 </button>
             </div>
         `;
-        resultsList.appendChild(card);
-    }
-}
+          resultsList.appendChild(card);
+        }
+      }
 
-      function applyFilters() {
-        // Lee el estado que SOLO se actualiza al pulsar Buscar
+      /**
+       * Llama a la API del backend para obtener alojamientos filtrados y los renderiza.
+       */
+      async function applyFilters() {
+        // 1. Recopilamos TODOS los valores de los filtros (igual que en tu versión)
         const checkedTypes = Array.from(
           document.querySelectorAll(".filter-type:checked")
         ).map((n) => n.value);
+
         const max = +maxPrice.value;
         const minR = +minRating.value;
-
-        let filtered = data.filter(
-          (d) =>
-            checkedTypes.includes(d.type) &&
-            d.price <= max &&
-            d.rating >= minR &&
-            d.ciudad.toLowerCase().includes(lastQuery) &&
-            d.capacity >= count
-          // Si en el futuro filtras por fechas, usa lastCheckin/lastCheckout aquí
-        );
-
         const s = sortBy.value;
-        if (s === "price_asc") filtered.sort((a, b) => a.price - b.price);
-        if (s === "price_desc") filtered.sort((a, b) => b.price - a.price);
-        if (s === "rating") filtered.sort((a, b) => b.rating - a.rating);
 
-        renderList(filtered);
+        // Usamos las variables de estado controlado para la barra de búsqueda
+        const cap = count; // 'count' es tu variable global de personas
+        const query = lastQuery; // 'lastQuery' es tu variable global de ciudad
+
+        // 2. Construimos la URL con parámetros de búsqueda
+        // Esto crea una URL como: /api/alojamientos?q=madrid&maxPrice=500&...
+        const params = new URLSearchParams();
+        params.set("q", query);
+        params.set("maxPrice", max);
+        params.set("minRating", minR);
+        params.set("capacity", cap);
+        params.set("sortBy", s);
+
+        // Añadimos los 'types' manualmente (para que Spring los reciba como una lista)
+        checkedTypes.forEach((type) => {
+          params.append("types", type);
+        });
+
+        // Esta es la URL de tu API que creamos en Spring Boot
+        const url = `/api/alojamientos?${params.toString()}`;
+
+        // 3. Hacemos la llamada (fetch) a tu API de Spring Boot
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`Error del servidor: ${response.status}`);
+          }
+          const items = await response.json(); // Convertimos la respuesta en JSON
+
+          // 4. ¡Guardamos los datos y renderizamos!
+          alojamientosCargados = items; // Guardamos los datos en nuestra variable global
+          renderList(alojamientosCargados); // Usamos tu función renderList() existente
+        } catch (error) {
+          console.error("Error al buscar alojamientos:", error);
+          resultsList.innerHTML =
+            '<div class="no-results-card">Error al cargar los resultados. Inténtalo de nuevo.</div>';
+          resultsCount.textContent = "Mostrando 0 alojamientos";
+        }
       }
 
       // Personas: ACTUALIZA SOLO EL CONTADOR VISUAL; NO FILTRA EN VIVO
@@ -399,10 +372,11 @@ function renderList(items) {
       })();
 
       function book(id) {
-        const selected = data.find((item) => item.id === id);
+        // CAMBIA 'data' POR 'alojamientosCargados'
+        const selected = alojamientosCargados.find((item) => item.id === id);
         if (selected) {
           localStorage.setItem("selectedLodging", JSON.stringify(selected));
-          window.location.href = "/alojamientos/detalleAlojamientos"; // <- aquí
+          window.location.href = "/alojamientos/detalleAlojamientos";
         }
       }
     </script>

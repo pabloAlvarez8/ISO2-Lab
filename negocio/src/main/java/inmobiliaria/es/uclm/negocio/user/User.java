@@ -1,44 +1,69 @@
 package inmobiliaria.es.uclm.negocio.user;
 
 import jakarta.persistence.*;
+import lombok.Getter; // Usando Lombok para getters/setters (opcional)
+import lombok.Setter;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "users")
+@Table(name = "usuario") // ¡Que coincida con el nombre real de la tabla (la renombraste!)
+@Getter // Anotación Lombok
+@Setter // Anotación Lombok
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
-
-    @Column(unique = true, nullable = false)
+    // Usa 'email' para coincidir con tu código anterior, mapea a columna 'correo'
+    @Column(name = "correo", nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    // Usa 'password', mapea a columna 'contrasena'
+    @Column(name = "contrasena", nullable = false)
     private String password;
 
-    private String phone; 
+    // El nombre del campo Java coincide con la columna si se llaman igual
+    @Column(nullable = false)
+    private String nombre;
 
-    private boolean isOwner;
+    @Column(nullable = false)
+    private String apellido;
 
-    // Getters y Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    private String direccion;
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    @Column(name = "url_foto_perfil")
+    private String urlFotoPerfil;
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    // Usa un Enum para el Rol
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.INQUILINO; // Valor por defecto
 
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 
-     public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
-    
-    public boolean isOwner() { return isOwner; }
-    public void setOwner(boolean owner) { isOwner = owner; }
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    // --- Timestamps (Marcas de tiempo) ---
+    @PrePersist // Antes de guardar por primera vez
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate // Antes de actualizar
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    // --- Enum para el Rol ---
+    public enum Role {
+        INQUILINO, PROPIETARIO
+    }
+
+    // --- Opcional: Constructores, toString ---
+    // Puedes añadir constructores o un método toString si los necesitas
+    // Lombok a menudo se encarga de esto, o puedes generarlos
 }

@@ -3,11 +3,10 @@ package inmobiliaria.es.uclm.negocio.alojamiento;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+// ... (quita el import de List si ya no se usa aquí)
 
 @Controller
-@RequestMapping("/alojamientos")
+@RequestMapping("/alojamientos") // Todas las rutas de vistas de alojamientos
 public class AlojamientoController {
 
     private final AlojamientoService_Interfaz alojamientoService;
@@ -21,20 +20,6 @@ public class AlojamientoController {
     public String listar(Model model) {
         model.addAttribute("alojamientos", alojamientoService.listarTodos());
         return "alojamientos"; // vista alojamientos.html
-    }
-
-    // 🔹 Listar en JSON (para fetch desde frontend)
-    @GetMapping("/api")
-    @ResponseBody
-    public List<Alojamiento> listarApi() {
-        return alojamientoService.listarTodos();
-    }
-
-    // 🔹 Buscar por ciudad en JSON
-    @GetMapping("/api/buscar")
-    @ResponseBody
-    public List<Alojamiento> buscarPorCiudadApi(@RequestParam String ciudad) {
-        return alojamientoService.buscarPorCiudad(ciudad);
     }
 
     // 🔹 Formulario HTML
@@ -58,12 +43,9 @@ public class AlojamientoController {
         return "redirect:/alojamientos";
     }
 
-    // 🔹 Página de detalle de alojamiento
+    // 🔹 Página de detalle de alojamiento (justo la que tu JS necesita)
     @GetMapping("/detalleAlojamientos")
     public String detalleAlojamientos() {
         return "detalleAlojamientos"; // templates/detalleAlojamientos.html
     }
-    
-    
-    
 }
