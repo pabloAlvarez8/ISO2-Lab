@@ -3,118 +3,44 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Tipografía igual que en pago.html -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
   <title>Detalles del alojamiento — Inmobiliarias Paqui</title>
+
+  <!-- CSS general -->
   <link rel="stylesheet" href="/css/stylePaginaPrincipal.css" />
-  <style>
-    main {
-      max-width: 1000px;
-      margin: 40px auto;
-      background: #fff;
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    /* Carrusel */
-    .carousel {
-      position: relative;
-      width: 100%;
-      max-width: 600px;
-      margin-bottom: 20px;
-    }
-
-    .carousel img {
-      width: 100%;
-      height: 400px;
-      object-fit: cover;
-      border-radius: 10px;
-      transition: transform 0.3s ease;
-    }
-
-    .carousel-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0,0,0,0.5);
-      color: white;
-      border: none;
-      font-size: 24px;
-      padding: 8px 12px;
-      cursor: pointer;
-      border-radius: 50%;
-    }
-
-    .carousel-btn.prev { left: 10px; }
-    .carousel-btn.next { right: 10px; }
-
-    .carousel-btn:hover { background: rgba(0,0,0,0.7); }
-
-    .price-reserve {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 10px;
-    }
-
-    .btn-reserve {
-      background-color: #0071c2;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 12px 24px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .btn-reserve:hover { background-color: #005b9a; }
-
-    .info-section, .comments {
-      margin-top: 40px;
-    }
-
-    .comment {
-      border-top: 1px solid #ddd;
-      padding: 15px 0;
-    }
-
-    .comment strong { font-size: 15px; color: #333; }
-    .comment span { color: #888; margin-left: 8px; }
-
-    .btn-volver {
-      display: inline-block;
-      margin-top: 40px;
-      background: #eee;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .btn-volver:hover { background: #ddd; }
-  </style>
+  <!-- CSS específico de esta página -->
+  <link rel="stylesheet" href="/css/styleAlojamiento.css" />
 </head>
 
 <body>
+  <!-- Header accesible -->
   <header>
-    <!-- Logo clicable -->
-    <div class="logo" style="cursor:pointer;" onclick="volverInicio()">Inmobiliarias Paqui</div>
-    <button class="btn-register" onclick="window.location.href='/register'">
-      Iniciar sesión o registrarse
-    </button>
+    <div class="container">
+      <div class="logo" role="link" tabindex="0" aria-label="Ir a inicio"
+           onclick="location.href='/'"
+           onkeydown="if(event.key==='Enter'||event.key===' '){location.href='/';}">
+        Inmobiliarias Paqui
+      </div>
+      <button class="btn-register" onclick="window.location.href='/register'">
+        Mi cuenta
+      </button>
+    </div>
   </header>
+
 
   <main>
     <div class="lodging-header">
+   <!-- Imagen principal aleatoria del alojamiento -->
+<section class="imagen-alojamiento">
+  <img id="fotoAlojamiento" alt="Imagen del alojamiento">
+</section>
 
-      <!-- Carrusel -->
-      <div class="carousel">
-        <button class="carousel-btn prev" onclick="prevSlide()">❮</button>
-        <img id="detalleImg" src="" alt="Imagen del alojamiento" />
-        <button class="carousel-btn next" onclick="nextSlide()">❯</button>
-      </div>
 
       <h1 id="detalleTitulo"></h1>
-
       <p id="detalleCiudad"></p>
       <p id="detalleTipo"></p>
       <p id="detalleCapacidad"></p>
@@ -122,14 +48,14 @@
       <p id="detalleRating"></p>
 
       <div class="price-reserve">
-        <p id="detallePrecio" style="font-size:20px;font-weight:700;color:#0071c2;"></p>
+        <p id="detallePrecio" class="price-highlight"></p>
         <button class="btn-reserve" onclick="reservar()">Reservar ahora</button>
       </div>
     </div>
 
     <section class="info-section">
       <h2>Información sobre el alojamiento</h2>
-      <p id="lodgingDescription" style="margin-top:10px;line-height:1.6;color:#444;"></p>
+      <p id="lodgingDescription"></p>
     </section>
 
     <section class="comments">
@@ -137,69 +63,49 @@
       <div id="commentsList"></div>
     </section>
 
-    <!-- Botón volver -->
     <button class="btn-volver" onclick="volverInicio()">← Volver a inicio</button>
   </main>
+
+  <!-- Footer -->
+  <footer>
+    © 2025 Inmobiliarias Paqui
+  </footer>
 
   <script>
     // Recuperar alojamiento del localStorage
     const selected = JSON.parse(localStorage.getItem("selectedLodging"));
-
     if (selected) {
-      // 🏠 Mostrar los datos originales
       document.getElementById("detalleTitulo").textContent = selected.title;
-      document.getElementById("detalleCiudad").textContent =
-        "📍 Ciudad: " + selected.ciudad;
-      document.getElementById("detalleTipo").textContent =
-        "🏠 Tipo: " + selected.type;
-      document.getElementById("detalleCapacidad").textContent =
-        "👥 Capacidad: " + selected.capacity + " personas";
-      document.getElementById("detalleDistancia").textContent =
-        "📏 Distancia al centro: " + selected.distance;
-      document.getElementById("detalleRating").textContent =
-        "⭐ Valoración: " + selected.rating;
-      document.getElementById("detallePrecio").textContent =
-        selected.price + " € / noche";
+      document.getElementById("detalleCiudad").textContent = "📍 Ciudad: " + selected.ciudad;
+      document.getElementById("detalleTipo").textContent = "🏠 Tipo: " + selected.type;
+      document.getElementById("detalleCapacidad").textContent = "👥 Capacidad: " + selected.capacity + " personas";
+      document.getElementById("detalleDistancia").textContent = "📏 Distancia al centro: " + selected.distance;
+      document.getElementById("detalleRating").textContent = "⭐ Valoración: " + selected.rating;
+      document.getElementById("detallePrecio").textContent = selected.price + " € / noche";
 
-      // Descripción más elaborada
+      // Descripción
       document.getElementById("lodgingDescription").textContent =
-        `Este ${selected.type} se encuentra en ${selected.ciudad}, a ${selected.distance} del centro.
-        Ideal para ${selected.capacity} personas. Ofrece todas las comodidades modernas, con una valoración media de ${selected.rating} estrellas.`;
-
-      // Carrusel: varias imágenes
-      const images = selected?.images || [selected?.img];
-      let currentIndex = 0;
-      const carouselImg = document.getElementById("detalleImg");
-
-      function showSlide(index) {
-        carouselImg.src = images[index];
-      }
-      window.nextSlide = function() {
-        currentIndex = (currentIndex + 1) % images.length;
-        showSlide(currentIndex);
-      }
-      window.prevSlide = function() {
-        currentIndex = (currentIndex - 1 + images.length) % images.length;
-        showSlide(currentIndex);
-      }
-      showSlide(currentIndex);
-
+        `Este ${selected.type} se encuentra en ${selected.ciudad}, a ${selected.distance} del centro. Ideal para ${selected.capacity} personas. Ofrece todas las comodidades modernas, con una valoración media de ${selected.rating} estrellas.`;
     } else {
       document.querySelector("main").innerHTML = "<p>No se ha encontrado información del alojamiento.</p>";
     }
 
-    // Función del botón "Reservar"
+    // Reservar
     function reservar() {
-      if (selected)
-        alert(`✅ Has reservado: ${selected.title} por ${selected.price} € / noche`);
+      if (selected) {
+        localStorage.setItem("reservaSeleccionada", JSON.stringify(selected));
+        window.location.href = "/pago";
+      } else {
+        alert("⚠️ No hay alojamiento seleccionado.");
+      }
     }
 
-    // 🔙 Función del botón "Volver a inicio" y logo
+    // Volver al inicio
     function volverInicio() {
-      window.location.href = "/inicio";
+      window.location.href = "/";
     }
 
-    // 💬 Comentarios simulados
+    // Comentarios
     const comentarios = [
       { nombre: "María G.", puntuacion: 5, texto: "Todo perfecto, muy limpio y buena ubicación." },
       { nombre: "Carlos P.", puntuacion: 4, texto: "Buen sitio, aunque el wifi podría mejorar." },
@@ -210,12 +116,9 @@
     comentarios.forEach(c => {
       const div = document.createElement("div");
       div.className = "comment";
-      div.innerHTML = `<strong>${c.nombre}</strong> <span>⭐ ${c.puntuacion}</span>
-                       <p>${c.texto}</p>`;
+      div.innerHTML = `<strong>${c.nombre}</strong> <span>⭐ ${c.puntuacion}</span> <p>${c.texto}</p>`;
       commentsList.appendChild(div);
     });
   </script>
-
-
 </body>
 </html>

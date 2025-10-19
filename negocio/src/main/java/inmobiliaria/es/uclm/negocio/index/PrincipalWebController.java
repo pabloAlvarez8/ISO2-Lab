@@ -20,4 +20,9 @@ public class PrincipalWebController {
     public String buscador() {
         return "Buscador";
     }
+
+    @GetMapping("/pago")
+    public String mostrarPaginaPago() {
+        return "pago"; // <-- nombre del archivo en templates sin .html
+    }
 }
