@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detalles del alojamiento — Inmobiliarias Paqui</title>
+  
+    <link rel="stylesheet" th::href="@{/css/stylePaginaPrincipal.css}" />
+
+  <link rel="stylesheet" th:href="@{/css/styleDetalle.css}" />
+  
+</head>
+
+<body>
+  <header>
+        <div class="logo" style="cursor:pointer;" onclick="volverInicio()">Inmobiliarias Paqui</div>
+    <button class="btn-register" onclick="window.location.href='/register'">
+      Iniciar sesión o registrarse
+    </button>
+  </header>
+
+  <main>
+    <div class="lodging-header">
+
+            <div class="carousel">
+        <button class="carousel-btn prev" onclick="prevSlide()">❮</button>
+        <img id="detalleImg" src="" alt="Imagen del alojamiento" />
+        <button class="carousel-btn next" onclick="nextSlide()">❯</button>
+      </div>
+
+      <h1 id="detalleTitulo"></h1>
+      <p id="detalleCiudad"></p>
+      <p id="detalleTipo"></p>
+      <p id="detalleCapacidad"></p>
+      <p id="detalleDistancia"></p>
+      <p id="detalleRating"></p>
+
+      <div class="price-reserve">
+        <p id="detallePrecio" style="font-size:20px;font-weight:700;color:#0071c2;"></p>
+        <button class="btn-reserve" onclick="reservar()">Reservar ahora</button>
+      </div>
+    </div>
+
+    <section class="info-section">
+      <h2>Información sobre el alojamiento</h2>
+      <p id="lodgingDescription" style="margin-top:10px;line-height:1.6;color:#444;"></p>
+    </section>
+
+    <section class="comments">
+      <h2>Comentarios de usuarios</h2>
+      <div id="commentsList"></div>
+    </section>
+
+        <button class="btn-volver" onclick="volverInicio()">← Volver a inicio</button>
+  </main>
+
+    <script th:src="@{/js/detalle.js}"></script>
+
+</body>
+</html>

@@ -3,37 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <title>Registro de Usuario</title>
-    <link rel="stylesheet" href="/css/styleRegister.css">
+    <link rel="stylesheet" th:href="@{/css/styleRegister.css}">
 </head>
 <body>
     <div class="container">
-        <h2>Registrate aquí</h2>
+        <h2>Regístrate aquí</h2>
 
-        <div th:if="${successMessage != null}" class="alert">
-            <p th:text="${successMessage}"></p>
-        </div>
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
 
-        <div th:if="${errorMessage != null}" class="alert alert-danger">
-            <p th:text="${errorMessage}"></p>
-        </div>
+        <form th:action="@{/register}" th:object="${user}" method="post" class="form-register">
 
-       <form th:action="@{/register}" th:object="${user}" method="post" class="form-register">
-            
-            <input type="text" th:field="*{name}" placeholder="Nombre y apellidos" required>
+            <input type="text" th:field="*{nombre}" placeholder="Nombre" required>
 
-            <input type="tel" th:field="*{phone}" placeholder="Numero de teléfono" required>
-            
-            <input type="email" th:field="*{email}" placeholder="Correo electronico" required>
-            
+            <input type="text" th:field="*{apellido}" placeholder="Apellidos" required>
+
+            <input type="email" th:field="*{email}" placeholder="Correo electrónico" required>
+
             <input type="password" th:field="*{password}" placeholder="Contraseña" required>
-            
-           
+
+            <input type="text" th:field="*{direccion}" placeholder="Dirección (opcional)">
+
+            <input type="hidden" th:field="*{role}" th:value="${T(inmobiliaria.es.uclm.negocio.user.User.Role).INQUILINO}" />
+
             <button type="submit">Continuar</button>
         </form>
 
-        
+        <div class="login-link">
+            ¿Ya tienes cuenta? <a th:href="@{/login}">Inicia sesión aquí</a>
+        </div>
 
     </div>
 </body>
 </html>
-

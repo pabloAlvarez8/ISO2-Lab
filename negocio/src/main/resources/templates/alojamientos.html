@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Detalles del alojamiento</title>
+    <link rel="stylesheet" href="/css/styleAlojamiento.css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo" onclick="window.location.href='/html/PaginaPrincipal.html'">
+        ← Volver al buscador
+      </div>
+    </header>
+
+    <main class="details-container">
+      <div class="image-section">
+        <img id="lodgingImage" src="" alt="Imagen del alojamiento" />
+      </div>
+      <div class="info-section">
+        <h1 id="lodgingTitle"></h1>
+        <p id="lodgingLocation"></p>
+        <p id="lodgingDescription"></p>
+        <p id="lodgingPrice" class="price"></p>
+        <button onclick="window.location.href='/html/PaginaPrincipal.html'">Volver</button>
+      </div>
+    </main>
+
+    <script src="/js/alojamiento.js"></script>
+  </body>
+</html>
