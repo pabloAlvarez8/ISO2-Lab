@@ -30,4 +30,15 @@ public class PrincipalWebController {
         // (4.b) Devuelve el nombre de la plantilla HTML
         return "index"; // (Asegúrate que tu HTML se llama 'index.html')
     }
+
+    @GetMapping("/buscador")
+    public String buscador() {
+        return "Buscador";
+    }
+
+    @GetMapping("/pago")
+    public String mostrarPaginaPago() {
+        return "pago"; // <-- nombre del archivo en templates sin .html
+    }
 }
+

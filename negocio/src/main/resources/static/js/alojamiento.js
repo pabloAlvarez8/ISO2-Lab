@@ -19,14 +19,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         <p>${a.ubicacion}</p>
         <p class="precio">${a.precio} €/noche</p>
       `;
+
       // Evento de click → guardar en localStorage y redirigir
       card.addEventListener("click", () => {
         localStorage.setItem("selectedAlojamiento", JSON.stringify(a));
         window.location.href = "/alojamientos/detalleAlojamientos";
       });
+
       container.appendChild(card);
     });
   } catch (error) {
     console.error("Error cargando alojamientos:", error);
   }
+
+  
 });

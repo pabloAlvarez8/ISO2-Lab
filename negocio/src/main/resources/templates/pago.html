@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Confirmar reserva - Inmobiliarias Paqui</title>
+  <link rel="stylesheet" th:href="@{/css/stylePago.css}" />
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="logo" role="link" tabindex="0" aria-label="Ir a inicio"
+           onclick="location.href='/'"
+           onkeydown="if(event.key==='Enter'||event.key===' '){location.href='/';}">
+        Inmobiliarias Paqui
+      </div>
+      <button class="btn-register" onclick="window.location.href='/register'">
+        Mi cuenta
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Confirmar reserva</h1>
+      <p>Revisa los detalles y completa tu pago de forma segura.</p>
+    </section>
+
+    <section class="payment-section">
+      <div class="payment-container">
+
+
+        <!-- Bloque izquierda: Resumen -->
+        <div class="resumen-box">
+          <h2>Resumen de reserva</h2>
+          <div id="resumen-reserva">
+            <h3 id="nombreAlojamiento">Cargando...</h3>
+            <p id="precioAlojamiento"></p>
+
+            <img id="fotoAlojamiento" src="" alt="Imagen del alojamiento">
+          </div>
+        </div>
+
+
+        <!-- Bloque derecha: Método de pago -->
+        <div class="metodo-box">
+          <h2>Método de pago</h2>
+          <!-- Botones -->
+          <button id="btnTarjeta" class="btn-pago active">💳 Tarjeta de crédito/débito</button>
+          <button id="btnPayPal" class="btn-pago btn-paypal">🅿️ PayPal</button>
+
+          <!-- Formulario Tarjeta -->
+          <form id="formTarjeta" class="form-pago active">
+            <input type="text" placeholder="Titular de la tarjeta" required>
+            <input type="text" placeholder="Número de la tarjeta" maxlength="16" required>
+            <div class="flex-row">
+              <input type="text" placeholder="CVV" maxlength="3" required>
+              <input type="month" placeholder="Fecha de caducidad" required>
+            </div>
+            <button type="button" class="btn-pago" id="btnEnviarTarjeta">Enviar</button>
+          </form>
+
+          <!-- Formulario PayPal -->
+          <form id="formPayPal" class="form-pago">
+            <input type="email" placeholder="Email de PayPal" required>
+            <input type="password" placeholder="Contraseña" required>
+            <button type="button" class="btn-pago btn-paypal" id="btnEnviarPayPal">Enviar</button>
+          </form>
+
+          <p id="mensaje" class="mensaje"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © 2025 Inmobiliarias Paqui
+  </footer>
+
+  <script src="/js/pago.js"></script>
+
+
+
+
+</body>
+</html>
