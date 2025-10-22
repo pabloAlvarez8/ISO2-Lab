@@ -184,7 +184,7 @@
           const card = document.createElement("article");
           card.className = "card";
           card.innerHTML = `
-            <img src="${it.img}" alt="${it.title}" loading="lazy" />
+            <img src="${it.images[0]}" alt="${it.title}" loading="lazy" />
             <div class="info">
                 <div class="title">${it.title}</div>
                 <div class="meta">⭐ ${it.rating} · ${formatDistance(

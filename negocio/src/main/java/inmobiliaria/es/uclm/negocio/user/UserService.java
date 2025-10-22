@@ -1,5 +1,6 @@
 package inmobiliaria.es.uclm.negocio.user;
 
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,9 @@ public class UserService {
         }
     }
 
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
     public boolean existsByEmail(String email) {
         boolean exists = userRepository.existsByEmail(email);
         log.debug("Comprobando si el email {} existe: {}", email, exists);

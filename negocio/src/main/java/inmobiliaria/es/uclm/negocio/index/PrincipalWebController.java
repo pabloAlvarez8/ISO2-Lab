@@ -18,7 +18,7 @@ public class PrincipalWebController {
         this.alojamientoService = alojamientoService;
     }
 
-    @GetMapping("/index") // (1) Escucha en la raíz de tu web
+    @GetMapping({"/","/index"}) // (1) Escucha en la raíz de tu web
     public String paginaDeInicio(Model model) {
         
         // (2) Llama al servicio para obtener los destinos

@@ -2,6 +2,8 @@ package inmobiliaria.es.uclm.negocio.alojamiento;
 
 
 import inmobiliaria.es.uclm.negocio.alojamiento.dto.DestinoDTO; // Importa el DTO
+
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,8 +19,8 @@ public interface AlojamientoService_Interfaz {
 
     List<Alojamiento> buscarConFiltros(
         String ciudad, 
-        double maxPrice, 
-        double minRating, 
+        BigDecimal maxPrice, 
+        Double minRating, 
         List<String> types, 
         int capacity, 
         String sortBy
