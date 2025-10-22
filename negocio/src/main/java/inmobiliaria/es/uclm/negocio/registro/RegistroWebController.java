@@ -43,7 +43,7 @@ public class RegistroWebController {
         try {
             userService.registerUser(user);
             redirectAttrs.addFlashAttribute("successMessage", "Usuario registrado correctamente.");
-            return "redirect:/login";
+            return "redirect:/register";
 
         } catch (IllegalArgumentException e) {
             log.warn("Registro fallido para email {}: {}", user.getEmail(), e.getMessage());
