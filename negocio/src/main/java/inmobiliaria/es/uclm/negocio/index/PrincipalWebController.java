@@ -18,15 +18,15 @@ public class PrincipalWebController {
         this.alojamientoService = alojamientoService;
     }
 
-    @GetMapping({"/","/index"}) // (1) Escucha en la raíz de tu web
+    @GetMapping({ "/", "/index" }) // (1) Escucha en la raíz de tu web
     public String paginaDeInicio(Model model) {
-        
+
         // (2) Llama al servicio para obtener los destinos
         List<DestinoDTO> destinos = alojamientoService.obtenerDestinosPopulares();
-        
+
         // (3) Añade la lista al Model para que Thymeleaf la pueda usar
         model.addAttribute("destinosPopulares", destinos);
-        
+
         // (4.b) Devuelve el nombre de la plantilla HTML
         return "index"; // (Asegúrate que tu HTML se llama 'index.html')
     }
@@ -41,4 +41,3 @@ public class PrincipalWebController {
         return "pago"; // <-- nombre del archivo en templates sin .html
     }
 }
-

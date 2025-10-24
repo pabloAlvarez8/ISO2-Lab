@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
 
 * {
   box-sizing: border-box;
@@ -7,7 +7,7 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   background-color: #ffffff;
   color: #222;
 }
@@ -140,13 +140,13 @@ header {
 }
 
 #resumen-reserva img {
-  width: 100%;        /* ocupa todo el ancho del cuadro */
-  max-width: 3100px;   /* ancho máximo de la foto */
-  max-height: 250px;  /* altura máxima */
-  object-fit: cover;  /* mantiene proporción y recorta exceso */
+  width: 100%; /* ocupa todo el ancho del cuadro */
+  max-width: 3100px; /* ancho máximo de la foto */
+  max-height: 250px; /* altura máxima */
+  object-fit: cover; /* mantiene proporción y recorta exceso */
   border-radius: 12px;
   display: block;
-  margin: 0 auto;     /* centra la imagen */
+  margin: 0 auto; /* centra la imagen */
 }
 
 /* Botones de pago */
@@ -174,7 +174,7 @@ header {
 }
 
 .btn-pago.active {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-paypal {
@@ -225,7 +225,7 @@ header {
 
 .form-pago input:focus {
   border-color: #4b8fe7;
-  box-shadow: 0 0 0 2px rgba(75,143,231,0.2);
+  box-shadow: 0 0 0 2px rgba(75, 143, 231, 0.2);
 }
 
 /* FOOTER */
@@ -240,24 +240,28 @@ footer {
 
 /* RESPONSIVE */
 @media (max-width: 700px) {
-  .hero h1 { font-size: 28px; }
+  .hero h1 {
+    font-size: 28px;
+  }
   .payment-container {
     flex-direction: column;
     align-items: center;
   }
-  .resumen-box, .metodo-box {
+  .resumen-box,
+  .metodo-box {
     width: 90%;
   }
-  .flex-row { flex-direction: column; }
+  .flex-row {
+    flex-direction: column;
+  }
 
   /* IMAGEN RESUMEN BOX */
 
   #resumen-reserva img {
-  width: 100%;         /* ocupa todo el ancho del cuadro */
-  max-height: 250px;   /* altura máxima */
-  object-fit: cover;   /* mantiene proporción y recorta exceso */
-  border-radius: 12px;
-  margin-top: 15px;    /* separación con el texto */
-}
-
+    width: 100%; /* ocupa todo el ancho del cuadro */
+    max-height: 250px; /* altura máxima */
+    object-fit: cover; /* mantiene proporción y recorta exceso */
+    border-radius: 12px;
+    margin-top: 15px; /* separación con el texto */
+  }
 }

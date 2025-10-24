@@ -72,7 +72,8 @@ public class PagoServicio {
 
     public Map<String, Object> capturarOrdenPayPal(String idOrden) {
         Map<String, Object> orden = pagos.get(idOrden);
-        if (orden == null) throw new IllegalArgumentException("idOrden desconocido");
+        if (orden == null)
+            throw new IllegalArgumentException("idOrden desconocido");
         orden.put("estado", "COMPLETADA");
         orden.put("capturada_en", Instant.now().toString());
         return Map.copyOf(orden);

@@ -17,7 +17,7 @@ public class PagoController {
     private final String modo;
 
     public PagoController(PagoServicio pagoServicio,
-                          @Value("${pagos.modo:SIMULADO}") String modo) {
+            @Value("${pagos.modo:SIMULADO}") String modo) {
         this.pagoServicio = pagoServicio;
         this.modo = modo;
     }

@@ -41,16 +41,15 @@ public class AlojamientoController {
             @RequestParam(value = "q", required = false) String ciudad,
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "people", required = false, defaultValue = "1") int capacity,
-            Model model
-    ) {
-        
+            Model model) {
+
         // Ya NO se llama a alojamientoService.buscarConFiltros() aquí.
-        
+
         // Solo pasamos los filtros iniciales de la URL al HTML
         model.addAttribute("filtroCiudad", ciudad);
         model.addAttribute("filtroTipo", type);
         model.addAttribute("filtroCapacidad", capacity);
-        
+
         return "Buscador"; // Devuelve la plantilla 'Buscador.html'
     }
 
@@ -68,7 +67,7 @@ public class AlojamientoController {
      */
     @PostMapping("/guardar")
     public String guardar(@ModelAttribute Alojamiento alojamiento, Authentication authentication) {
-        
+
         // Busca al usuario propietario que ha iniciado sesión
         String userEmail = authentication.getName();
         User anfitrion = userService.findByEmail(userEmail)
@@ -77,7 +76,7 @@ public class AlojamientoController {
         // Asigna el anfitrión al alojamiento antes de guardarlo
         alojamiento.setAnfitrion(anfitrion);
         alojamientoService.guardar(alojamiento);
-        
+
         return "redirect:/alojamientos"; // Redirige a la página de búsqueda
     }
 
@@ -95,6 +94,6 @@ public class AlojamientoController {
      */
     @GetMapping("/detalleAlojamientos")
     public String detalleAlojamientos() {
-        return "detalleAlojamientos"; 
+        return "detalleAlojamientos";
     }
 }

@@ -31,14 +31,15 @@ public class RegistroWebController {
         return "register"; // Asume que tienes una plantilla register.html
     }
 
-
     // POST -> procesa el formulario
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") User user, // Vincula datos del form al objeto User
-                               RedirectAttributes redirectAttrs) {
-       // ▼▼▼ ¡AÑADE ESTAS DOS LÍNEAS AQUÍ! ▼▼▼
+            RedirectAttributes redirectAttrs) {
+        // ▼▼▼ ¡AÑADE ESTAS DOS LÍNEAS AQUÍ! ▼▼▼
         log.info("Datos recibidos del formulario - Email: {}", user.getEmail());
-        log.info("Datos recibidos del formulario - Objeto User completo: {}", user); // Necesitas un método toString() en User.java para que esto sea útil
+        log.info("Datos recibidos del formulario - Objeto User completo: {}", user); // Necesitas un método toString()
+                                                                                     // en User.java para que esto sea
+                                                                                     // útil
 
         try {
             userService.registerUser(user);

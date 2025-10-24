@@ -27,7 +27,6 @@ main {
   transform: scale(1.02);
 }
 
-
 /* HEADER */
 header {
   background-color: #fff;
@@ -73,7 +72,6 @@ header .btn-register {
 header .btn-register:hover {
   background-color: #005b9a;
 }
-
 
 /* Precio + botón */
 .price-reserve {
@@ -153,7 +151,7 @@ footer {
 
 /* Tipografía global (igual que pago.html) */
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   background-color: #f9f9f9;
   color: #333;
   margin: 0;

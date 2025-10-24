@@ -50,15 +50,15 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Recuperar la reserva seleccionada
-const selected = JSON.parse(localStorage.getItem("reservaSeleccionada"));
+  const selected = JSON.parse(localStorage.getItem("reservaSeleccionada"));
 
-if (selected) {
-  // Mostrar datos
-  document.getElementById("nombreAlojamiento").textContent = selected.title;
-  document.getElementById("precioAlojamiento").textContent = selected.price + " € / noche";
+  if (selected) {
+    // Mostrar datos
+    document.getElementById("nombreAlojamiento").textContent = selected.title;
+    document.getElementById("precioAlojamiento").textContent = selected.price + " € / noche";
 
-  // Imagen (misma que detalleAlojamiento)
-  document.getElementById("fotoAlojamiento").src = selected.images ? selected.images[0] : selected.img;
-}
+    // Imagen (misma que detalleAlojamiento)
+    document.getElementById("fotoAlojamiento").src = selected.images ? selected.images[0] : selected.img;
+  }
 
 });

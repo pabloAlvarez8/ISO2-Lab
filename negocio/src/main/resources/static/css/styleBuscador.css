@@ -82,11 +82,11 @@ header {
 
 /* Botón de registro en el header */
 .btn-register {
-  margin-left: 20px;           /* separa de la search bar */
+  margin-left: 20px; /* separa de la search bar */
   border: none;
   border-radius: 20px;
   padding: 10px 20px;
-  background-color: transparent;   /* mismo color que buscar */
+  background-color: transparent; /* mismo color que buscar */
   color: #333;
   font-weight: 600;
   font-size: 13px;
@@ -95,14 +95,14 @@ header {
 }
 
 .btn-register:hover {
-   background: rgba(0,0,0,0.05); 
-   color: #111;  /* más oscuro al pasar */
+  background: rgba(0, 0, 0, 0.05);
+  color: #111; /* más oscuro al pasar */
 }
 
 .btn-register:active {
-  background: rgba(0,0,0,0.1);  /* gris un poco más intenso */
+  background: rgba(0, 0, 0, 0.1); /* gris un poco más intenso */
   border-color: #666;
-  transform: scale(0.97); 
+  transform: scale(0.97);
 }
 
 /* contador de personas como mini pastilla */
@@ -217,8 +217,8 @@ main.container {
 .filter-group select:active {
   border-color: #4b8fe7;
   outline: none;
-  background: #f0f6ff;   /* azul clarito al enfocar */
-  color: #2c5394;   
+  background: #f0f6ff; /* azul clarito al enfocar */
+  color: #2c5394;
 }
 
 /* Valor del rango */

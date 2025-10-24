@@ -1,10 +1,69 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #ffffff;
+  color: #222;
+}
+
 main {
   max-width: 1000px;
   margin: 40px auto;
   background: #fff;
   border-radius: 12px;
   padding: 30px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+header {
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+}
+
+.btn-register {
+  background-color: transparent;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  color: #333;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-register:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #111;
+}
+
+.btn-register:active {
+  background: rgba(0, 0, 0, 0.1);
+  transform: scale(0.97);
+}
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #4b8fe7;
+  cursor: pointer;
+  padding: 10px 20px;
 }
 
 /* Carrusel */
@@ -27,7 +86,7 @@ main {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   color: white;
   border: none;
   font-size: 24px;
@@ -36,10 +95,16 @@ main {
   border-radius: 50%;
 }
 
-.carousel-btn.prev { left: 10px; }
-.carousel-btn.next { right: 10px; }
+.carousel-btn.prev {
+  left: 10px;
+}
+.carousel-btn.next {
+  right: 10px;
+}
 
-.carousel-btn:hover { background: rgba(0,0,0,0.7); }
+.carousel-btn:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
 
 .price-reserve {
   display: flex;
@@ -64,9 +129,12 @@ main {
   cursor: pointer;
   transition: background 0.3s;
 }
-.btn-reserve:hover { background-color: #005b9a; }
+.btn-reserve:hover {
+  background-color: #005b9a;
+}
 
-.info-section, .comments {
+.info-section,
+.comments {
   margin-top: 40px;
 }
 
@@ -81,8 +149,14 @@ main {
   padding: 15px 0;
 }
 
-.comment strong { font-size: 15px; color: #333; }
-.comment span { color: #888; margin-left: 8px; }
+.comment strong {
+  font-size: 15px;
+  color: #333;
+}
+.comment span {
+  color: #888;
+  margin-left: 8px;
+}
 
 .btn-volver {
   display: inline-block;
@@ -94,4 +168,6 @@ main {
   cursor: pointer;
   transition: background 0.3s;
 }
-.btn-volver:hover { background: #ddd; }
+.btn-volver:hover {
+  background: #ddd;
+}
