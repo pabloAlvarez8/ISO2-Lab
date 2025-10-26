@@ -4,53 +4,43 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-// Importa BCryptPasswordEncoder correctamente
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import java.util.Collections;
+
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     private UserRepository userRepository;
 
-    // Inyecta el Bean PasswordEncoder (forma recomendada)
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Transactional // Buena práctica para métodos que modifican la BD
+    // --- Tu método de registro (ya está perfecto) ---
+    @Transactional
     public User registerUser(User user) {
-        // Comprobar si el email ya existe (¡importante!)
         if (userRepository.existsByEmail(user.getEmail())) {
             log.warn("Intento de registro con email existente: {}", user.getEmail());
-            // Deberías lanzar una excepción específica que el controlador pueda capturar
             throw new IllegalArgumentException("El correo electrónico ya está registrado.");
         }
-
         try {
-            // Hashear la contraseña antes de guardar
+            // Hashear la contraseña
             user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-            // Establecer rol por defecto si no se proporciona (ya gestionado por el default
-            // del Enum)
+            // Asignar rol por defecto (aunque tu entidad ya lo hace, esto es una doble seguridad)
             if (user.getRole() == null) {
                 user.setRole(User.Role.INQUILINO);
             }
-
-            log.info("Intentando guardar usuario con email: {}", user.getEmail());
-            log.info("--- VALORES ANTES DE SAVE ---");
-            log.info("ID: {}", user.getId()); // Debería ser null
-            log.info("Email: {}", user.getEmail()); // ¿Es null aquí?
-            log.info("Nombre: {}", user.getNombre());
-            log.info("Apellido: {}", user.getApellido());
-            log.info("Password (Hashed): {}", user.getPassword());
-            log.info("Direccion: {}", user.getDireccion());
-            log.info("URL Foto: {}", user.getUrlFotoPerfil());
-            log.info("Role: {}", user.getRole());
-            log.info("-----------------------------");
+            
+            log.info("Guardando nuevo usuario: {}", user.getEmail());
             User savedUser = userRepository.save(user);
             log.info("✅ Usuario guardado correctamente con ID: {}", savedUser.getId());
             return savedUser;
@@ -61,15 +51,48 @@ public class UserService {
         }
     }
 
+    // --- Tus otros métodos (findByEmail, existsByEmail) ---
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
     public boolean existsByEmail(String email) {
-        boolean exists = userRepository.existsByEmail(email);
-        log.debug("Comprobando si el email {} existe: {}", email, exists);
-        return exists;
+        return userRepository.existsByEmail(email);
     }
 
-    // Añade otros métodos relacionados con usuarios aquí (login, findById, etc.)
+
+    // --- MÉTODO DE LOGIN (UserDetailsService) ---
+    
+    /**
+     * Este es el método que Spring Security llama automáticamente durante el login.
+     * Busca al usuario por EMAIL.
+     *
+     * @param email El email que el usuario escribió en el formulario.
+     * @return un objeto UserDetails que Spring Security usa para verificar la contraseña.
+     */
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        
+        log.debug("Buscando usuario por email para autenticación: {}", email);
+
+        User usuario = userRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    log.warn("Intento de login fallido. Email no encontrado: {}", email);
+                    return new UsernameNotFoundException("Usuario (email) no encontrado: " + email);
+                });
+
+        // --- ¡AQUÍ ESTÁ EL ÚNICO CAMBIO! ---
+        // Antes: usuario.getUsername()
+        // Ahora: usuario.getEmail()
+        //
+        // (Lombok nos da getEmail() y getPassword() automáticamente)
+        return new org.springframework.security.core.userdetails.User(
+            
+            usuario.getEmail(), // Usamos el email como el "principal"
+            
+            usuario.getPassword(), // Spring se encarga de comparar este hash
+            
+            Collections.emptyList() // Lista de roles (vacía por ahora)
+        );
+    }
 }

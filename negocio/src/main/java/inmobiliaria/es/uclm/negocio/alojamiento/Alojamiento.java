@@ -10,7 +10,7 @@ public class Alojamiento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     // 3. Añade la relación OBLIGATORIA con el anfitrión
     @ManyToOne(fetch = FetchType.LAZY)
@@ -45,7 +45,7 @@ public class Alojamiento {
     private String fotoUrl;
 
     @Column(name = "valoracion_media")
-    private double valoracionMedia;
+    private Double valoracionMedia;
 
     @Column(name = "distancia_centro")
     private BigDecimal distanciaCentro;
@@ -55,11 +55,11 @@ public class Alojamiento {
 
     // Getters y setters (¡actualizados con los nuevos campos!)
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -143,7 +143,7 @@ public class Alojamiento {
         this.distanciaCentro = distanciaCentro;
     }
 
-    public double getValoracionMedia() {
+    public Double getValoracionMedia() {
         return valoracionMedia;
     }
 

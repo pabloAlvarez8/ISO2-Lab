@@ -13,7 +13,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     // Usa 'email' para coincidir con tu código anterior, mapea a columna 'correo'
     @Column(name = "correo", nullable = false, unique = true)
@@ -63,6 +63,22 @@ public class User {
         INQUILINO, PROPIETARIO
     }
 
+    // ... dentro de tu clase User.java ...
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", apellido='" + apellido + '\'' +
+                ", email='" + email + '\'' +
+                // ¡NUNCA incluyas la contraseña en el log!
+                ", password='[PROTEGIDO]'" +
+                ", direccion='" + direccion + '\'' +
+                ", role=" + role +
+                ", urlFotoPerfil='" + urlFotoPerfil + '\'' +
+                '}';
+    }
     // --- Opcional: Constructores, toString ---
     // Puedes añadir constructores o un método toString si los necesitas
     // Lombok a menudo se encarga de esto, o puedes generarlos

@@ -40,4 +40,9 @@ public class PrincipalWebController {
     public String mostrarPaginaPago() {
         return "pago"; // <-- nombre del archivo en templates sin .html
     }
+
+    @GetMapping("/dashboard")
+    public String mostrarDashboard() {
+        return "dashboard"; // Devuelve templates/dashboard.html
+    }
 }

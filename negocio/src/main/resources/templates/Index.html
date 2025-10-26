@@ -8,23 +8,8 @@
   </head>
 
   <body>
-    <header>
-      <div class="container">
-        <div
-          class="logo"
-          role="link"
-          tabindex="0"
-          aria-label="Ir a inicio"
-          onclick="location.href='/'"
-          onkeydown="if(event.key==='Enter'||event.key===' '){location.href='/';}"
-        >
-          Inmobiliarias Paqui
-        </div>
-        <button class="btn-register" onclick="window.location.href='/register'">
-          Iniciar sesión o registrarse
-        </button>
-      </div>
-    </header>
+    
+    <div th:replace="~{fragments/header :: navbar}"></div>
 
     <main>
       <section class="hero">

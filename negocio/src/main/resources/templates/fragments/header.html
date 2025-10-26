@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+    <header th:fragment="navbar">
+        <div class="container">
+            
+            <div
+                class="logo"
+                role="link" 
+                tabindex="0" 
+                aria-label="Ir a inicio" 
+                onclick="location.href='/'"
+                onkeydown="if(event.key==='Enter'||event.key===' '){location.href='/';}"
+            >
+                Inmobiliarias Paqui
+            </div>
+
+            <div sec:authorize="!isAuthenticated()">
+                <button class="btn-register" onclick="window.location.href='/login'">
+                    Iniciar sesión o registrarse
+                </button>
+            </div>
+
+            <div class="dropdown-container" sec:authorize="isAuthenticated()">
+                <button class="btn-dropdown">Mi Cuenta</button>
+                
+                <div class="dropdown-content">
+                    <a th:href="@{/perfil}">Ver Perfil</a>
+                    
+                    <form th:action="@{/logout}" method="POST" style="margin: 0;">
+                        <button type="submit" class="logout-button-dropdown">Cerrar Sesión</button>
+                    </form>
+                </div>
+            </div>
+            </div>
+    </header>
+
+</body>
+</html>
