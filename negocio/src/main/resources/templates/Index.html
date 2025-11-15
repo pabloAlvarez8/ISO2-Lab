@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Inmobiliarias Paqui - Inicio</title>
+    <link rel="stylesheet" th:href="@{/css/styleIndex.css}" />
+  </head>
+
+  <body>
+    
+    <div th:replace="~{fragments/header :: navbar}"></div>
+
+    <main>
+      <section class="hero">
+        <h1>Encuentra tu alojamiento ideal en España</h1>
+        <p>Hoteles, apartamentos y mucho más… ¡a un clic!</p>
+
+        <div class="search-bar">
+          <input type="text" placeholder="¿A dónde vas?" aria-label="Destino" />
+          <input type="date" aria-label="Fecha de entrada" />
+          <input type="date" aria-label="Fecha de salida" />
+          <div class="people-counter" aria-label="Personas">
+            <button type="button" aria-label="Quitar persona">-</button>
+            <span aria-live="polite">2</span>
+            <button type="button" aria-label="Añadir persona">+</button>
+          </div>
+          <button class="btn-search">Buscar</button>
+        </div>
+      </section>
+
+      <section class="types">
+        <h2>Explora por tipo de alojamiento</h2>
+        <div class="type-grid">
+          <div
+            class="type-card"
+            data-type="apartamento"
+            role="button"
+            tabindex="0"
+            aria-label="Ver apartamentos"
+          >
+            🏠 <span>Apartamentos</span>
+          </div>
+          <div
+            class="type-card"
+            data-type="hotel"
+            role="button"
+            tabindex="0"
+            aria-label="Ver hoteles"
+          >
+            🏨 <span>Hoteles</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="popular">
+        <h2>Destinos populares en España</h2>
+
+        <div class="destinos-grid" th:if="${!destinosPopulares.isEmpty()}">
+          <div
+            class="destino"
+            th:each="destino : ${destinosPopulares}"
+            th:data-city="${destino.ciudad}"
+            role="button"
+            tabindex="0"
+            th:aria-label="'Buscar en ' + ${destino.ciudad}"
+          >
+            <img th:src="${destino.fotoUrl}" th:alt="${destino.ciudad}" />
+            <span th:text="${destino.ciudad}">Ciudad Ejemplo</span>
+          </div>
+        </div>
+
+        <div th:if="${destinosPopulares.isEmpty()}">
+          <p>No hay destinos populares en este momento.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>© 2025 Inmobiliarias Paqui</footer>
+
+    <script th:src="@{/js/index.js}" defer></script>
+  </body>
+</html>

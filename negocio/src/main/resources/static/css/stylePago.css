@@ -1,0 +1,267 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #ffffff;
+  color: #222;
+}
+
+/* HEADER */
+header {
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #4b8fe7;
+  cursor: pointer;
+  padding: 10px 20px;
+}
+
+.btn-register {
+  background-color: transparent;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  color: #333;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-register:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #111;
+}
+
+.btn-register:active {
+  background: rgba(0, 0, 0, 0.1);
+  transform: scale(0.97);
+}
+
+/* HERO */
+.hero {
+  text-align: center;
+  padding: 120px 20px 80px;
+  background: linear-gradient(to bottom, #f5f8ff, #fff);
+}
+
+.hero h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: #2c5394;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  color: #444;
+  font-size: 18px;
+  margin-bottom: 40px;
+}
+
+/* SECCIÓN PAGO */
+.payment-section {
+  width: 90%;
+  max-width: 1100px;
+  margin: 0 auto 100px;
+}
+
+.payment-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.resumen-box,
+.metodo-box {
+  flex: 1;
+  min-width: 320px;
+  background: #f7f7f7;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 30px 40px;
+}
+
+.resumen-box h2,
+.metodo-box h2 {
+  color: #2c5394;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* Resumen */
+#resumen-reserva h3 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+#resumen-reserva p {
+  font-size: 16px;
+  color: #666;
+}
+
+#resumen-reserva {
+  text-align: left; /* centra todo el contenido */
+}
+
+#resumen-reserva h3 {
+  margin-bottom: 16px; /* espacio inferior */
+}
+
+#resumen-reserva p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 50px; /* espacio mayor antes de la foto */
+}
+
+#resumen-reserva img {
+  width: 100%; /* ocupa todo el ancho del cuadro */
+  max-width: 3100px; /* ancho máximo de la foto */
+  max-height: 250px; /* altura máxima */
+  object-fit: cover; /* mantiene proporción y recorta exceso */
+  border-radius: 12px;
+  display: block;
+  margin: 0 auto; /* centra la imagen */
+}
+
+/* Botones de pago */
+.btn-pago {
+  width: 100%;
+  background-color: #4b8fe7; /* azul tarjeta */
+  color: #fff;
+  border: none;
+  padding: 14px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 15px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-pago:hover {
+  background-color: #3a70c2;
+}
+
+.btn-pago:active {
+  background-color: #2c5394;
+  transform: scale(0.96);
+}
+
+.btn-pago.active {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-paypal {
+  background-color: #ffc439; /* amarillo PayPal */
+  color: #111;
+}
+
+.btn-paypal:hover {
+  background-color: #f4b830;
+}
+
+/* Mensaje de confirmación */
+.mensaje {
+  text-align: center;
+  margin-top: 10px;
+  font-weight: 600;
+  color: #2c5394;
+}
+
+/* FORMULARIOS DE PAGO */
+.form-pago {
+  display: none;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.form-pago.active {
+  display: flex;
+}
+
+.flex-row {
+  display: flex;
+  gap: 10px;
+}
+
+.flex-row input {
+  flex: 1;
+}
+
+.form-pago input {
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  outline: none;
+}
+
+.form-pago input:focus {
+  border-color: #4b8fe7;
+  box-shadow: 0 0 0 2px rgba(75, 143, 231, 0.2);
+}
+
+/* FOOTER */
+footer {
+  background: #f7f7f7;
+  color: #555;
+  text-align: center;
+  padding: 30px 10px;
+  font-size: 14px;
+  border-top: 1px solid #eee;
+}
+
+/* RESPONSIVE */
+@media (max-width: 700px) {
+  .hero h1 {
+    font-size: 28px;
+  }
+  .payment-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .resumen-box,
+  .metodo-box {
+    width: 90%;
+  }
+  .flex-row {
+    flex-direction: column;
+  }
+
+  /* IMAGEN RESUMEN BOX */
+
+  #resumen-reserva img {
+    width: 100%; /* ocupa todo el ancho del cuadro */
+    max-height: 250px; /* altura máxima */
+    object-fit: cover; /* mantiene proporción y recorta exceso */
+    border-radius: 12px;
+    margin-top: 15px; /* separación con el texto */
+  }
+}

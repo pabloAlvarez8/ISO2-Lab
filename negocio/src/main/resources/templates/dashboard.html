@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    
+    <link rel="stylesheet" th:href="@{/css/styleDashboard.css}">
+</head>
+<body>
+
+    <div class="container">
+        
+        <h2>¡Bienvenido!</h2>
+        
+        <p>Has iniciado sesión correctamente.</p>
+
+        <div class="dashboard-actions">
+
+            <a th:href="@{/perfil}" class="btn">Ver mi Perfil</a>
+            
+            <a th:href="@{/}" class="btn">Volver a Inicio</a>
+            
+            <form th:action="@{/logout}" method="POST">
+                <button type="submit" class="btn btn-logout">
+                    Cerrar Sesión
+                </button>
+            </form>
+
+        </div> </div> </body>
+</html>

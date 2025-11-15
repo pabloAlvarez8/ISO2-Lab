@@ -1,0 +1,77 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "arial";
+}
+
+/* 1. Usamos la misma base del .container del login */
+.container {
+  width: 468px;
+  max-width: 568px;
+  min-width: 200px;
+  background: #ffffff;
+  padding: 30px;
+  margin: auto;
+  margin-top: 100px;
+  border-radius: 20px;
+  font-family: Arial;
+  color: rgb(0, 0, 0);
+  text-align: center;
+  box-shadow: 0 4px 8px;
+  overflow: hidden;
+}
+
+.container h2 {
+  font-size: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+}
+
+.container p {
+  margin-bottom: 30px;
+  font-size: 16px;
+}
+
+/* 2. Un contenedor para los botones */
+/* Usamos Flexbox para controlar el espaciado */
+.dashboard-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* <- ¡ESTO SOLUCIONA TU PROBLEMA DE MÁRGENES! */
+            /* Es el espacio entre cada botón */
+}
+
+/* 3. Clase de botón UNIFICADA para <a> y <button> */
+.btn {
+  display: block; /* Hace que el enlace <a> ocupe todo el ancho */
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  color: white;
+  background-color: rgb(0, 132, 255); /* Azul por defecto */
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+/* 4. Modificador de color para el botón de logout */
+.btn-logout {
+  background-color: #6c757d;
+}
+
+.btn-logout:hover {
+  background-color: #5a6268;
+}

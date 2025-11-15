@@ -1,0 +1,158 @@
+main {
+  max-width: 1000px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Imagen principal del alojamiento */
+.imagen-alojamiento {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.imagen-alojamiento img {
+  width: 100%;
+  max-width: 900px;
+  height: 400px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.imagen-alojamiento img:hover {
+  transform: scale(1.02);
+}
+
+/* HEADER */
+header {
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+header .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header .logo {
+  font-size: 22px;
+  font-weight: 600;
+  color: #0071c2;
+  cursor: pointer;
+  user-select: none;
+}
+
+header .logo:hover {
+  color: #005b9a;
+}
+
+header .btn-register {
+  background-color: #0071c2;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+header .btn-register:hover {
+  background-color: #005b9a;
+}
+
+/* Precio + botón */
+.price-reserve {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.price-highlight {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0071c2;
+}
+
+.btn-reserve {
+  background-color: #0071c2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-reserve:hover {
+  background-color: #005b9a;
+}
+
+/* Información + comentarios */
+.info-section,
+.comments {
+  margin-top: 40px;
+}
+
+.comment {
+  border-top: 1px solid #ddd;
+  padding: 15px 0;
+}
+
+.comment strong {
+  font-size: 15px;
+  color: #333;
+}
+
+.comment span {
+  color: #888;
+  margin-left: 8px;
+}
+
+/* Botón volver */
+.btn-volver {
+  display: inline-block;
+  margin-top: 40px;
+  background: #eee;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-volver:hover {
+  background: #ddd;
+}
+
+/* FOOTER */
+footer {
+  background: #f7f7f7;
+  color: #555;
+  text-align: center;
+  padding: 30px 10px;
+  font-size: 14px;
+  border-top: 1px solid #eee;
+}
+
+/* Tipografía global (igual que pago.html) */
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  margin: 0;
+}
