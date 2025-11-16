@@ -28,9 +28,9 @@ public class Alojamiento {
     @Column(nullable = false)
     private String nombre;
 
-    // @Lob se usa para mapear a tipos TEXT/CLOB de SQL, 
+    // @Lob se usa para mapear a tipos TEXT/CLOB de SQL,
     // adecuados para Strings largos.
-    @Lob 
+    @Lob
     @Column(nullable = false)
     private String direccion;
 
