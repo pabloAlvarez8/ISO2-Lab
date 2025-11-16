@@ -2,17 +2,22 @@ package inmobiliaria.es.uclm.negocio.alojamiento;
 
 import java.math.BigDecimal;
 import jakarta.persistence.*;
-import inmobiliaria.es.uclm.negocio.user.User; // 1. Importa la entidad User
+import inmobiliaria.es.uclm.negocio.user.User;
 
+/**
+ * Entidad JPA que representa un Alojamiento.
+ * Se mapea contra la tabla 'inmueble'.
+ */
 @Entity
-@Table(name = "inmueble") // 2. Apunta a la tabla correcta
+@Table(name = "inmueble")
 public class Alojamiento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // 3. Añade la relación OBLIGATORIA con el anfitrión
+    // Relación obligatoria con el anfitrión (User).
+    // LAZY fetch para optimizar la carga.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_anfitrion", nullable = false)
     private User anfitrion;
@@ -23,24 +28,27 @@ public class Alojamiento {
     @Column(nullable = false)
     private String nombre;
 
-    @Lob // La columna 'direccion' es TEXT, @Lob es mejor para textos largos
+    // @Lob se usa para mapear a tipos TEXT/CLOB de SQL, 
+    // adecuados para Strings largos.
+    @Lob 
     @Column(nullable = false)
     private String direccion;
 
     @Column(nullable = false)
     private String ciudad;
 
-    @Lob // La columna 'descripcion' es TEXT
+    @Lob
     private String descripcion;
 
     @Column(nullable = false)
     private int capacidad;
 
-    // 4. Mapea el campo 'precio' a la columna 'precio_noche'
+    // Mapeo explícito del campo 'precio' a la columna 'precio_noche'.
+    // Se usa BigDecimal para precisión monetaria.
     @Column(name = "precio_noche", nullable = false)
     private BigDecimal precio;
 
-    // 5. Mapea 'fotoUrl' a la columna 'url_imagen_principal'
+    // Mapeo explícito a la columna de imagen.
     @Column(name = "url_imagen_principal")
     private String fotoUrl;
 
@@ -50,10 +58,8 @@ public class Alojamiento {
     @Column(name = "distancia_centro")
     private BigDecimal distanciaCentro;
 
-    // ... (También faltarían is_active, politica_cancelacion, etc.,
-    // pero estos son los mínimos para que funcione)
-
-    // Getters y setters (¡actualizados con los nuevos campos!)
+    // --- Getters y Setters ---
+    // Requeridos por JPA.
 
     public int getId() {
         return id;
@@ -150,7 +156,4 @@ public class Alojamiento {
     public void setValoracionMedia(Double valoracionMedia) {
         this.valoracionMedia = valoracionMedia;
     }
-    // O 'double' si prefieres para ratings
-
-    // ... y sus getters/setters
 }
