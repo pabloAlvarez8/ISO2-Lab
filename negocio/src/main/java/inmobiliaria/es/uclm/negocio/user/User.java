@@ -13,7 +13,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     // Usa 'email' para coincidir con tu código anterior, mapea a columna 'correo'
     @Column(name = "correo", nullable = false, unique = true)
