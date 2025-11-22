@@ -10,7 +10,7 @@ public class Alojamiento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     // 3. Añade la relación OBLIGATORIA con el anfitrión
     @ManyToOne(fetch = FetchType.LAZY)
@@ -55,11 +55,11 @@ public class Alojamiento {
 
     // Getters y setters (¡actualizados con los nuevos campos!)
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
