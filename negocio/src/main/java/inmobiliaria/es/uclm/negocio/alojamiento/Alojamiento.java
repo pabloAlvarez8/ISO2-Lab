@@ -1,18 +1,18 @@
 package inmobiliaria.es.uclm.negocio.alojamiento;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime; // Necesario para las fechas
 import jakarta.persistence.*;
-import inmobiliaria.es.uclm.negocio.user.User; // 1. Importa la entidad User
+import inmobiliaria.es.uclm.negocio.user.User;
 
 @Entity
-@Table(name = "inmueble") // 2. Apunta a la tabla correcta
+@Table(name = "inmueble")
 public class Alojamiento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 3. Añade la relación OBLIGATORIA con el anfitrión
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_anfitrion", nullable = false)
     private User anfitrion;
@@ -23,134 +23,107 @@ public class Alojamiento {
     @Column(nullable = false)
     private String nombre;
 
-    @Lob // La columna 'direccion' es TEXT, @Lob es mejor para textos largos
-    @Column(nullable = false)
-    private String direccion;
-
     @Column(nullable = false)
     private String ciudad;
 
-    @Lob // La columna 'descripcion' es TEXT
+    // CAMBIO 1: Usar columnDefinition para asegurar que coincida con el SQL TEXT
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String direccion;
+
+    // CAMBIO 1: Lo mismo aquí
+    @Column(columnDefinition = "TEXT")
     private String descripcion;
 
     @Column(nullable = false)
     private int capacidad;
 
-    // 4. Mapea el campo 'precio' a la columna 'precio_noche'
     @Column(name = "precio_noche", nullable = false)
     private BigDecimal precio;
 
-    // 5. Mapea 'fotoUrl' a la columna 'url_imagen_principal'
     @Column(name = "url_imagen_principal")
     private String fotoUrl;
-
-    @Column(name = "valoracion_media")
-    private Double valoracionMedia;
 
     @Column(name = "distancia_centro")
     private BigDecimal distanciaCentro;
 
-    // ... (También faltarían is_active, politica_cancelacion, etc.,
-    // pero estos son los mínimos para que funcione)
+    // CAMBIO 2: Añadir campos que existen en SQL (Obligatorio para validate)
+    @Column(name = "is_active")
+    private Boolean isActive = true;
 
-    // Getters y setters (¡actualizados con los nuevos campos!)
+    // Usamos String para simplificar, o crea el Enum si quieres ser estricto
+   @Column(name = "politica_cancelacion", columnDefinition = "ENUM('NO_REEMBOLSABLE', 'FLEXIBLE', 'ESTRICTA') DEFAULT 'ESTRICTA'")
+    private String politicaCancelacion;
+    // CAMBIO 3: Eliminar valoracionMedia de la BD
+    // Como NO existe columna en la tabla 'inmueble', usamos @Transient
+    // para que Hibernate lo ignore al validar contra la BD.
+   @Transient 
+    private Double valoracionMedia;
 
-    public Long getId() {
-        return id;
+    // CAMBIO 4: Las fechas IGUAL que en User (Espejo exacto del SQL)
+    @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", columnDefinition = "DATETIME")
+    private LocalDateTime updatedAt;
+
+    // --- Timestamps ---
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        if (updatedAt == null) updatedAt = LocalDateTime.now();
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 
-    public User getAnfitrion() {
-        return anfitrion;
-    }
+    // --- GETTERS Y SETTERS ---
+    // (Incluye los nuevos getters/setters para isActive, fechas, etc.)
 
-    public void setAnfitrion(User anfitrion) {
-        this.anfitrion = anfitrion;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public String getTipo() {
-        return tipo;
-    }
+    public User getAnfitrion() { return anfitrion; }
+    public void setAnfitrion(User anfitrion) { this.anfitrion = anfitrion; }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
+    public String getTipo() { return tipo; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public String getDireccion() { return direccion; }
+    public void setDireccion(String direccion) { this.direccion = direccion; }
 
-    public String getDireccion() {
-        return direccion;
-    }
+    public String getCiudad() { return ciudad; }
+    public void setCiudad(String ciudad) { this.ciudad = ciudad; }
 
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    public String getCiudad() {
-        return ciudad;
-    }
+    public int getCapacidad() { return capacidad; }
+    public void setCapacidad(int capacidad) { this.capacidad = capacidad; }
 
-    public void setCiudad(String ciudad) {
-        this.ciudad = ciudad;
-    }
+    public BigDecimal getPrecio() { return precio; }
+    public void setPrecio(BigDecimal precio) { this.precio = precio; }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
+    public String getFotoUrl() { return fotoUrl; }
+    public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
+    public BigDecimal getDistanciaCentro() { return distanciaCentro; }
+    public void setDistanciaCentro(BigDecimal distanciaCentro) { this.distanciaCentro = distanciaCentro; }
 
-    public int getCapacidad() {
-        return capacidad;
-    }
+    public Boolean getIsActive() { return isActive; }
+    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
 
-    public void setCapacidad(int capacidad) {
-        this.capacidad = capacidad;
-    }
+    public String getPoliticaCancelacion() { return politicaCancelacion; }
+    public void setPoliticaCancelacion(String politicaCancelacion) { this.politicaCancelacion = politicaCancelacion; }
 
-    public BigDecimal getPrecio() {
-        return precio;
-    }
+    // Getter para valoracionMedia (aunque no se guarde en BD)
+    public Double getValoracionMedia() { return valoracionMedia; }
+    public void setValoracionMedia(Double valoracionMedia) { this.valoracionMedia = valoracionMedia; }
 
-    public void setPrecio(BigDecimal precio) {
-        this.precio = precio;
-    }
-
-    public String getFotoUrl() {
-        return fotoUrl;
-    }
-
-    public void setFotoUrl(String fotoUrl) {
-        this.fotoUrl = fotoUrl;
-    }
-
-    public BigDecimal getDistanciaCentro() {
-        return distanciaCentro;
-    }
-
-    public void setDistanciaCentro(BigDecimal distanciaCentro) {
-        this.distanciaCentro = distanciaCentro;
-    }
-
-    public Double getValoracionMedia() {
-        return valoracionMedia;
-    }
-
-    public void setValoracionMedia(Double valoracionMedia) {
-        this.valoracionMedia = valoracionMedia;
-    }
-    // O 'double' si prefieres para ratings
-
-    // ... y sus getters/setters
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
 }
