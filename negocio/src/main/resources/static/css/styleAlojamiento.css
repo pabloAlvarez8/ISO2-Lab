@@ -1,13 +1,21 @@
+/**
+ * ESTILOS PRINCIPALES DE ALOJAMIENTO
+ * Define la estructura visual de la ficha de detalle del alojamiento.
+ * Se utiliza un diseño tipo 'card' centrado para el contenido principal.
+ */
 main {
-  max-width: 1000px;
-  margin: 40px auto;
+  max-width: 1000px; /* Limita el ancho para mantener la legibilidad en pantallas grandes */
+  margin: 40px auto; /* Centrado horizontal */
   background: #fff;
   border-radius: 12px;
   padding: 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Elevación suave para separar del fondo */
 }
 
-/* Imagen principal del alojamiento */
+/**
+ * SECCIÓN DE IMAGEN DESTACADA
+ * Gestión de la imagen principal con efectos de interacción.
+ */
 .imagen-alojamiento {
   margin-top: 20px;
   text-align: center;
@@ -16,32 +24,36 @@ main {
 .imagen-alojamiento img {
   width: 100%;
   max-width: 900px;
-  height: 400px;
+  height: 400px; /* Altura fija para consistencia en el layout */
   border-radius: 12px;
-  object-fit: cover;
+  object-fit: cover; /* Recorta la imagen para llenar el contenedor sin distorsión */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease; /* Suaviza la animación de hover */
 }
 
+/* Micro-interacción para dar feedback de elemento interactivo */
 .imagen-alojamiento img:hover {
   transform: scale(1.02);
 }
 
-/* HEADER */
+/**
+ * HEADER DE NAVEGACIÓN
+ * Barra superior persistente (Sticky) para acceso rápido a acciones globales.
+ */
 header {
   background-color: #fff;
   border-bottom: 1px solid #eee;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  position: sticky;
+  position: sticky; /* Mantiene el header visible al hacer scroll */
   top: 0;
-  z-index: 1000;
+  z-index: 1000; /* Asegura que sobreponga al contenido al hacer scroll */
 }
 
 header .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 15px 20px;
-  display: flex;
+  display: flex; /* Flexbox para separar logo (izq) y botón (der) */
   justify-content: space-between;
   align-items: center;
 }
@@ -49,13 +61,13 @@ header .container {
 header .logo {
   font-size: 22px;
   font-weight: 600;
-  color: #0071c2;
+  color: #0071c2; /* Azul corporativo principal */
   cursor: pointer;
-  user-select: none;
+  user-select: none; /* Evita selección accidental de texto al hacer click */
 }
 
 header .logo:hover {
-  color: #005b9a;
+  color: #005b9a; /* Variación más oscura para estado hover */
 }
 
 header .btn-register {
@@ -73,7 +85,10 @@ header .btn-register:hover {
   background-color: #005b9a;
 }
 
-/* Precio + botón */
+/**
+ * SECCIÓN DE PRECIO Y RESERVA
+ * Componente de llamada a la acción (CTA) principal.
+ */
 .price-reserve {
   display: flex;
   justify-content: space-between;
@@ -84,7 +99,7 @@ header .btn-register:hover {
 .price-highlight {
   font-size: 20px;
   font-weight: 700;
-  color: #0071c2;
+  color: #0071c2; /* Destacamos el precio con el color primario */
 }
 
 .btn-reserve {
@@ -92,7 +107,7 @@ header .btn-register:hover {
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 12px 24px;
+  padding: 12px 24px; /* Área de click más grande para el CTA principal */
   font-size: 16px;
   cursor: pointer;
   transition: background 0.3s;
@@ -102,14 +117,17 @@ header .btn-register:hover {
   background-color: #005b9a;
 }
 
-/* Información + comentarios */
+/**
+ * ÁREA DE CONTENIDO Y COMENTARIOS
+ * Estilos para bloques de texto e iteraciones de feedback de usuarios.
+ */
 .info-section,
 .comments {
-  margin-top: 40px;
+  margin-top: 40px; /* Espaciado vertical para jerarquía visual */
 }
 
 .comment {
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #ddd; /* Separador visual entre comentarios */
   padding: 15px 0;
 }
 
@@ -119,15 +137,18 @@ header .btn-register:hover {
 }
 
 .comment span {
-  color: #888;
+  color: #888; /* Color atenuado para metadatos (fechas, etc.) */
   margin-left: 8px;
 }
 
-/* Botón volver */
+/**
+ * NAVEGACIÓN SECUNDARIA
+ * Botones de acción de baja prioridad.
+ */
 .btn-volver {
   display: inline-block;
   margin-top: 40px;
-  background: #eee;
+  background: #eee; /* Fondo neutro para denotar acción secundaria */
   border: none;
   padding: 10px 20px;
   border-radius: 8px;
@@ -139,7 +160,9 @@ header .btn-register:hover {
   background: #ddd;
 }
 
-/* FOOTER */
+/**
+ * PIE DE PÁGINA
+ */
 footer {
   background: #f7f7f7;
   color: #555;
@@ -149,10 +172,13 @@ footer {
   border-top: 1px solid #eee;
 }
 
-/* Tipografía global (igual que pago.html) */
+/**
+ * RESET Y TIPOGRAFÍA GLOBAL
+ * Configuración base heredada de la guía de estilos (coincide con pago.html).
+ */
 body {
   font-family: "Poppins", sans-serif;
-  background-color: #f9f9f9;
-  color: #333;
+  background-color: #f9f9f9; /* Gris muy suave para reducir fatiga visual */
+  color: #333; /* Gris oscuro en lugar de negro puro para mejor lectura */
   margin: 0;
 }
