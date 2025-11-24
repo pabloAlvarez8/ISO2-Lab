@@ -9,53 +9,58 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Controlador REST que expone los endpoints para la gestión y
- * búsqueda de Alojamientos.
- * Toda la API de esta clase se sirve bajo la ruta /api/alojamientos.
+ * Controlador REST que expone la API pública para la consulta de alojamientos.
+ * <p>
+ * Gestiona las peticiones HTTP entrantes bajo la ruta '/api/alojamientos',
+ * actuando como adaptador entre la interfaz web/móvil y la capa de servicios.
+ * Se encarga de la validación básica de parámetros y la transformación de
+ * entidades a DTOs.
+ * </p>
  */
 @RestController
 @RequestMapping("/api/alojamientos")
 public class AlojamientoApiController {
 
-        // Inyección de la capa de servicio que contiene la lógica de negocio.
-        @Autowired
-        private AlojamientoService_Interfaz alojamientoService;
+    /**
+     * Servicio de negocio para la gestión de alojamientos.
+     */
+    @Autowired
+    private AlojamientoService_Interfaz alojamientoService;
 
-        /**
-         * Endpoint principal (GET /) para la búsqueda y filtrado de alojamientos.
-         * Acepta múltiples parámetros de consulta opcionales para refinar los
-         * resultados.
-         *
-         * @param ciudad    (q) Filtro opcional por ciudad o término de búsqueda.
-         * @param maxPrice  Filtro opcional para el precio máximo.
-         * @param minRating Filtro opcional para la valoración mínima.
-         * @param types     Filtro opcional de lista de tipos de alojamiento.
-         * @param capacity  Filtro de capacidad (default 1 si no se especifica).
-         * @param sortBy    Criterio de ordenación (default 'recommend').
-         * @return Una lista de AlojamientoSearchResultDTO, nunca la entidad
-         *         directamente.
-         */
-        @GetMapping
-        public List<AlojamientoSearchResultDTO> buscarAlojamientosConFiltros(
+    /**
+     * Endpoint de búsqueda avanzada de alojamientos (GET /).
+     * <p>
+     * Permite filtrar el catálogo de inmuebles mediante múltiples criterios opcionales.
+     * La respuesta devuelve una lista de objetos de transferencia de datos (DTO)
+     * para evitar exponer directamente la estructura de la base de datos.
+     * </p>
+     *
+     * @param ciudad    Término de búsqueda textual (ciudad o ubicación). Mapeado al parámetro 'q'.
+     * @param maxPrice  Tope de precio por noche permitido.
+     * @param minRating Puntuación mínima requerida (0-5).
+     * @param types     Lista de tipos de inmueble permitidos (ej. "Apartamento", "Casa").
+     * @param capacity  Número mínimo de personas requeridas (por defecto 1).
+     * @param sortBy    Criterio de ordenación de resultados (por defecto 'recommend').
+     * @return Lista de {@link AlojamientoSearchResultDTO} con los resultados filtrados.
+     */
+    @GetMapping
+    public List<AlojamientoSearchResultDTO> buscarAlojamientosConFiltros(
+            @RequestParam(value = "q", required = false) String ciudad,
+            @RequestParam(value = "maxPrice", required = false) BigDecimal maxPrice,
+            @RequestParam(value = "minRating", required = false) Double minRating,
+            @RequestParam(value = "types", required = false) List<String> types,
+            @RequestParam(value = "capacity", required = false, defaultValue = "1") int capacity,
+            @RequestParam(value = "sortBy", required = false, defaultValue = "recommend") String sortBy) {
 
-                        // Los @RequestParam(required = false) permiten que todos los filtros
-                        // sean opcionales. Si un parámetro no se envía, su valor será 'null'.
-                        @RequestParam(value = "q", required = false) String ciudad,
-                        @RequestParam(value = "maxPrice", required = false) BigDecimal maxPrice,
-                        @RequestParam(value = "minRating", required = false) Double minRating,
-                        @RequestParam(value = "types", required = false) List<String> types,
-                        @RequestParam(value = "capacity", required = false, defaultValue = "1") int capacity,
-                        @RequestParam(value = "sortBy", required = false, defaultValue = "recommend") String sortBy) {
-                // 1. Delegación: La responsabilidad de la lógica de negocio (cómo filtrar)
-                // se pasa completamente a la capa de servicio.
-                List<Alojamiento> alojamientosEncontrados = alojamientoService.buscarConFiltros(
-                                ciudad, maxPrice, minRating, types, capacity, sortBy);
-                // 2. Transformación (Patrón DTO):
-                // Mapeamos la lista de Entidades (Alojamiento) a una lista de DTOs.
-                // Esto desacopla la API de la persistencia y previene problemas de
-                // serialización (LazyInitializationExceptions o bucles infinitos).
-                return alojamientosEncontrados.stream()
-                                .map(AlojamientoSearchResultDTO::fromEntity) // Conversión estática
-                                .collect(Collectors.toList());
-        }
+        // Delegación de la lógica de filtrado a la capa de servicio.
+        List<Alojamiento> alojamientosEncontrados = alojamientoService.buscarConFiltros(
+                ciudad, maxPrice, minRating, types, capacity, sortBy);
+
+        // Transformación a DTO:
+        // Es vital convertir las entidades JPA a DTOs antes de devolverlas al cliente
+        // para evitar problemas de serialización (Lazy Loading) y desacoplar la API.
+        return alojamientosEncontrados.stream()
+                .map(AlojamientoSearchResultDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
 }
