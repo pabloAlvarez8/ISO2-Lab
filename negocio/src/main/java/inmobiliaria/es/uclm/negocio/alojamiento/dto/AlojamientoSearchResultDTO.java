@@ -1,34 +1,66 @@
 package inmobiliaria.es.uclm.negocio.alojamiento.dto;
 
 import java.math.BigDecimal;
-import java.util.List; // Importa List
-import inmobiliaria.es.uclm.negocio.alojamiento.Alojamiento; // Importa tu entidad
+import java.util.List;
+import inmobiliaria.es.uclm.negocio.alojamiento.Alojamiento;
 
-// Este DTO ahora coincide EXACTAMENTE con lo que 'detalle.js' espera.
+/**
+ * DTO (Data Transfer Object) inmutable que proyecta los datos de un alojamiento
+ * para los resultados de búsqueda.
+ * <p>
+ * Se implementa como un Java Record para garantizar inmutabilidad y reducir el boilerplate.
+ * Su estructura está intencionalmente desacoplada de la entidad JPA {@link Alojamiento} y
+ * adaptada al contrato JSON específico que espera el cliente web (script 'detalle.js').
+ * Esto permite cambiar el modelo de datos interno sin romper la API pública.
+ * </p>
+ *
+ * @param id Identificador único del recurso.
+ * @param title Título comercial del anuncio. Renombrado desde 'nombre' para el frontend.
+ * @param ciudad Ubicación geográfica.
+ * @param type Categoría del inmueble. Renombrado desde 'tipo'.
+ * @param price Precio por noche. Renombrado desde 'precio'.
+ * @param images Lista de URLs de imágenes. El frontend requiere un array/galería, aunque la entidad base solo tenga una.
+ * @param rating Puntuación media. Renombrado desde 'valoracionMedia'.
+ * @param capacity Capacidad máxima de personas.
+ * @param distance Distancia al punto de interés (centro).
+ */
 public record AlojamientoSearchResultDTO(
     int id,
-    String title,         // <-- 'nombre' ahora es 'title'
+    String title,
     String ciudad,
-    String type,          // <-- 'tipo' ahora es 'type'
-    BigDecimal price,     // <-- 'precio' ahora es 'price'
-    List<String> images,  // <-- 'fotoUrl' ahora es un array 'images'
-    Double rating,        // <-- 'valoracionMedia' ahora es 'rating'
-    int capacity,         // <-- 'capacidad' ahora es 'capacity'
-    BigDecimal distance  // <-- AÑADIDO: 'distancia_centro' ahora es 'distance'
+    String type,
+    BigDecimal price,
+    List<String> images,
+    Double rating,
+    int capacity,
+    BigDecimal distance
 ) {
 
-    // El método 'factory' se actualiza para hacer el mapeo
+    /**
+     * Método factoría estático para convertir la entidad de persistencia en este DTO.
+     * <p>
+     * Centraliza la lógica de transformación y mapeo de campos, evitando que esta lógica
+     * se disperse por el controlador o el servicio. Realiza adaptaciones de tipos,
+     * como envolver la URL de la imagen única en una {@link List} para cumplir con la
+     * estructura de galería que espera la vista.
+     * </p>
+     *
+     * @param a Entidad {@link Alojamiento} con los datos origen.
+     * @return Instancia del DTO lista para ser serializada y enviada al cliente.
+     */
     public static AlojamientoSearchResultDTO fromEntity(Alojamiento a) {
         return new AlojamientoSearchResultDTO(
             a.getId(),
-            a.getNombre(),         // Mapea 'nombre'
+            a.getNombre(),         
             a.getCiudad(),
-            a.getTipo(),           // Mapea 'tipo'
-            a.getPrecio(),         // Mapea 'precio'
-            List.of(a.getFotoUrl()), // Mapea 'fotoUrl' a un array con una imagen
-            a.getValoracionMedia(),// Mapea 'valoracionMedia'
-            a.getCapacidad(),      // Mapea 'capacidad'
-            a.getDistanciaCentro() // Mapea 'distanciaCentro' (Debes añadirlo a tu entidad)
+            a.getTipo(),           
+            a.getPrecio(),         
+            // Adaptación estructural: Convertimos el String único en una Lista
+            // para mantener la compatibilidad con componentes de galería en el UI.
+            List.of(a.getFotoUrl()), 
+            a.getValoracionMedia(),
+            a.getCapacidad(),      
+            a.getDistanciaCentro() 
         );
     }
 }
