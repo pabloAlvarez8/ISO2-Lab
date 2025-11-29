@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Archivo POM de Maven: define dependencias, configuración y build del proyecto -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<!-- Versión del modelo del POM -->
 	<modelVersion>4.0.0</modelVersion>
+
+	<!-- Hereda configuración de Spring Boot -->
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.5.6</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/> <!-- Busca el parent en el repo de Maven -->
 	</parent>
+
+	<!-- Identificación básica del proyecto -->
 	<groupId>inmobiliaria</groupId>
 	<artifactId>es.uclm.negocio</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>war</packaging> <!-- Empaquetado WAR, para desplegar en servidor -->
 	<name>demo</name>
 	<description>Demo project for Spring Boot</description>
+
+	<!-- Campos opcionales -->
 	<url/>
 	<licenses>
 		<license/>
@@ -27,59 +38,69 @@
 		<tag/>
 		<url/>
 	</scm>
+
+	<!-- Versión de Java que usará Maven para compilar -->
 	<properties>
 		<java.version>17</java.version>
 	</properties>
+
+	<!-- DEPENDENCIAS DEL PROYECTO -->
 	<dependencies>
+
+		<!-- Motor de plantillas Thymeleaf -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+
+		<!-- Dependencia básica para construir APIs web -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<!-- Extensión de Thymeleaf para usar Spring Security en plantillas -->
 		<dependency>
     		<groupId>org.thymeleaf.extras</groupId>
    		 	<artifactId>thymeleaf-extras-springsecurity6</artifactId>
     	</dependency>
 	
+		<!-- Tomcat como servidor embebido -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 			<scope>provided</scope>
 		</dependency>
+
+		<!-- Herramientas para test -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- JPA: ORM para conectar con BD relacionales -->
 		<dependency>
     		<groupId>org.springframework.boot</groupId>
    			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 
-		<!-- Lombok -->
+		<!-- Lombok: genera getters, setters, constructores… -->
 		<dependency>
 		    <groupId>org.projectlombok</groupId>
 		    <artifactId>lombok</artifactId>
-		    <version>1.18.32</version> <!-- Última estable -->
+		    <version>1.18.32</version>
 		    <scope>provided</scope>
 		</dependency>
 		
-		<!-- Spring Security (para BCrypt y futuro login con JWT) -->
+		<!-- Seguridad: incluye BCrypt y filtros de seguridad -->
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		
-		<!-- BD MySQL -->
-    	<dependency>
-    	    <groupId>org.springframework.boot</groupId>
-    	    <artifactId>spring-boot-starter-data-jpa</artifactId>
-    	</dependency>
 
+		<!-- Driver de MySQL para conectar con la BD -->
     	<dependency>
     	    <groupId>com.mysql</groupId>
     	    <artifactId>mysql-connector-j</artifactId>
@@ -88,30 +109,43 @@
 
     </dependencies>
 
+	<!-- CONFIGURACIÓN DE COMPILACIÓN -->
 	<build>
-    <plugins>
-        <plugin>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-        </plugin>
-        
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-                <source>${java.version}</source> <target>${java.version}</target> <annotationProcessorPaths>
-                    <path>
-                        <groupId>org.projectlombok</groupId>
-                        <artifactId>lombok</artifactId>
-                        <version>${lombok.version}</version> </path>
-                    <path>
-                         <groupId>org.projectlombok</groupId>
-                         <artifactId>lombok-mapstruct-binding</artifactId>
-                         <version>0.2.0</version> </path>
-                </annotationProcessorPaths>
-            </configuration>
-        </plugin>
-        </plugins>
-</build>
+	    <plugins>
+
+	        <!-- Plugin de Spring Boot: empaquetar y ejecutar -->
+	        <plugin>
+	            <groupId>org.springframework.boot</groupId>
+	            <artifactId>spring-boot-maven-plugin</artifactId>
+	        </plugin>
+
+	        <!-- Compilador de Maven: configura Java y Lombok -->
+	        <plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-compiler-plugin</artifactId>
+	            <configuration>
+	                <!-- Versión de Java configurada arriba -->
+	                <source>${java.version}</source>
+	                <target>${java.version}</target>
+
+	                <!-- Procesadores de anotaciones (Lombok) -->
+	                <annotationProcessorPaths>
+	                    <path>
+	                        <groupId>org.projectlombok</groupId>
+	                        <artifactId>lombok</artifactId>
+	                        <version>${lombok.version}</version>
+	                    </path>
+
+	                    <!-- Compatibilidad Lombok + MapStruct -->
+	                    <path>
+	                         <groupId>org.projectlombok</groupId>
+	                         <artifactId>lombok-mapstruct-binding</artifactId>
+	                         <version>0.2.0</version>
+	                    </path>
+	                </annotationProcessorPaths>
+	            </configuration>
+	        </plugin>
+	    </plugins>
+	</build>
 
 </project>
