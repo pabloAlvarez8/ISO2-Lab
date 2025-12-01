@@ -1,33 +1,55 @@
+<!-- 
+  Vista de inicio de sesión (Login).
+  Utiliza Thymeleaf para renderizar mensajes condicionales y gestionar
+  la integración con el proceso de autenticación de Spring Security.
+-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <title>Iniciar Sesión</title>
-    <link rel="stylesheet" th:href="@{/css/styleLogin.css}" />
+    
+    <!-- Enlace a la hoja de estilos. '@{...}' asegura que la ruta sea correcta
+         independientemente del contexto de despliegue de la aplicación -->
+    <link rel="stylesheet" th:href="@{/css/login.css}" />
 </head>
 <body>
     <div class="container">
         <h2>Inicia sesión</h2>
 
+        <!-- 
+          Bloque de notificaciones y feedback al usuario.
+          Usa 'th:if' para renderizar los elementos solo si se cumple la condición.
+        -->
+        
+        <!-- Muestra error si Spring Security redirige con el parámetro ?error -->
         <div th:if="${param.error}" class="alert">
             Email o contraseña incorrectos.
         </div>
         
+        <!-- Muestra confirmación si se redirige tras logout con ?logout -->
         <div th:if="${param.logout}" class="alert">
              Has cerrado sesión correctamente.
         </div>
 
+        <!-- Mensajes personalizados inyectados desde el controlador (ej. tras registro exitoso) -->
         <div th:if="${successMessage}" class="alert" style="background-color: #d4edda; color: #155724;">
             <p th:text="${successMessage}"></p>
         </div>
 
-
+        <!-- 
+          Formulario de autenticación estándar.
+          La acción '@{/login}' es interceptada automáticamente por el filtro de Spring Security.
+          Es crucial que los 'name' de los inputs coincidan con la configuración de seguridad 
+          (por defecto: username y password).
+        -->
         <form th:action="@{/login}" method="post" class="form-login">
             <input type="email" id="username" name="username" placeholder="Correo electrónico" required />
             <input type="password" id="password" name="password" placeholder="Contraseña" required />
             <button type="submit">Iniciar sesión</button>
         </form>
 
+        <!-- Navegación hacia el flujo de registro -->
         <div class="register-link">
             ¿No tienes cuenta? <a th:href="@{/register}">Regístrate aquí</a>
         </div>
