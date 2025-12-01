@@ -1,37 +1,60 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
   <head>
+  
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <!-- Título de la pestaña del navegador -->
     <title>Inmobiliarias Paqui - Inicio</title>
+
+    <!-- CSS de la página -->
     <link rel="stylesheet" th:href="@{/css/styleIndex.css}" />
   </head>
 
   <body>
-    
+
+    <!-- Inserta el fragmento del header usando Thymeleaf -->
     <div th:replace="~{fragments/header :: navbar}"></div>
 
     <main>
+
+      <!-- Sección principal tipo "hero" con mensaje y barra de búsqueda -->
       <section class="hero">
         <h1>Encuentra tu alojamiento ideal en España</h1>
         <p>Hoteles, apartamentos y mucho más… ¡a un clic!</p>
 
+        <!-- Barra de búsqueda con destino + fechas + contador de personas -->
         <div class="search-bar">
+          <!-- Campo texto para destino -->
           <input type="text" placeholder="¿A dónde vas?" aria-label="Destino" />
+
+          <!-- Fecha de entrada -->
           <input type="date" aria-label="Fecha de entrada" />
+
+          <!-- Fecha de salida -->
           <input type="date" aria-label="Fecha de salida" />
+
+          <!-- Contador accesible de personas -->
           <div class="people-counter" aria-label="Personas">
             <button type="button" aria-label="Quitar persona">-</button>
             <span aria-live="polite">2</span>
             <button type="button" aria-label="Añadir persona">+</button>
           </div>
+
+          <!-- Botón para buscar -->
           <button class="btn-search">Buscar</button>
         </div>
       </section>
 
+      <!-- Sección para explorar tipos de alojamiento -->
       <section class="types">
         <h2>Explora por tipo de alojamiento</h2>
+
+        <!-- Grid con tarjetas clicables -->
         <div class="type-grid">
+
+          <!-- Tarjeta para buscar apartamentos -->
           <div
             class="type-card"
             data-type="apartamento"
@@ -41,6 +64,8 @@
           >
             🏠 <span>Apartamentos</span>
           </div>
+
+          <!-- Tarjeta para buscar hoteles -->
           <div
             class="type-card"
             data-type="hotel"
@@ -50,13 +75,18 @@
           >
             🏨 <span>Hoteles</span>
           </div>
+
         </div>
       </section>
 
+      <!-- Sección de destinos populares -->
       <section class="popular">
         <h2>Destinos populares en España</h2>
 
+        <!-- Se muestra solo si la lista no está vacía -->
         <div class="destinos-grid" th:if="${!destinosPopulares.isEmpty()}">
+
+          <!-- Iteración Thymeleaf para cada destino -->
           <div
             class="destino"
             th:each="destino : ${destinosPopulares}"
@@ -65,19 +95,25 @@
             tabindex="0"
             th:aria-label="'Buscar en ' + ${destino.ciudad}"
           >
+            <!-- Imagen del destino -->
             <img th:src="${destino.fotoUrl}" th:alt="${destino.ciudad}" />
+            <!-- Nombre de la ciudad -->
             <span th:text="${destino.ciudad}">Ciudad Ejemplo</span>
           </div>
         </div>
 
+        <!-- Mensaje alternativo si no hay destinos -->
         <div th:if="${destinosPopulares.isEmpty()}">
           <p>No hay destinos populares en este momento.</p>
         </div>
       </section>
     </main>
 
+    <!-- Pie de página -->
     <footer>© 2025 Inmobiliarias Paqui</footer>
 
+    <!-- Script principal de la página-->
     <script th:src="@{/js/index.js}" defer></script>
+
   </body>
 </html>

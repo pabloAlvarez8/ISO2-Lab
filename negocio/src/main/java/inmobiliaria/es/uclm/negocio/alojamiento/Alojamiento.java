@@ -5,6 +5,10 @@ import java.time.LocalDateTime; // Necesario para las fechas
 import jakarta.persistence.*;
 import inmobiliaria.es.uclm.negocio.user.User;
 
+/**
+ * Entidad JPA que representa un Alojamiento.
+ * Se mapea contra la tabla 'inmueble'.
+ */
 @Entity
 @Table(name = "inmueble")
 public class Alojamiento {
@@ -12,6 +16,9 @@ public class Alojamiento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    // Relación obligatoria con el anfitrión (User).
+    // LAZY fetch para optimizar la carga.
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_anfitrion", nullable = false)
@@ -22,6 +29,7 @@ public class Alojamiento {
 
     @Column(nullable = false)
     private String nombre;
+
 
     @Column(nullable = false)
     private String ciudad;
@@ -36,6 +44,7 @@ public class Alojamiento {
 
     @Column(nullable = false)
     private int capacidad;
+
 
     @Column(name = "precio_noche", nullable = false)
     private BigDecimal precio;
