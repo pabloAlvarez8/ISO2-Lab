@@ -6,7 +6,7 @@ import inmobiliaria.es.uclm.negocio.alojamiento.Alojamiento; // Importa tu entid
 
 // Este DTO ahora coincide EXACTAMENTE con lo que 'detalle.js' espera.
 public record AlojamientoSearchResultDTO(
-    int id,
+    Long id,
     String title,         // <-- 'nombre' ahora es 'title'
     String ciudad,
     String type,          // <-- 'tipo' ahora es 'type'
