@@ -1,15 +1,33 @@
+/**
+ * Hoja de estilos para la vista de registro de usuarios.
+ * Gestiona la presentación del formulario, la agrupación visual de campos
+ * y la respuesta visual (feedback) de las operaciones.
+ */
+
+/**
+ * Normalización del modelo de caja.
+ * Garantiza que el padding y border no incrementen el ancho total de los elementos.
+ */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/**
+ * Configuración base del formulario y tipografía.
+ */
 .form-register {
   padding: 30px;
   margin: auto;
-  font-family: "arial";
+  font-family: "arial", sans-serif;
 }
 
+/**
+ * Contenedor principal tipo 'Card'.
+ * Centrado en pantalla con ancho controlado y sombra (box-shadow)
+ * para separar visualmente el formulario del fondo.
+ */
 .container {
   width: 468px;
   max-width: 568px;
@@ -19,13 +37,16 @@
   margin: auto;
   margin-top: 100px;
   border-radius: 20px;
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   color: rgb(0, 0, 0);
   text-align: center;
-  box-shadow: 0 4px 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   overflow: hidden;
 }
 
+/**
+ * Título del formulario.
+ */
 .container h2 {
   font-size: 20px;
   margin-top: 20px;
@@ -34,32 +55,52 @@
   font-weight: bold;
 }
 
+/**
+ * Layout flexible en columna para apilar inputs y botones.
+ */
 .form-register {
   display: flex;
   flex-direction: column;
 }
 
+/**
+ * Estilizado de los campos de entrada.
+ * Se elimina el borde inferior y el redondeo para crear un efecto de "lista unificada".
+ * El borde se gestiona específicamente en el primer y último elemento.
+ */
 .form-register input {
   padding: 12px;
   min-height: 50px;
   font-size: 16px;
   border: 1px solid #888888;
-  border-bottom: none; /* quitar borde inferior para los inputs intermedios */
-  border-radius: 0; /* quitar redondeo interno */
+  border-bottom: none; /* Se elimina para unir visualmente con el siguiente input */
+  border-radius: 0;
   box-sizing: border-box;
 }
 
+/**
+ * Aplica esquinas redondeadas solo a la parte superior del primer input.
+ */
 .form-register input:first-child {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
 
+/**
+ * Restaura el borde inferior y redondea las esquinas del último input.
+ * Se usa 'nth-last-of-type(2)' asumiendo que el último elemento es el botón,
+ * por lo que este selector apunta al último input real.
+ */
 .form-register input:nth-last-of-type(2) {
   border-bottom: 1px solid #888888;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 }
 
+/**
+ * Botón de envío del formulario.
+ * Incluye sombras y transiciones para feedback interactivo.
+ */
 .form-register button {
   margin-top: 50px;
   padding: 12px;
@@ -73,13 +114,20 @@
   transition: all 0.2s ease-in-out;
 }
 
+/**
+ * Efecto hover para el botón.
+ * Oscurece el color y desplaza ligeramente el elemento hacia arriba.
+ */
 .form-register button:hover {
-  background-color: #0056b3; /* tono más oscuro */
+  background-color: #0056b3;
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4);
-  transform: translateY(-2px); /* efecto de levantar */
+  transform: translateY(-2px);
 }
 
-/* Mensaje de éxito */
+/**
+ * Componente de alerta para notificaciones de éxito.
+ * Utiliza paleta de colores verdes semánticos.
+ */
 .alert {
   background-color: #d4edda;
   color: #155724;
