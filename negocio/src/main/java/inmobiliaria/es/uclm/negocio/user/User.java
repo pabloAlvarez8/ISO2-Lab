@@ -1,70 +1,124 @@
 package inmobiliaria.es.uclm.negocio.user;
 
 import jakarta.persistence.*;
-import lombok.Getter; // Usando Lombok para getters/setters (opcional)
+import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
 
+/**
+ * Entidad JPA que representa a un usuario en el sistema.
+ * <p>
+ * Esta clase mapea la tabla "usuario" de la base de datos y define la estructura
+ * de datos fundamental para la autenticación y gestión de perfiles.
+ * Utiliza anotaciones de Lombok para reducir el código repetitivo (getters/setters).
+ */
 @Entity
-@Table(name = "usuario") // ¡Que coincida con el nombre real de la tabla (la renombraste!)
-@Getter // Anotación Lombok
-@Setter // Anotación Lombok
+@Table(name = "usuario")
+@Getter
+@Setter
 public class User {
 
+    /**
+     * Identificador único del usuario.
+     * Generado automáticamente por la base de datos (estrategia IDENTITY).
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // Usa 'email' para coincidir con tu código anterior, mapea a columna 'correo'
+    /**
+     * Correo electrónico del usuario, utilizado como nombre de usuario para el login.
+     * Mapeado a la columna "correo" con restricción de unicidad.
+     */
     @Column(name = "correo", nullable = false, unique = true)
     private String email;
 
-    // Usa 'password', mapea a columna 'contrasena'
+    /**
+     * Contraseña del usuario cifrada.
+     * Mapeada a la columna "contrasena". Nunca debe almacenarse en texto plano.
+     */
     @Column(name = "contrasena", nullable = false)
     private String password;
 
-    // El nombre del campo Java coincide con la columna si se llaman igual
+    /**
+     * Nombre de pila del usuario.
+     */
     @Column(nullable = false)
     private String nombre;
 
+    /**
+     * Apellidos del usuario.
+     */
     @Column(nullable = false)
     private String apellido;
 
+    /**
+     * Dirección física del usuario (opcional).
+     */
     private String direccion;
 
+    /**
+     * URL o ruta relativa a la imagen de perfil del usuario.
+     */
     @Column(name = "url_foto_perfil")
     private String urlFotoPerfil;
 
-    // Usa un Enum para el Rol
+    /**
+     * Rol asignado al usuario para la gestión de permisos.
+     * Se almacena como cadena de texto (STRING) en la base de datos.
+     * Valor por defecto: {@link Role#INQUILINO}.
+     */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role = Role.INQUILINO; // Valor por defecto
+    private Role role = Role.INQUILINO;
 
+    /**
+     * Marca de tiempo de la creación del registro.
+     * No es actualizable una vez insertado.
+     */
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    /**
+     * Marca de tiempo de la última actualización del registro.
+     */
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // --- Timestamps (Marcas de tiempo) ---
-    @PrePersist // Antes de guardar por primera vez
+    /**
+     * Método ejecutado automáticamente antes de persistir la entidad por primera vez.
+     * Inicializa las fechas de creación y actualización.
+     */
+    @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }
 
-    @PreUpdate // Antes de actualizar
+    /**
+     * Método ejecutado automáticamente antes de actualizar la entidad en base de datos.
+     * Refresca la fecha de actualización.
+     */
+    @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
 
-    // --- Enum para el Rol ---
+    /**
+     * Enumeración que define los roles disponibles en la aplicación.
+     */
     public enum Role {
         INQUILINO, PROPIETARIO
     }
 
-    // ... dentro de tu clase User.java ...
-
+    /**
+     * Representación en cadena del objeto Usuario.
+     * <p>
+     * Nota: Por razones de seguridad, el campo contraseña se oculta en la salida
+     * para evitar filtraciones en los logs del sistema.
+     *
+     * @return Una cadena con los datos representativos del usuario.
+     */
     @Override
     public String toString() {
         return "User{" +
@@ -72,14 +126,10 @@ public class User {
                 ", nombre='" + nombre + '\'' +
                 ", apellido='" + apellido + '\'' +
                 ", email='" + email + '\'' +
-                // ¡NUNCA incluyas la contraseña en el log!
-                ", password='[PROTEGIDO]'" +
+                ", password='[PROTEGIDO]'" + // Seguridad: ocultar hash
                 ", direccion='" + direccion + '\'' +
                 ", role=" + role +
                 ", urlFotoPerfil='" + urlFotoPerfil + '\'' +
                 '}';
     }
-    // --- Opcional: Constructores, toString ---
-    // Puedes añadir constructores o un método toString si los necesitas
-    // Lombok a menudo se encarga de esto, o puedes generarlos
 }
