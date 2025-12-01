@@ -1,5 +1,15 @@
+/**
+ * Hoja de estilos para la pasarela de pago y confirmación de reserva.
+ * Gestiona el layout de la sección de pago, estilos de tarjetas de resumen
+ * y formularios dinámicos para métodos de pago.
+ */
+
+/* Importación de tipografía 'Inter' desde Google Fonts */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
 
+/**
+ * Reset global y configuración básica.
+ */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -12,16 +22,20 @@ body {
   color: #222;
 }
 
-/* HEADER */
+/**
+ * --- HEADER DE NAVEGACIÓN ---
+ * Barra superior fija (sticky) con sombra suave para separación visual.
+ */
 header {
   background-color: #fff;
   border-bottom: 1px solid #eee;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 1000; /* Asegura que el header flote sobre el contenido al hacer scroll */
 }
 
+/* Contenedor flexible para alinear logo y botones */
 .container {
   margin: 0 auto;
   padding: 20px;
@@ -34,11 +48,12 @@ header {
 .logo {
   font-size: 22px;
   font-weight: 700;
-  color: #4b8fe7;
+  color: #4b8fe7; /* Azul corporativo */
   cursor: pointer;
   padding: 10px 20px;
 }
 
+/* Estilos para botones de acción secundaria en el header */
 .btn-register {
   background-color: transparent;
   border: none;
@@ -58,10 +73,13 @@ header {
 
 .btn-register:active {
   background: rgba(0, 0, 0, 0.1);
-  transform: scale(0.97);
+  transform: scale(0.97); /* Efecto de click */
 }
 
-/* HERO */
+/**
+ * --- SECCIÓN HERO ---
+ * Encabezado visual de la página con degradado sutil.
+ */
 .hero {
   text-align: center;
   padding: 120px 20px 80px;
@@ -81,24 +99,29 @@ header {
   margin-bottom: 40px;
 }
 
-/* SECCIÓN PAGO */
+/**
+ * --- CONTENEDOR PRINCIPAL DE PAGO ---
+ * Layout principal que divide la pantalla en resumen y métodos de pago.
+ */
 .payment-section {
   width: 90%;
   max-width: 1100px;
   margin: 0 auto 100px;
 }
 
+/* Contenedor Flex para las cajas de contenido (Resumen vs Método) */
 .payment-container {
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* Permite que las cajas bajen en pantallas pequeñas */
   gap: 40px;
 }
 
+/* Estilos base compartidos para las tarjetas (Cards) */
 .resumen-box,
 .metodo-box {
-  flex: 1;
-  min-width: 320px;
+  flex: 1; /* Ocupan el mismo espacio disponible */
+  min-width: 320px; /* Ancho mínimo antes de hacer wrap */
   background: #f7f7f7;
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -113,46 +136,44 @@ header {
   margin-bottom: 20px;
 }
 
-/* Resumen */
+/**
+ * --- CAJA DE RESUMEN DE RESERVA ---
+ * Estilos específicos para la visualización de datos de la propiedad.
+ */
+#resumen-reserva {
+  text-align: left;
+}
+
 #resumen-reserva h3 {
   font-size: 18px;
   color: #333;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 }
 
 #resumen-reserva p {
   font-size: 16px;
   color: #666;
+  margin-bottom: 50px;
 }
 
-#resumen-reserva {
-  text-align: left; /* centra todo el contenido */
-}
-
-#resumen-reserva h3 {
-  margin-bottom: 16px; /* espacio inferior */
-}
-
-#resumen-reserva p {
-  font-size: 16px;
-  color: #666;
-  margin-bottom: 50px; /* espacio mayor antes de la foto */
-}
-
+/* Imagen de la propiedad en el resumen */
 #resumen-reserva img {
-  width: 100%; /* ocupa todo el ancho del cuadro */
-  max-width: 3100px; /* ancho máximo de la foto */
-  max-height: 250px; /* altura máxima */
-  object-fit: cover; /* mantiene proporción y recorta exceso */
+  width: 100%;
+  max-width: 3100px; /* Nota: Valor alto para asegurar cobertura, limitado por contenedor padre */
+  max-height: 250px;
+  object-fit: cover; /* Recorte inteligente para mantener proporción */
   border-radius: 12px;
   display: block;
-  margin: 0 auto; /* centra la imagen */
+  margin: 0 auto;
 }
 
-/* Botones de pago */
+/**
+ * --- BOTONES DE SELECCIÓN DE PAGO ---
+ * Estilos para los selectores de método (Tarjeta, PayPal).
+ */
 .btn-pago {
   width: 100%;
-  background-color: #4b8fe7; /* azul tarjeta */
+  background-color: #4b8fe7;
   color: #fff;
   border: none;
   padding: 14px;
@@ -173,12 +194,14 @@ header {
   transform: scale(0.96);
 }
 
+/* Estado activo para indicar selección actual vía JS */
 .btn-pago.active {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* Variante específica para PayPal */
 .btn-paypal {
-  background-color: #ffc439; /* amarillo PayPal */
+  background-color: #ffc439;
   color: #111;
 }
 
@@ -186,7 +209,7 @@ header {
   background-color: #f4b830;
 }
 
-/* Mensaje de confirmación */
+/* Feedback de confirmación */
 .mensaje {
   text-align: center;
   margin-top: 10px;
@@ -194,27 +217,33 @@ header {
   color: #2c5394;
 }
 
-/* FORMULARIOS DE PAGO */
+/**
+ * --- FORMULARIOS DE PAGO DINÁMICOS ---
+ * Gestión de visibilidad para los campos de entrada de datos.
+ */
 .form-pago {
-  display: none;
+  display: none; /* Oculto por defecto */
   flex-direction: column;
   gap: 15px;
   margin-top: 20px;
 }
 
+/* Clase toggleada por JS para mostrar el formulario seleccionado */
 .form-pago.active {
   display: flex;
 }
 
+/* Fila flexible para campos cortos (ej. Fecha y CVV) */
 .flex-row {
   display: flex;
   gap: 10px;
 }
 
 .flex-row input {
-  flex: 1;
+  flex: 1; /* Distribución equitativa del espacio */
 }
 
+/* Estilos de inputs del formulario */
 .form-pago input {
   padding: 12px;
   border-radius: 12px;
@@ -225,10 +254,12 @@ header {
 
 .form-pago input:focus {
   border-color: #4b8fe7;
-  box-shadow: 0 0 0 2px rgba(75, 143, 231, 0.2);
+  box-shadow: 0 0 0 2px rgba(75, 143, 231, 0.2); /* Anillo de foco accesible */
 }
 
-/* FOOTER */
+/**
+ * --- FOOTER ---
+ */
 footer {
   background: #f7f7f7;
   color: #555;
@@ -238,30 +269,37 @@ footer {
   border-top: 1px solid #eee;
 }
 
-/* RESPONSIVE */
+/**
+ * --- MEDIA QUERIES (RESPONSIVE) ---
+ * Adaptaciones para dispositivos móviles y tablets (<700px).
+ */
 @media (max-width: 700px) {
   .hero h1 {
     font-size: 28px;
   }
+  
+  /* Cambia el layout de columnas a fila única vertical */
   .payment-container {
     flex-direction: column;
     align-items: center;
   }
+  
   .resumen-box,
   .metodo-box {
     width: 90%;
   }
+  
+  /* Apila los inputs de fecha/cvv verticalmente en pantallas muy estrechas */
   .flex-row {
     flex-direction: column;
   }
 
-  /* IMAGEN RESUMEN BOX */
-
+  /* Ajustes específicos de imagen para móvil */
   #resumen-reserva img {
-    width: 100%; /* ocupa todo el ancho del cuadro */
-    max-height: 250px; /* altura máxima */
-    object-fit: cover; /* mantiene proporción y recorta exceso */
+    width: 100%;
+    max-height: 250px;
+    object-fit: cover;
     border-radius: 12px;
-    margin-top: 15px; /* separación con el texto */
+    margin-top: 15px;
   }
 }
