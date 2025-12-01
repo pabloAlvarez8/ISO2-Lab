@@ -1,13 +1,28 @@
+<!-- 
+  Vista de Confirmación de Reserva y Pasarela de Pago.
+  Esta plantilla gestiona la interfaz de usuario para la selección del método de pago
+  y muestra el resumen dinámico de la propiedad seleccionada.
+  
+  Integra scripts de cliente (/js/pago.js) para la interactividad del frontend sin recargas.
+-->
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="utf-8" />
+    <!-- Configuración de Viewport para asegurar diseño responsive en dispositivos móviles -->
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Confirmar reserva - Inmobiliarias Paqui</title>
+    
+    <!-- Enlace a la hoja de estilos específica de la pasarela de pago.
+         Utiliza th:href para asegurar la resolución correcta del contexto en Spring Boot -->
     <link rel="stylesheet" th:href="@{/css/stylePago.css}" />
   </head>
 
   <body>
+    <!-- 
+      HEADER: Navegación principal.
+      Incluye atributos de accesibilidad (role, tabindex, aria-label) para navegación por teclado.
+    -->
     <header>
       <div class="container">
         <div
@@ -20,6 +35,7 @@
         >
           Inmobiliarias Paqui
         </div>
+        <!-- Navegación al área de usuario / registro -->
         <button class="btn-register" onclick="window.location.href='/register'">
           Mi cuenta
         </button>
@@ -27,14 +43,21 @@
     </header>
 
     <main>
+      <!-- HERO: Sección introductoria visual -->
       <section class="hero">
         <h1>Confirmar reserva</h1>
         <p>Revisa los detalles y completa tu pago de forma segura.</p>
       </section>
 
+      <!-- SECCIÓN PRINCIPAL DE PAGO -->
       <section class="payment-section">
         <div class="payment-container">
-          <!-- Bloque izquierda: Resumen -->
+          
+          <!-- 
+            BLOQUE IZQUIERDO: Resumen de la reserva.
+            Los elementos con ID (nombreAlojamiento, precioAlojamiento, fotoAlojamiento)
+            son populados dinámicamente vía JavaScript (pago.js) al cargar la página.
+          -->
           <div class="resumen-box">
             <h2>Resumen de reserva</h2>
             <div id="resumen-reserva">
@@ -45,10 +68,14 @@
             </div>
           </div>
 
-          <!-- Bloque derecha: Método de pago -->
+          <!-- 
+            BLOQUE DERECHO: Selección de método de pago.
+            Gestiona la lógica de pestañas (tabs) entre Tarjeta y PayPal.
+          -->
           <div class="metodo-box">
             <h2>Método de pago</h2>
-            <!-- Botones -->
+            
+            <!-- Botones de alternancia de método de pago -->
             <button id="btnTarjeta" class="btn-pago active">
               💳 Tarjeta de crédito/débito
             </button>
@@ -56,7 +83,11 @@
               🅿️ PayPal
             </button>
 
-            <!-- Formulario Tarjeta -->
+            <!-- 
+              FORMULARIO 1: Tarjeta de Crédito.
+              Visible por defecto (clase 'active').
+              Los campos 'required' y 'maxlength' proporcionan validación básica HTML5.
+            -->
             <form id="formTarjeta" class="form-pago active">
               <input type="text" placeholder="Titular de la tarjeta" required />
               <input
@@ -74,7 +105,10 @@
               </button>
             </form>
 
-            <!-- Formulario PayPal -->
+            <!-- 
+              FORMULARIO 2: PayPal.
+              Oculto inicialmente. Se activa mediante JS al hacer clic en el botón correspondiente.
+            -->
             <form id="formPayPal" class="form-pago">
               <input type="email" placeholder="Email de PayPal" required />
               <input type="password" placeholder="Contraseña" required />
@@ -87,6 +121,7 @@
               </button>
             </form>
 
+            <!-- Contenedor para feedback de usuario (éxito/error) tras el intento de pago -->
             <p id="mensaje" class="mensaje"></p>
           </div>
         </div>
@@ -95,6 +130,10 @@
 
     <footer>© 2025 Inmobiliarias Paqui</footer>
 
-    <script src="/js/pago.js"></script>
+    <!-- 
+      Lógica de cliente. 
+      Maneja la alternancia de formularios y la simulación del proceso de pago.
+    -->
+    <script th:src="@{/js/pago.js}"></script>
   </body>
 </html>
