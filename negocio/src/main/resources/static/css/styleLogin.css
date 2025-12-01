@@ -1,15 +1,36 @@
+/**
+ * Hoja de estilos para las vistas de autenticación (Login y Registro).
+ * Define la estructura de tarjeta centrada, normalización de elementos
+ * y feedback visual para el usuario.
+ */
+
+/**
+ * Reset global del modelo de caja.
+ * Elimina márgenes por defecto y asegura que el padding no afecte al ancho total.
+ */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/**
+ * Configuración general del formulario.
+ * Establece la fuente base y el espaciado interno.
+ */
 .form-login {
   padding: 30px;
   margin: auto;
-  font-family: "arial";
+  font-family: "arial", sans-serif;
+  display: flex;
+  flex-direction: column; /* Alineación vertical de inputs y botones */
 }
 
+/**
+ * Contenedor principal tipo 'Card'.
+ * Centrado en pantalla con ancho restringido, bordes redondeados y sombra
+ * para dar efecto de elevación sobre el fondo.
+ */
 .container {
   width: 468px;
   max-width: 568px;
@@ -17,15 +38,18 @@
   background: #ffffff;
   padding: 30px;
   margin: auto;
-  margin-top: 100px;
+  margin-top: 100px; /* Separación superior para centrado visual */
   border-radius: 20px;
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   color: rgb(0, 0, 0);
   text-align: center;
-  box-shadow: 0 4px 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Sombra suave */
   overflow: hidden;
 }
 
+/**
+ * Título de la tarjeta.
+ */
 .container h2 {
   font-size: 20px;
   margin-top: 20px;
@@ -34,52 +58,69 @@
   font-weight: bold;
 }
 
-.form-login {
-  display: flex;
-  flex-direction: column;
-}
-
+/**
+ * Estilizado base de los campos de entrada.
+ * Se eliminan bordes intermedios para crear un efecto de "grupo de inputs" cohesivo.
+ */
 .form-login input {
   padding: 12px;
   min-height: 50px;
   font-size: 16px;
   border: 1px solid #888888;
-  border-bottom: none; 
+  border-bottom: none; /* Se elimina el borde inferior para apilar inputs */
   border-radius: 0;
   box-sizing: border-box;
 }
 
+/**
+ * Redondea las esquinas superiores del primer input del grupo.
+ */
 .form-login input:first-child {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
 
+/**
+ * Redondea las esquinas inferiores del último input y restaura su borde inferior.
+ * Cierra visualmente el bloque de campos.
+ */
 .form-login input:nth-last-of-type(1) {
   border-bottom: 1px solid #888888;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 }
 
+/**
+ * Botón de acción principal (Submit).
+ * Incluye transiciones para estados hover/active.
+ */
 .form-login button {
   margin-top: 50px;
   padding: 12px;
   border-radius: 10px;
   border: none;
   color: rgb(255, 255, 255);
-  background-color: rgb(0, 132, 255);
+  background-color: rgb(0, 132, 255); /* Azul primario */
   font-size: 16px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 }
 
+/**
+ * Efecto hover para el botón principal.
+ * Oscurece el fondo y eleva ligeramente el elemento.
+ */
 .form-login button:hover {
   background-color: #0056b3;
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4);
   transform: translateY(-2px);
 }
 
-/* Mensaje de error */
+/**
+ * Componente de alerta para mensajes de error o validación.
+ * Usa colores semánticos de error (rojo suave).
+ */
 .alert {
   background-color: #f8d7da;
   color: #721c24;
@@ -92,9 +133,10 @@
   font-size: 16px;
 }
 
-
-/* Enlace de registro */
-
+/**
+ * Botón/Enlace secundario para navegación entre Login y Registro.
+ * Mantiene la consistencia visual con el botón principal pero como elemento <a>.
+ */
 .login-link a {
   display: inline-block;
   margin-top: 20px;
@@ -111,5 +153,4 @@
   background-color: #0056b3;
   transform: translateY(-2px);
 }
-
 
