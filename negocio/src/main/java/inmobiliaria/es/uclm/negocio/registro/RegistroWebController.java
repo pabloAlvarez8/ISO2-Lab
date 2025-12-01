@@ -14,31 +14,33 @@ import inmobiliaria.es.uclm.negocio.user.User;
 import inmobiliaria.es.uclm.negocio.user.UserService;
 
 /**
- * Controlador web encargado de gestionar el proceso de registro de usuarios.
- *
- * Esta clase maneja las peticiones HTTP para mostrar el formulario de registro
- * y procesar los datos enviados por el usuario.
- *
+ * Controlador web para la gestión del proceso de registro de nuevos usuarios.
+ * Mapea las peticiones HTTP GET y POST relacionadas con el formulario de registro.
+ * Es una pieza fundamental en la capa de presentación que conecta la vista
+ * con la lógica de negocio a través de {@link UserService}.
  */
 @Controller
 public class RegistroWebController {
 
+    /**
+     * Instancia de logger para registrar información y errores de la clase.
+     */
     private static final Logger log = LoggerFactory.getLogger(RegistroWebController.class);
 
     /**
-     * Servicio para la gestión de la lógica de negocio de usuarios.
+     * Inyección del servicio de negocio para la gestión de usuarios.
      */
     @Autowired
     private UserService userService;
 
     /**
-     * Maneja la petición GET para mostrar la página de registro.
+     * Muestra el formulario de registro al manejar la petición GET "/register".
      *
-     * Prepara el modelo asegurando que exista un objeto 'user' vacío
-     * para ser vinculado con los campos del formulario en la vista.
+     * En caso de redirección por error, asegura que los datos del usuario previamente introducidos
+     * se mantengan en el modelo para evitar la pérdida de información.
      *
-     * @param model El modelo de Spring MVC utilizado para pasar datos a la vista.
-     * @return El nombre de la plantilla HTML a renderizar ("register").
+     * @param model El modelo de Spring MVC.
+     * @return La vista del formulario de registro ("register").
      */
     @GetMapping("/register")
     public String showRegisterPage(Model model) {
@@ -50,14 +52,16 @@ public class RegistroWebController {
     }
 
     /**
-     * Procesa la petición POST con los datos del formulario de registro.
+     * Procesa los datos enviados desde el formulario de registro (petición POST a "/register").
      *
-     * Recibe los datos del usuario, intenta realizar el registro a través del servicio
-     * y gestiona los mensajes de éxito o error mediante atributos flash (que sobreviven a la redirección).
+     * Intenta registrar el nuevo usuario mediante el servicio. En caso de éxito o fallo,
+     * utiliza {@link RedirectAttributes} para enviar un mensaje a la siguiente vista
+     * y redirige al formulario de registro para evitar el doble envío del formulario.
      *
-     * @param user Objeto User poblado automáticamente con los datos del formulario.
-     * @param redirectAttrs Utilidad para añadir atributos que persisten tras la redirección.
-     * @return Una cadena de redirección a la página de registro ("/register").
+     * @param user Objeto {@link User} poblado automáticamente con los datos del formulario.
+     * @param redirectAttrs Utilidad para transferir mensajes (éxito/error) y datos (objeto User)
+     * tras una redirección HTTP.
+     * @return Redirección al formulario de registro ("/register").
      */
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") User user, RedirectAttributes redirectAttrs) {
