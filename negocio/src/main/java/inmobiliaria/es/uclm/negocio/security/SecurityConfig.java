@@ -8,52 +8,65 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Clase de configuración principal de Spring Security.
+ * Define las políticas de autorización, la gestión de sesiones, el cifrado de contraseñas
+ * y la integración con el formulario de login personalizado.
+ */
 @Configuration
 public class SecurityConfig {
 
+    /**
+     * Define el bean encargado de codificar y verificar las contraseñas.
+     * Se utiliza BCrypt, un algoritmo de hashing robusto estándar en la industria.
+     * * @return Una instancia de {@link BCryptPasswordEncoder}.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Correcto: lo necesitas para que el login pueda verificar el hash
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Configura la cadena de filtros de seguridad HTTP.
+     * Aquí se establecen qué rutas son públicas, se configura el comportamiento del
+     * formulario de login y se definen las redirecciones de éxito o fracaso.
+     *
+     * @param http El objeto {@link HttpSecurity} para construir la configuración.
+     * @return La cadena de filtros (SecurityFilterChain) configurada.
+     * @throws Exception Si ocurre un error durante la construcción de la seguridad.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1. DESHABILITA CSRF:
-                // Esto elimina los "problemas" al probar con Postman o formularios simples.
+                // Deshabilitamos CSRF para simplificar el desarrollo y pruebas (no recomendado en prod sin análisis)
                 .csrf(AbstractHttpConfigurer::disable)
 
-                // 2. DEFINE QUÉ ES PÚBLICO Y QUÉ ES PRIVADO:
+                // Definición de reglas de acceso por ruta
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                        "/",
-                                "/login", // <-- Ruta de tu LoginWebController
-                                "/register", // <-- Ruta de tu RegistroWebController
-                                "/css/**", "/js/**")
-                        .permitAll()
-                        .anyRequest().authenticated())
+                                "/",
+                                "/login",    // Vista del formulario de login
+                                "/register", // Vista y proceso de registro
+                                "/css/**",   // Recursos estáticos
+                                "/js/**")
+                        .permitAll() // Estas rutas son accesibles por cualquiera
+                        .anyRequest().authenticated()) // Cualquier otra ruta requiere login
+                
+                // Configuración del Login con formulario
                 .formLogin(form -> form
-                        // ▼▼▼ AÑADE ESTA LÍNEA ▼▼▼
-                        .loginPage("/login") // Le dice a Spring que use tu @GetMapping("/login")
-
-                        // Esta es la URL que Spring intercepta para el POST
-                        .loginProcessingUrl("/login")
-
-                        // A dónde ir si el login es exitoso
-                        .defaultSuccessUrl("/dashboard", true)
-
-                        // A dónde ir si el login falla (Thymeleaf lo usará)
-                        .failureUrl("/login?error=true")
-
+                        .loginPage("/login")           // Nuestra vista personalizada
+                        .loginProcessingUrl("/login")  // La URL donde Spring espera el POST
+                        .defaultSuccessUrl("/dashboard", true) // Redirección tras login correcto
+                        .failureUrl("/login?error=true")       // Redirección tras fallo
                         .permitAll())
+                
+                // Configuración del Logout
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        // A dónde ir tras el logout (Thymeleaf lo usará)
-                        .logoutSuccessUrl("/login?logout=true")
+                        .logoutSuccessUrl("/login?logout=true") // Redirección tras salir
                         .permitAll())
 
-                // Opcional: Permite que la consola H2 funcione
+                // Configuración necesaria para permitir la consola H2 en frames
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
         return http.build();
