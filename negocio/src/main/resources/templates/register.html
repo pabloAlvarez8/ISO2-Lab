@@ -1,14 +1,30 @@
+<!-- 
+  Vista de Registro de Usuario.
+  Utiliza el motor de plantillas Thymeleaf para vincular un formulario HTML
+  con el objeto de dominio 'User' del backend (Data Binding).
+-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <title>Registro de Usuario</title>
+    
+    <!-- 
+      Enlace a la hoja de estilos. 
+      La expresión '@{...}' resuelve la ruta relativa al contexto de la aplicación,
+      asegurando que el CSS cargue correctamente en cualquier entorno de despliegue.
+    -->
     <link rel="stylesheet" th:href="@{/css/styleRegister.css}" />
   </head>
   <body>
     <div class="container">
       <h2>Regístrate aquí</h2>
 
+      <!-- 
+        Bloque de Feedback.
+        Renderiza mensajes de éxito o error provenientes de 'RedirectAttributes' 
+        del controlador. Solo se muestran si el atributo existe en el modelo.
+      -->
       <div
         th:if="${successMessage}"
         class="alert alert-success"
@@ -20,12 +36,23 @@
         th:text="${errorMessage}"
       ></div>
 
+      <!-- 
+        Formulario de Registro.
+        th:action="@{/register}": URL de destino del POST.
+        th:object="${user}": Vincula el formulario completo al objeto 'User' vacío 
+        que el controlador inyectó en el modelo.
+      -->
       <form
         th:action="@{/register}"
         th:object="${user}"
         method="post"
         class="form-register"
       >
+        <!-- 
+          Inputs vinculados con th:field="*{propiedad}".
+          Esto genera automáticamente los atributos 'name', 'id' y 'value',
+          mapeándolos a las propiedades de la clase Java 'User'.
+        -->
         <input type="text" th:field="*{nombre}" placeholder="Nombre" required />
 
         <input
@@ -55,6 +82,12 @@
           placeholder="Dirección (opcional)"
         />
 
+        <!-- 
+          Campo oculto para el Rol.
+          Usa Spring Expression Language (SpEL) con 'T(...)' para acceder 
+          estáticamente al Enum 'Role.INQUILINO' definido en la clase User.
+          Esto asegura que todos los registros públicos sean inquilinos por defecto.
+        -->
         <input
           type="hidden"
           th:field="*{role}"
@@ -64,6 +97,7 @@
         <button type="submit">Continuar</button>
       </form>
 
+      <!-- Navegación cruzada hacia el login -->
       <div class="login-link">
         ¿Ya tienes cuenta? <a th:href="@{/login}">Inicia sesión aquí</a>
       </div>
