@@ -70,4 +70,11 @@ public interface AlojamientoService_Interfaz {
             List<String> types,
             int capacity,
             String sortBy);
+
+            /**
+     * Recupera todos los alojamientos que pertenecen a un anfitrión específico.
+     * @param idUsuario ID del usuario anfitrión.
+     * @return Lista de alojamientos de ese usuario.
+     */
+    List<Alojamiento> listarAlojamientosDeAnfitrion(Long idUsuario);
 }
