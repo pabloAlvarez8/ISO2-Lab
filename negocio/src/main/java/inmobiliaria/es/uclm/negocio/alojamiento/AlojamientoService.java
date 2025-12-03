@@ -1,7 +1,6 @@
 package inmobiliaria.es.uclm.negocio.alojamiento;
 
 import inmobiliaria.es.uclm.negocio.alojamiento.dto.DestinoDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.criteria.Predicate;
@@ -19,7 +18,7 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
     // Única inyección del Repositorio
     private final AlojamientoRepository repo;
 
-    @Autowired
+    
     public AlojamientoService(AlojamientoRepository repo) {
         this.repo = repo;
     }
@@ -123,5 +122,10 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
 
         // 3. Ejecutamos la consulta
         return repo.findAll(spec, sort);
+    }
+
+    @Override
+    public List<Alojamiento> listarAlojamientosDeAnfitrion(Long idUsuario) {
+        return repo.findByAnfitrion_Id(idUsuario);
     }
 }
