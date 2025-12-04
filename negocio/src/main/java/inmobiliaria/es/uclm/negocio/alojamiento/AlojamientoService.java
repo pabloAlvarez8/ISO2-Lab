@@ -123,4 +123,9 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
         // 3. Ejecutamos la consulta
         return repo.findAll(spec, sort);
     }
+
+    @Override
+    public List<Alojamiento> listarAlojamientosDeAnfitrion(Long idUsuario) {
+        return repo.findByAnfitrion_Id(idUsuario);
+    }
 }

@@ -18,6 +18,9 @@ public interface AlojamientoRepository extends JpaRepository<Alojamiento, Long>,
     // Buscar por ciudad y precio máximo
     List<Alojamiento> findByCiudadAndPrecioLessThan(String ciudad, BigDecimal precio);
 
+    // Buscar alojamientos de un anfitrión específico mediante el ID
+    List<Alojamiento> findByAnfitrion_Id(Long idUsuario);
+
     
 
 }
