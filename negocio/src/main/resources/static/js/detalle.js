@@ -1,6 +1,6 @@
 /* eslint-env browser */
 
-// 🔙 Función del botón "Volver a inicio" y logo
+// Función del botón "Volver a inicio" y logo
 // Se define globalmente para que el onclick del HTML la encuentre
 function volverInicio() {
   window.location.href = "/index"; // Asumiendo que /inicio es tu página principal
@@ -14,7 +14,7 @@ function reservar() {
     alert(`✅ Has reservado: ${selectedData.title} por ${selectedData.price} € / noche`);
 }
 
-// --- Lógica del Carrusel ---
+// Lógica del Carrusel 
 let currentSlideIndex = 0;
 let slideImages = [];
 
@@ -37,7 +37,7 @@ window.prevSlide = function () {
 }
 
 
-// --- Carga de datos al iniciar la página ---
+// Carga de datos al iniciar la página 
 document.addEventListener("DOMContentLoaded", () => {
   // Recuperar alojamiento del localStorage
   const selectedJSON = localStorage.getItem("selectedLodging");
@@ -70,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     slideImages = selected?.images || [selected?.img]; // Carga las imágenes
     showSlide(currentSlideIndex); // Muestra la primera imagen
 
+    // Manejo de error: si se accede directamente sin seleccionar alojamiento
   } else {
     document.querySelector("main").innerHTML = "<p>No se ha encontrado información del alojamiento. <a href='/'>Volver al inicio</a>.</p>";
   }
