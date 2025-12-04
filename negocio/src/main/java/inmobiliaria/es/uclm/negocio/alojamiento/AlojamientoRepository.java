@@ -5,9 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor; 
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor; // <-- 1. Importa esto
 
 public interface AlojamientoRepository extends JpaRepository<Alojamiento, Long>, JpaSpecificationExecutor<Alojamiento> {
+
+    // Ejemplos de consultas personalizadas:
 
     // Buscar por ciudad
     List<Alojamiento> findByCiudad(String ciudad);
@@ -17,9 +19,6 @@ public interface AlojamientoRepository extends JpaRepository<Alojamiento, Long>,
 
     // Buscar por ciudad y precio máximo
     List<Alojamiento> findByCiudadAndPrecioLessThan(String ciudad, BigDecimal precio);
-
-    // Buscar alojamientos de un anfitrión específico mediante el ID
-    List<Alojamiento> findByAnfitrion_Id(Long idUsuario);
 
     
 
