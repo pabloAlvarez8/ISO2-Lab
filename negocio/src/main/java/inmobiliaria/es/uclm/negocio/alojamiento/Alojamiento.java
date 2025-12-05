@@ -1,24 +1,17 @@
 package inmobiliaria.es.uclm.negocio.alojamiento;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime; // Necesario para las fechas
+import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import inmobiliaria.es.uclm.negocio.user.User;
 
-/**
- * Entidad JPA que representa un Alojamiento.
- * Se mapea contra la tabla 'inmueble'.
- */
 @Entity
-@Table(name = "inmueble")
+@Table(name = "inmueble") // Asegúrate de que en data.sql insertas en 'inmueble' (singular)
 public class Alojamiento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    // Relación obligatoria con el anfitrión (User).
-    // LAZY fetch para optimizar la carga.
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_anfitrion", nullable = false)
@@ -30,21 +23,20 @@ public class Alojamiento {
     @Column(nullable = false)
     private String nombre;
 
-
     @Column(nullable = false)
     private String ciudad;
 
-    // CAMBIO 1: Usar columnDefinition para asegurar que coincida con el SQL TEXT
-    @Column(nullable = false, columnDefinition = "TEXT")
+    // CORRECCIÓN 1: Derby no soporta TEXT.
+    // Al quitar columnDefinition, Hibernate usará VARCHAR(255).
+    // Si necesitas más espacio, usa length = 1000 (o hasta 32000).
+    @Column(nullable = false, length = 1000)
     private String direccion;
 
-    // CAMBIO 1: Lo mismo aquí
-    @Column(columnDefinition = "TEXT")
+    @Column(length = 2000) // Le damos más espacio para la descripción
     private String descripcion;
 
     @Column(nullable = false)
     private int capacidad;
-
 
     @Column(name = "precio_noche", nullable = false)
     private BigDecimal precio;
@@ -55,31 +47,33 @@ public class Alojamiento {
     @Column(name = "distancia_centro")
     private BigDecimal distanciaCentro;
 
-    // CAMBIO 2: Añadir campos que existen en SQL (Obligatorio para validate)
     @Column(name = "is_active")
     private Boolean isActive = true;
 
-    // Usamos String para simplificar, o crea el Enum si quieres ser estricto
-   @Column(name = "politica_cancelacion", columnDefinition = "ENUM('NO_REEMBOLSABLE', 'FLEXIBLE', 'ESTRICTA') DEFAULT 'ESTRICTA'")
+    // CORRECCIÓN 2: Derby no soporta ENUM en SQL nativo fácilmente.
+    // Lo guardamos como String simple. Hibernate lo gestiona bien.
+    @Column(name = "politica_cancelacion")
     private String politicaCancelacion;
-    // CAMBIO 3: Eliminar valoracionMedia de la BD
-    // Como NO existe columna en la tabla 'inmueble', usamos @Transient
-    // para que Hibernate lo ignore al validar contra la BD.
-   @Transient 
+
+    @Transient
     private Double valoracionMedia;
 
-    // CAMBIO 4: Las fechas IGUAL que en User (Espejo exacto del SQL)
-    @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    // CORRECCIÓN 3: Derby O-D-I-A 'DATETIME'. Solo entiende 'TIMESTAMP'.
+    // Quitamos los columnDefinition y dejamos que Hibernate elija el tipo correcto (TIMESTAMP).
+    // Además, quitamos el DEFAULT SQL porque ya lo haces en el @PrePersist de Java.
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", columnDefinition = "DATETIME")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // --- Timestamps ---
+    // --- Timestamps (Esto es lo que realmente guarda la fecha, no el SQL) ---
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         if (updatedAt == null) updatedAt = LocalDateTime.now();
+        // Valor por defecto para política si es nula
+        if (politicaCancelacion == null) politicaCancelacion = "ESTRICTA";
     }
 
     @PreUpdate
@@ -88,8 +82,6 @@ public class Alojamiento {
     }
 
     // --- GETTERS Y SETTERS ---
-    // (Incluye los nuevos getters/setters para isActive, fechas, etc.)
-
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -129,7 +121,6 @@ public class Alojamiento {
     public String getPoliticaCancelacion() { return politicaCancelacion; }
     public void setPoliticaCancelacion(String politicaCancelacion) { this.politicaCancelacion = politicaCancelacion; }
 
-    // Getter para valoracionMedia (aunque no se guarde en BD)
     public Double getValoracionMedia() { return valoracionMedia; }
     public void setValoracionMedia(Double valoracionMedia) { this.valoracionMedia = valoracionMedia; }
 

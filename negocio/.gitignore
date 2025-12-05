@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Ignorar base de datos Derby local
+/derbydb/
+*.log
