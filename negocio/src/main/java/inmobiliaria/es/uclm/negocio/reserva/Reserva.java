@@ -6,31 +6,31 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "reserva") // <--- Recomendado: Nombre explícito en minúsculas
+@Table(name = "reserva")
 public class Reserva {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Relación con User (Tabla 'usuario')
+    // inquilino_id
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false) // 'nullable = false' evita reservas sin inquilino
+    @JoinColumn(name = "inquilino_id", nullable = false) 
     private User inquilino;
 
-    // Relación con Alojamiento (Tabla 'inmueble')
+    // inmueble_id
     @ManyToOne
-    @JoinColumn(name = "alojamiento_id", nullable = false) // 'nullable = false' evita reservas sin casa
+    @JoinColumn(name = "inmueble_id", nullable = false) 
     private Alojamiento alojamiento;
 
-    @Column(nullable = false)
+    // Mapeamos las fechas a los nombres de la BD ---
+    
+    @Column(name = "fecha_inicio", nullable = false) 
     private LocalDate fechaEntrada;
 
-    @Column(nullable = false)
+    @Column(name = "fecha_fin", nullable = false)    
     private LocalDate fechaSalida;
-    
-    // Derby no tiene ENUM, así que lo dejamos como String. 
-    // Valores esperados: "PENDIENTE", "ACEPTADA", "RECHAZADA"
+   
     private String estado; 
 
     // Getters y Setters

@@ -15,26 +15,43 @@ import java.util.stream.Collectors;
 @Service
 public class AlojamientoService implements AlojamientoService_Interfaz {
 
-    // Única inyección del Repositorio
     private final AlojamientoRepository repo;
 
-    
     public AlojamientoService(AlojamientoRepository repo) {
         this.repo = repo;
     }
 
-    // ... (métodos listarTodos, guardar, eliminar, etc. van aquí) ...
-    // ... (método obtenerDestinosPopulares va aquí) ...
 
     @Override
     public List<Alojamiento> buscarPorCiudad(String ciudad) {
-        return repo.findByCiudad(ciudad);
+        return repo.findByCiudadContainingIgnoreCase(ciudad);
     }
 
+    
     @Override
-    public Optional<Alojamiento> buscarPorId(Long id) {
-        return repo.findById(id);
-    }
+    public Optional<Alojamiento> buscarPorId(Long id) { 
+        return repo.findById(id); }
+
+
+    @Override
+    public void guardar(Alojamiento alojamiento) { 
+        repo.save(alojamiento); }
+
+
+    @Override
+    public void eliminar(Long id) { 
+        repo.deleteById(id); }
+
+
+    @Override
+    public List<Alojamiento> listarTodos() { 
+        return repo.findAll(); }
+
+
+    @Override
+    public List<Alojamiento> listarAlojamientosDeAnfitrion(Long idUsuario) { 
+        return repo.findByAnfitrion_Id(idUsuario); }
+
 
     @Override
     public List<DestinoDTO> obtenerDestinosPopulares() {
@@ -47,85 +64,67 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public void guardar(Alojamiento alojamiento) {
-        repo.save(alojamiento);
-    }
-
-    @Override
-    public void eliminar(Long id) {
-        repo.deleteById(id);
-    }
-
-    @Override
-    public List<Alojamiento> listarTodos() {
-        return repo.findAll();
-    }
-
-    // --- MÉTODO CORREGIDO ---
-    @Override
+@Override
     public List<Alojamiento> buscarConFiltros(
             String ciudad,
             BigDecimal maxPrice,
-            Double minRating, // <-- Asegúrate que la Interfaz también use 'Double' (objeto)
+            Double minRating,
             List<String> types,
             int capacity,
             String sortBy) {
 
         Specification<Alojamiento> spec = (root, query, criteriaBuilder) -> {
-
             List<Predicate> predicates = new ArrayList<>();
 
-            // Filtro de Ciudad
+            // 1.Filtro de Ciudad 
             if (ciudad != null && !ciudad.isEmpty()) {
                 predicates.add(criteriaBuilder.like(
-                        criteriaBuilder.lower(root.get("ciudad")), // <-- Nombre de campo Java
+                        criteriaBuilder.lower(root.get("ciudad")), 
                         "%" + ciudad.toLowerCase() + "%"));
             }
 
-            // Filtro de Precio
-            if (maxPrice != null) { // <-- ARREGLADO: Así se comprueba si el filtro se aplica
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("precio"), maxPrice)); // <-- ARREGLADO:
-                                                                                                 // 'precio'
+            // 2. Filtro de Precio ('precioNoche' a 'precio')
+            if (maxPrice != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("precio"), maxPrice));
             }
 
-            // Filtro de Puntuación (minRating)
+
+            
+            // 3. Filtro de Puntuación (minRating)
             if (minRating != null && minRating > 0) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("valoracionMedia"), minRating)); // <--
                                                                                                               // ARREGLADO:
                                                                                                               // 'valoracionMedia'
             }
-
-            // Filtro de Capacidad
+            
+            
+            // 4. Filtro de Capacidad
             if (capacity > 1) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("capacidad"), capacity)); // <-- ARREGLADO:
                                                                                                        // 'capacidad'
             }
 
-            // Filtro de Tipos
+            /* 
+            // 5. Filtro de Tipos 
             if (types != null && !types.isEmpty()) {
-                predicates.add(root.get("tipo").in(types)); // <-- ARREGLADO: 'tipo'
+                predicates.add(root.get("tipo").in(types)); 
             }
+            */
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
 
-        // 2. Construimos el Sort
+         
+
+        // ORDENACIÓN SIMPLIFICADA
         Sort sort = Sort.unsorted();
         if ("price_asc".equals(sortBy)) {
-            sort = Sort.by(Sort.Direction.ASC, "precio"); // <-- ARREGLADO: 'precio'
+            sort = Sort.by(Sort.Direction.ASC, "precio");
         } else if ("price_desc".equals(sortBy)) {
-            sort = Sort.by(Sort.Direction.DESC, "precio"); // <-- ARREGLADO: 'precio'
-        } else if ("rating".equals(sortBy)) {
-            sort = Sort.by(Sort.Direction.DESC, "valoracionMedia"); // <-- ARREGLADO: 'valoracionMedia'
-        }
+            sort = Sort.by(Sort.Direction.DESC, "precio");
+        } 
 
-        // 3. Ejecutamos la consulta
+        // Ejecutamos la consulta con los filtros y la ordenación
         return repo.findAll(spec, sort);
-    }
-
-    @Override
-    public List<Alojamiento> listarAlojamientosDeAnfitrion(Long idUsuario) {
-        return repo.findByAnfitrion_Id(idUsuario);
     }
 }
