@@ -15,7 +15,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // SOLUCIÓN 1: Longitud exacta del VARCHAR para coincidir con SQL
     @Column(name = "correo", nullable = false, unique = true, length = 191) 
     private String email;
 
@@ -37,20 +36,20 @@ public class User {
     @Column(nullable = false)
     private Role role = Role.INQUILINO;
 
-    // SOLUCIÓN 2: Forzar el tipo TIMESTAMP para created_at
-    // Hibernate por defecto usa DATETIME, pero en tu BD es TIMESTAMP. Esto arregla el choque.
-    @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    // CORRECCIÓN 1: Quitamos el columnDefinition complejo.
+    // Hibernate detectará que es LocalDateTime y usará TIMESTAMP automáticamente.
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    // SOLUCIÓN 3: Forzar el tipo DATETIME para updated_at
-    // Especificamos explícitamente DATETIME para que no haya dudas.
-    @Column(name = "updated_at", columnDefinition = "DATETIME")
+    // CORRECCIÓN 2: ¡CRÍTICO! Quitamos "DATETIME".
+    // Derby no tiene DATETIME, usaría TIMESTAMP. Al borrar el columnDefinition,
+    // dejamos que Hibernate haga la traducción correcta.
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // --- Timestamps (Marcas de tiempo) ---
+    // --- Timestamps (Esto se encarga de meter la fecha, no hace falta SQL default) ---
     @PrePersist
     protected void onCreate() {
-        // Asignamos la fecha en Java también para asegurar consistencia
         createdAt = LocalDateTime.now();
         if (updatedAt == null) {
             updatedAt = LocalDateTime.now();
@@ -66,7 +65,6 @@ public class User {
         INQUILINO, PROPIETARIO
     }
 
-    // toString (Opcional, pero útil para depurar)
     @Override
     public String toString() {
         return "User{id=" + id + ", email='" + email + "', role=" + role + "}";
