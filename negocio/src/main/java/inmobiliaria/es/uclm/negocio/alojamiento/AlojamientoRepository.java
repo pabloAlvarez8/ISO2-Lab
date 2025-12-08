@@ -1,26 +1,24 @@
 package inmobiliaria.es.uclm.negocio.alojamiento;
+
 import org.springframework.data.jpa.repository.JpaRepository;
-
-
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor; 
-
 public interface AlojamientoRepository extends JpaRepository<Alojamiento, Long>, JpaSpecificationExecutor<Alojamiento> {
 
-    // Buscar por ciudad
-    List<Alojamiento> findByCiudad(String ciudad);
+    // BÚSQUEDAS MEJORADAS
 
-    // Buscar por precio máximo
-    List<Alojamiento> findByPrecioLessThan(BigDecimal precio);
+    // 1. Buscar por ciudad ignorando mayúsculas/minúsculas y coincidencias parciales --> ejemplo: si buscas "bil", encontrará "Bilbao".
+    List<Alojamiento> findByCiudadContainingIgnoreCase(String ciudad);
 
-    // Buscar por ciudad y precio máximo
-    List<Alojamiento> findByCiudadAndPrecioLessThan(String ciudad, BigDecimal precio);
+    // 2. Buscar por precio menor o igual al indicado
+    // Usamos LessThanEqual para incluir el precio exacto (ej: si buscas 100€, que salgan los de 100€)
+    List<Alojamiento> findByPrecioLessThanEqual(BigDecimal precio);
 
-    // Buscar alojamientos de un anfitrión específico mediante el ID
+    // 3. Combinado: Ciudad (flexible) Y Precio máximo
+    List<Alojamiento> findByCiudadContainingIgnoreCaseAndPrecioLessThanEqual(String ciudad, BigDecimal precio);
+
+    // 4. Buscar alojamientos de un anfitrión (esto ya estaba bien, pero lo mantenemos)
     List<Alojamiento> findByAnfitrion_Id(Long idUsuario);
-
-    
-
 }
