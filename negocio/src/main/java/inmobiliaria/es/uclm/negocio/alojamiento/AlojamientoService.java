@@ -27,29 +27,29 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
         return repo.findByCiudadContainingIgnoreCase(ciudad);
     }
 
-    
+
     @Override
-    public Optional<Alojamiento> buscarPorId(Long id) { 
+    public Optional<Alojamiento> buscarPorId(Long id) {
         return repo.findById(id); }
 
 
     @Override
-    public void guardar(Alojamiento alojamiento) { 
+    public void guardar(Alojamiento alojamiento) {
         repo.save(alojamiento); }
 
 
     @Override
-    public void eliminar(Long id) { 
+    public void eliminar(Long id) {
         repo.deleteById(id); }
 
 
     @Override
-    public List<Alojamiento> listarTodos() { 
+    public List<Alojamiento> listarTodos() {
         return repo.findAll(); }
 
 
     @Override
-    public List<Alojamiento> listarAlojamientosDeAnfitrion(Long idUsuario) { 
+    public List<Alojamiento> listarAlojamientosDeAnfitrion(Long idUsuario) {
         return repo.findByAnfitrion_Id(idUsuario); }
 
 
@@ -76,10 +76,10 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
         Specification<Alojamiento> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            // 1.Filtro de Ciudad 
+            // 1.Filtro de Ciudad
             if (ciudad != null && !ciudad.isEmpty()) {
                 predicates.add(criteriaBuilder.like(
-                        criteriaBuilder.lower(root.get("ciudad")), 
+                        criteriaBuilder.lower(root.get("ciudad")),
                         "%" + ciudad.toLowerCase() + "%"));
             }
 
@@ -89,32 +89,32 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
             }
 
 
-            
+
             // 3. Filtro de Puntuación (minRating)
             if (minRating != null && minRating > 0) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("valoracionMedia"), minRating)); // <--
                                                                                                               // ARREGLADO:
                                                                                                               // 'valoracionMedia'
             }
-            
-            
+
+
             // 4. Filtro de Capacidad
             if (capacity > 1) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("capacidad"), capacity)); // <-- ARREGLADO:
                                                                                                        // 'capacidad'
             }
 
-            /* 
-            // 5. Filtro de Tipos 
+            /*
+            // 5. Filtro de Tipos
             if (types != null && !types.isEmpty()) {
-                predicates.add(root.get("tipo").in(types)); 
+                predicates.add(root.get("tipo").in(types));
             }
             */
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
 
-         
+
 
         // ORDENACIÓN SIMPLIFICADA
         Sort sort = Sort.unsorted();
@@ -122,7 +122,7 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
             sort = Sort.by(Sort.Direction.ASC, "precio");
         } else if ("price_desc".equals(sortBy)) {
             sort = Sort.by(Sort.Direction.DESC, "precio");
-        } 
+        }
 
         // Ejecutamos la consulta con los filtros y la ordenación
         return repo.findAll(spec, sort);

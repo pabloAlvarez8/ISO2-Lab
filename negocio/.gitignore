@@ -13,11 +13,24 @@ target/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
-*.iws
+### JAVA ###
+*.class
+*.jar
+*.war
+
+### INTELLIJ ###
+.idea/
 *.iml
-*.ipr
+*.iws
+out/
+
+### VSCODE ###
+.vscode/
+bin/
+
+### ECLIPSE ###
+.settings/
+.metadata/
 
 ### NetBeans ###
 /nbproject/private/
@@ -28,9 +41,6 @@ target/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
-
-### VS Code ###
-.vscode/
 
 # Ignorar base de datos Derby local
 /derbydb/
