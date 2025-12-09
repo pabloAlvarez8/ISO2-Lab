@@ -1,41 +1,58 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 
-    <header th:fragment="navbar">
-        <div class="container">
-            
-            <div
-                class="logo"
-                role="link" 
-                tabindex="0" 
-                aria-label="Ir a inicio" 
-                onclick="location.href='/'"
-                onkeydown="if(event.key==='Enter'||event.key===' '){location.href='/';}"
-            >
-                Inmobiliarias Paqui
-            </div>
+<header th:fragment="navbar">
 
-            <div sec:authorize="!isAuthenticated()">
-                <button class="btn-register" onclick="window.location.href='/login'">
-                    Iniciar sesión o registrarse
-                </button>
-            </div>
+    <div
+            class="logo"
+            role="link"
+            tabindex="0"
+            aria-label="Ir a inicio"
+            onclick="location.href='/'"
+            onkeydown="if(event.key==='Enter'||event.key===' '){location.href='/';}"
+    >
+        Inmobiliarias Paqui
+    </div>
 
-            <div class="dropdown-container" sec:authorize="isAuthenticated()">
-                <button class="btn-dropdown">Mi Cuenta</button>
-                
-                <div class="dropdown-content">
-                    <a th:href="@{/perfil}">Ver Perfil</a>
-                    
-                    <form th:action="@{/logout}" method="POST" style="margin: 0;">
-                        <button type="submit" class="logout-button-dropdown">Cerrar Sesión</button>
-                    </form>
-                </div>
+    <div style="margin-left: auto;">
+
+        <div sec:authorize="!isAuthenticated()">
+            <button class="btn-register" onclick="window.location.href='/login'">
+                Iniciar sesión o registrarse
+            </button>
+        </div>
+
+        <div sec:authorize="isAuthenticated()" class="dropdown-container">
+            <button class="btn-dropdown" th:with="usuarioOptional=${@userService.findByEmail(#authentication.name)}">
+
+                    <span th:if="${usuarioOptional.present}"
+                          th:text="${usuarioOptional.get().nombre}">
+                        Nombre
+                    </span>
+
+                <span th:unless="${usuarioOptional.present}"
+                      sec:authentication="name">
+                        Email
+                    </span>
+
+                <span style="margin-left:5px;">&#9662;</span>
+            </button>
+
+            <div class="dropdown-content">
+                <a th:href="@{/perfil}">Mi Perfil</a>
+
+                <form th:action="@{/logout}" method="post" style="margin: 0;">
+                    <button type="submit" class="logout-button-dropdown">
+                        Cerrar sesión
+                    </button>
+                </form>
             </div>
-            </div>
-    </header>
+        </div>
+    </div>
+</header>
 
 </body>
 </html>

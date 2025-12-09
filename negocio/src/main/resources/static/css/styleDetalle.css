@@ -8,62 +8,18 @@ body {
   font-family: "Inter", sans-serif;
   background-color: #ffffff;
   color: #222;
+  /* Añadimos padding superior para compensar el header fijo (100px + espacio) */
+  padding-top: 120px;
 }
 
 main {
   max-width: 1000px;
-  margin: 40px auto;
+  /* Margen ajustado ya que el body se encarga del espacio superior */
+  margin: 0 auto 40px auto;
   background: #fff;
   border-radius: 12px;
   padding: 30px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-header {
-  background-color: #fff;
-  border-bottom: 1px solid #eee;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.container {
-  margin: 0 auto;
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 80px;
-}
-
-.btn-register {
-  background-color: transparent;
-  border: none;
-  border-radius: 20px;
-  padding: 10px 20px;
-  color: #333;
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-.btn-register:hover {
-  background: rgba(0, 0, 0, 0.05);
-  color: #111;
-}
-
-.btn-register:active {
-  background: rgba(0, 0, 0, 0.1);
-  transform: scale(0.97);
-}
-.logo {
-  font-size: 22px;
-  font-weight: 700;
-  color: #4b8fe7;
-  cursor: pointer;
-  padding: 10px 20px;
 }
 
 /* Carrusel */
@@ -98,6 +54,7 @@ header {
 .carousel-btn.prev {
   left: 10px;
 }
+
 .carousel-btn.next {
   right: 10px;
 }
@@ -106,6 +63,7 @@ header {
   background: rgba(0, 0, 0, 0.7);
 }
 
+/* Sección de precio y reserva */
 .price-reserve {
   display: flex;
   justify-content: space-between;
@@ -129,10 +87,12 @@ header {
   cursor: pointer;
   transition: background 0.3s;
 }
+
 .btn-reserve:hover {
   background-color: #005b9a;
 }
 
+/* Información y comentarios */
 .info-section,
 .comments {
   margin-top: 40px;
@@ -153,6 +113,7 @@ header {
   font-size: 15px;
   color: #333;
 }
+
 .comment span {
   color: #888;
   margin-left: 8px;
@@ -168,6 +129,7 @@ header {
   cursor: pointer;
   transition: background 0.3s;
 }
+
 .btn-volver:hover {
   background: #ddd;
 }
