@@ -5,26 +5,12 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Confirmar reserva - Inmobiliarias Paqui</title>
     <link rel="stylesheet" th:href="@{/css/stylePago.css}" />
+    <link rel="stylesheet" th:href="@{/css/styleHeader.css}" />
   </head>
 
   <body>
-    <header>
-      <div class="container">
-        <div
-          class="logo"
-          role="link"
-          tabindex="0"
-          aria-label="Ir a inicio"
-          onclick="location.href='/'"
-          onkeydown="if(event.key==='Enter'||event.key===' '){location.href='/';}"
-        >
-          Inmobiliarias Paqui
-        </div>
-        <button class="btn-register" onclick="window.location.href='/register'">
-          Mi cuenta
-        </button>
-      </div>
-    </header>
+
+    <div th:replace="~{fragments/header-2 :: header_2-nav}"></div>
 
     <main>
       <section class="hero">

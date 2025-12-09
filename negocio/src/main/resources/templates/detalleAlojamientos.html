@@ -12,25 +12,12 @@
   <link rel="stylesheet" th:href="@{/css/stylePaginaPrincipal.css}" />
   <!-- CSS específico de la vista de detalle -->
   <link rel="stylesheet" th:href="@{/css/styleDetalle.css}" />
+  <link rel="stylesheet" th:href="@{/css/styleHeader.css}" />
 </head>
 
 <body>
-  <header>
-    <div class="container">
 
-      <!-- Inm Paqui (logo) que te devuelve a la página inicial -->
-      <div class="logo" style="cursor: pointer" onclick="volverInicio()">
-        Inmobiliarias Paqui
-      </div>
-
-      <!-- Botón para login / registro -->
-      <button class="btn-register" 
-      onclick="window.location.href='/register'">
-        Iniciar sesión o registrarse
-      </button>
-
-    </div>
-  </header>
+  <div th:replace="~{fragments/header-2 :: header_2-nav}"></div>
 
   <main>
 
