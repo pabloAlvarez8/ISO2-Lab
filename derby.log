@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-Tue Dec 09 23:18:02 CET 2025:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.16.1.1 - (1901046): instance a816c00e-019b-0531-6707-00000181fa68 
+Wed Dec 10 18:51:45 CET 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.16.1.1 - (1901046): instance a816c00e-019b-0963-f8b4-0000019bc730 
 on database directory C:\Users\pablo\Documents\GitHub\ISO2-Lab\derbydb with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@14dad5dc 
 Loaded from file:/C:/Users/pablo/.m2/repository/org/apache/derby/derby/10.16.1.1/derby-10.16.1.1.jar
 java.vendor=Oracle Corporation

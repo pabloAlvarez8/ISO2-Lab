@@ -3,7 +3,7 @@
 // Función del botón "Volver a inicio" y logo
 // Se define globalmente para que el onclick del HTML la encuentre
 function volverInicio() {
-  window.location.href = "/index"; // Asumiendo que /inicio es tu página principal
+  window.location.href = "/"; // Asumiendo que /inicio es tu página principal
 }
 
 // Función del botón "Reservar"
