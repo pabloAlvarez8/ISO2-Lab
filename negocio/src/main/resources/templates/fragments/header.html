@@ -6,16 +6,11 @@
 
 <header th:fragment="navbar">
 
-    <div
-            class="logo"
-            role="link"
-            tabindex="0"
-            aria-label="Ir a inicio"
-            onclick="location.href='/'"
-            onkeydown="if(event.key==='Enter'||event.key===' '){location.href='/';}"
-    >
-        Inmobiliarias Paqui
-    </div>
+    <a th:href="@{/}" class="logo" aria-label="Volver a inicio">
+        <img th:src="@{/images/logo.png}"
+             alt="Inmobiliarias Paqui"
+             class="logo-img" />
+    </a>
 
     <div style="margin-left: auto;">
 

@@ -30,7 +30,7 @@ public class SecurityConfig {
                         "/",
                                 "/login", // <-- Ruta de tu LoginWebController
                                 "/register", // <-- Ruta de tu RegistroWebController
-                                "/css/**", "/js/**")
+                                "/css/**", "/js/**", "/images/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form

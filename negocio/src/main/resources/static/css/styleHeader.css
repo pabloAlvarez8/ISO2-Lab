@@ -18,14 +18,42 @@ header {
 
 /* Logo */
 .logo {
-    margin-right: 40px;
-    margin-left: 40px;
-    font-weight: 700;
-    font-size: 22px;
-    color: #4b8fe7;
-    line-height: 100px;
+    display: block;
+    /* Tamaño cuadrado fijo */
+    height: 70px;
+    width: 70px;
+
+    /* Sin bordes ni fondo, totalmente transparente */
+    background: transparent;
+    border: none;
+    border-radius: 0; /* Asegura que sea cuadrado */
+
+    /* Posición y cursor */
+    margin: 0 40px;
     cursor: pointer;
-    text-decoration: none;
+
+    /* LA ANIMACIÓN: Suaviza el cambio de tamaño */
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Un pequeño efecto rebote */
+}
+
+/* 2. El Efecto al pasar el ratón */
+.logo:hover {
+    /* Aumenta el tamaño un 15% */
+    transform: scale(1.15);
+}
+
+/* 3. La imagen dentro */
+.logo-img {
+    /* Se ajusta al contenedor cuadrado */
+    height: 100%;
+    width: 100%;
+
+    /* 'contain' asegura que se vea TODA la imagen (abuela + texto)
+       dentro del cuadrado sin cortarse, aunque sobren huecos a los lados si no es cuadrada. */
+    object-fit: contain;
+
+    /* Eliminamos transformaciones anteriores */
+    transform: none;
 }
 
 /* Barra de búsqueda */
