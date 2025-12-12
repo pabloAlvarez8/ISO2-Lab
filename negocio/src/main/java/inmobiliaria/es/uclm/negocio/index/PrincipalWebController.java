@@ -53,4 +53,9 @@ public class PrincipalWebController {
 
         return "dashboard"; 
     }
+
+    @GetMapping("/detalleAlojamientos.html")
+    public String mostrarDetalle() {
+    return "detalleAlojamientos";
+    }
 }
