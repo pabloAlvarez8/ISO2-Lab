@@ -8,24 +8,22 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Setter
-@Getter
+@Setter // Lombok crea los setters para TODOS los campos
+@Getter // Lombok crea los getters para TODOS los campos
 @Entity
-@Table(name = "reserva") // <--- Recomendado: Nombre explícito en minúsculas
+@Table(name = "reserva")
 public class Reserva {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Relación con User (Tabla 'usuario')
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false) // 'nullable = false' evita reservas sin inquilino
+    @JoinColumn(name = "usuario_id", nullable = false)
     private User inquilino;
 
-    // Relación con Alojamiento (Tabla 'inmueble')
     @ManyToOne
-    @JoinColumn(name = "alojamiento_id", nullable = false) // 'nullable = false' evita reservas sin casa
+    @JoinColumn(name = "alojamiento_id", nullable = false)
     private Alojamiento alojamiento;
 
     @Column(nullable = false)
@@ -33,22 +31,12 @@ public class Reserva {
 
     @Column(nullable = false)
     private LocalDate fechaSalida;
-    
-    // Derby no tiene ENUM, así que lo dejamos como String. 
-    // Valores esperados: "PENDIENTE", "ACEPTADA", "RECHAZADA"
-    private String estado; 
 
-    // Getters y Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public User getInquilino() { return inquilino; }
-    public void setInquilino(User inquilino) { this.inquilino = inquilino; }
-    public Alojamiento getAlojamiento() { return alojamiento; }
-    public void setAlojamiento(Alojamiento alojamiento) { this.alojamiento = alojamiento; }
-    public LocalDate getFechaEntrada() { return fechaEntrada; }
-    public void setFechaEntrada(LocalDate fechaEntrada) { this.fechaEntrada = fechaEntrada; }
-    public LocalDate getFechaSalida() { return fechaSalida; }
-    public void setFechaSalida(LocalDate fechaSalida) { this.fechaSalida = fechaSalida; }
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
+    @Column(nullable = false)
+    private double precioTotal;
+
+    private String estado;
+
+    // ¡AQUÍ YA NO ESCRIBES NADA MÁS!
+    // Lombok se encarga del resto.
 }
