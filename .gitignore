@@ -1,2 +1,4 @@
 /.idea/
 /derbydb/
+*.lck
+*.log
