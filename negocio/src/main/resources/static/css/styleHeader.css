@@ -18,17 +18,34 @@ header {
 
 /* Logo */
 .logo {
-    margin-right: 40px;
-    margin-left: 40px;
-    font-weight: 700;
-    font-size: 22px;
-    color: #4b8fe7;
-    line-height: 100px;
+    display: block;
+    height: 100px;
+    width: 130px;
+
+    background: transparent;
+    border: none;
+    border-radius: 0;
+
+    margin: 0 40px;
     cursor: pointer;
-    text-decoration: none;
+
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Barra de búsqueda */
+/* 2. El Efecto al pasar el ratón */
+.logo:hover {
+    /* Aumenta el tamaño un 15% */
+    transform: scale(1.15);
+}
+
+.logo-img {
+
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    transform: none;
+}
+
 .search-bar {
     flex: 1;
     max-width: 850px;

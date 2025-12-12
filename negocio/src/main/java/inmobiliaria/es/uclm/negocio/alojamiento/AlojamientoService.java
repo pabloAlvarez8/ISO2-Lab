@@ -29,28 +29,34 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
 
 
     @Override
-    public Optional<Alojamiento> buscarPorId(Long id) {
-        return repo.findById(id); }
+    public Alojamiento findById(Long id) {
+        // .orElse(null) saca el objeto si existe, o devuelve null si no.
+        return repo.findById(id).orElse(null);
+    }
 
 
     @Override
     public void guardar(Alojamiento alojamiento) {
-        repo.save(alojamiento); }
+        repo.save(alojamiento);
+    }
 
 
     @Override
     public void eliminar(Long id) {
-        repo.deleteById(id); }
+        repo.deleteById(id);
+    }
 
 
     @Override
     public List<Alojamiento> listarTodos() {
-        return repo.findAll(); }
+        return repo.findAll();
+    }
 
 
     @Override
     public List<Alojamiento> listarAlojamientosDeAnfitrion(Long idUsuario) {
-        return repo.findByAnfitrion_Id(idUsuario); }
+        return repo.findByAnfitrion_Id(idUsuario);
+    }
 
 
     @Override
@@ -64,7 +70,7 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
                 .collect(Collectors.toList());
     }
 
-@Override
+    @Override
     public List<Alojamiento> buscarConFiltros(
             String ciudad,
             BigDecimal maxPrice,
@@ -89,19 +95,18 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
             }
 
 
-
             // 3. Filtro de Puntuación (minRating)
             if (minRating != null && minRating > 0) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("valoracionMedia"), minRating)); // <--
-                                                                                                              // ARREGLADO:
-                                                                                                              // 'valoracionMedia'
+                // ARREGLADO:
+                // 'valoracionMedia'
             }
 
 
             // 4. Filtro de Capacidad
             if (capacity > 1) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("capacidad"), capacity)); // <-- ARREGLADO:
-                                                                                                       // 'capacidad'
+                // 'capacidad'
             }
 
             /*
@@ -113,7 +118,6 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
-
 
 
         // ORDENACIÓN SIMPLIFICADA

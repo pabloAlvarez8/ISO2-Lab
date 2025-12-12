@@ -27,10 +27,14 @@ public class SecurityConfig {
                 // 2. DEFINE QUÉ ES PÚBLICO Y QUÉ ES PRIVADO:
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                        "/",
+                        "/","index",
                                 "/login", // <-- Ruta de tu LoginWebController
-                                "/register", // <-- Ruta de tu RegistroWebController
-                                "/css/**", "/js/**")
+                                "/register",
+                                "/buscador",
+                                "/alojamientos/detalleAlojamientos",
+                                "alojamientos",
+                                "api/alojamientos",
+                                "/css/**", "/js/**", "/images/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form

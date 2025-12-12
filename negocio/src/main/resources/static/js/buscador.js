@@ -1,5 +1,7 @@
-let alojamientosCargados = []; // Aquí guardaremos los resultados de la base de datos
-// Elements
+/* =======================================================
+   CONFIGURACIÓN INICIAL Y VARIABLES
+   ======================================================= */
+let alojamientosCargados = []; // Guardamos los datos recibidos de la API
 const resultsList = document.getElementById("resultsList");
 const resultsCount = document.getElementById("resultsCount");
 const maxPrice = document.getElementById("maxPrice");
@@ -15,62 +17,59 @@ const checkinEl = document.getElementById("checkin");
 const checkoutEl = document.getElementById("checkout");
 const searchBtn = document.getElementById("searchBtn");
 
-// Estado controlado SOLO al pulsar "Buscar"
+// Variables de estado
 let count = 2;
 let lastQuery = "";
 let lastCheckin = "";
 let lastCheckout = "";
 
-/** Convierte una distancia en km a un texto amigable para el usuario.
- * @param {number} km - La distancia en kilómetros.
- * @returns {string} El texto formateado.
- */
+/* =======================================================
+   FUNCIONES DE UTILIDAD
+   ======================================================= */
+
 function formatDistance(km) {
-    // Si la distancia es un número, la formateamos. Si ya es un texto, lo devolvemos tal cual.
-    if (typeof km !== "number") {
-        return km;
-    }
+    if (!km && km !== 0) return "";
+    if (typeof km !== "number") return km;
     if (km === 0) return "en el centro";
     if (km < 0.1) return "a 100 m del centro";
-    // .toFixed(1) limita a un decimal, ej: 0.8
     return `a ${km.toFixed(1)} km del centro`;
 }
 
-/**
- * Pinta la lista de resultados en el DOM.
- * @param {Array<Object>} items - El array de alojamientos a mostrar.
- */
+/* =======================================================
+   RENDERIZADO (AQUÍ ES DONDE PINTAMOS EL HTML)
+   ======================================================= */
+// EN TU ARCHIVO JS DEL BUSCADOR:
+
 function renderList(items) {
-    resultsList.innerHTML = ""; // Limpia la lista anterior
+    resultsList.innerHTML = "";
 
     if (!items || !items.length) {
-        // Muestra un mensaje si no hay resultados
-        resultsList.innerHTML =
-            '<div class="no-results-card">No hay alojamientos que coincidan con tu búsqueda.</div>';
-        resultsCount.textContent = "Mostrando 0 alojamientos";
+        // ... mensaje vacio ...
         return;
     }
 
     resultsCount.textContent = `Mostrando ${items.length} alojamientos`;
 
     for (const it of items) {
+        // AHORA USAMOS LOS NOMBRES DEL DTO (Inglés)
+        // Nota: images es una lista, cogemos la primera [0]
+        const imagen = (it.images && it.images.length > 0) ? it.images[0] : '/images/no-image.png';
+        const puntuacion = it.rating ? `⭐ ${it.rating}` : 'Nuevo';
+
         const card = document.createElement("article");
         card.className = "card";
         card.innerHTML = `
-            <img src="${it.images[0]}" alt="${it.title}" loading="lazy" />
+            <img src="${imagen}" alt="${it.title}" loading="lazy" />
             <div class="info">
                 <div class="title">${it.title}</div>
-                <div class="meta">⭐ ${it.rating} · ${formatDistance(
-            it.distance
-        )}</div>
-                <div class="details">Tipo: ${it.type} · Ciudad: ${it.ciudad
-            } · Capacidad: ${it.capacity} pers.</div>
+                <div class="meta">${puntuacion} · ${formatDistance(it.distance)}</div>
+                <div class="details">
+                   Ciudad: ${it.ciudad} · Tipo: ${it.type} · Cap.: ${it.capacity} p.
+                </div>
             </div>
             <div class="actions">
                 <div class="price">${it.price} €</div>
-                <button class="btn-book" 
-                        aria-label="Ver disponibilidad de ${it.title}" 
-                        onclick="book(${it.id})">
+                <button class="btn-book" onclick="book(${it.id})">
                     Ver disponibilidad
                 </button>
             </div>
@@ -79,175 +78,95 @@ function renderList(items) {
     }
 }
 
-/**
- * Llama a la API del backend para obtener alojamientos filtrados y los renderiza.
- */
+/* =======================================================
+   LLAMADA A LA API (BACKEND SPRING BOOT)
+   ======================================================= */
 async function applyFilters() {
-    // 1. Recopilamos TODOS los valores de los filtros (igual que en tu versión)
-    const checkedTypes = Array.from(
-        document.querySelectorAll(".filter-type:checked")
-    ).map((n) => n.value);
-
+    // 1. Recoger filtros del HTML
+    const checkedTypes = Array.from(document.querySelectorAll(".filter-type:checked")).map((n) => n.value);
     const max = +maxPrice.value;
     const minR = +minRating.value;
     const s = sortBy.value;
+    const cap = count;
+    const query = lastQuery;
 
-    // Usamos las variables de estado controlado para la barra de búsqueda
-    const cap = count; // 'count' es tu variable global de personas
-    const query = lastQuery; // 'lastQuery' es tu variable global de ciudad
-
-    // 2. Construimos la URL con parámetros de búsqueda
-    // Esto crea una URL como: /api/alojamientos?q=madrid&maxPrice=500&...
+    // 2. Construir la URL para llamar al Java
     const params = new URLSearchParams();
     params.set("q", query);
     params.set("maxPrice", max);
     params.set("minRating", minR);
     params.set("capacity", cap);
     params.set("sortBy", s);
+    checkedTypes.forEach(type => params.append("types", type));
 
-    // Añadimos los 'types' manualmente (para que Spring los reciba como una lista)
-    checkedTypes.forEach((type) => {
-        params.append("types", type);
-    });
-
-    // Esta es la URL de tu API que creamos en Spring Boot
+    // ESTA RUTA DEBE EXISTIR EN TU JAVA (AlojamientoRestController)
     const url = `/api/alojamientos?${params.toString()}`;
 
-    // 3. Hacemos la llamada (fetch) a tu API de Spring Boot
     try {
         const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Error del servidor: ${response.status}`);
-        }
-        const items = await response.json(); // Convertimos la respuesta en JSON
+        if (!response.ok) throw new Error(`Error API: ${response.status}`);
 
-        // 4. ¡Guardamos los datos y renderizamos!
-        alojamientosCargados = items; // Guardamos los datos en nuestra variable global
-        renderList(alojamientosCargados); // Usamos tu función renderList() existente
+        const items = await response.json();
+        alojamientosCargados = items;
+        renderList(alojamientosCargados);
+
     } catch (error) {
-        console.error("Error al buscar alojamientos:", error);
-        resultsList.innerHTML =
-            '<div class="no-results-card">Error al cargar los resultados. Inténtalo de nuevo.</div>';
-        resultsCount.textContent = "Mostrando 0 alojamientos";
+        console.error("Error buscando alojamientos:", error);
+        resultsList.innerHTML = '<div class="no-results-card">Error al conectar con el servidor.</div>';
     }
 }
 
-// Personas: ACTUALIZA SOLO EL CONTADOR VISUAL; NO FILTRA EN VIVO
-function updatePeople() {
-    peopleCountEl.textContent = count;
+/* =======================================================
+   LA FUNCIÓN QUE PEDÍAS (REDIRECCIÓN)
+   ======================================================= */
+function book(id) {
+    // ANTES: Guardabas en localStorage (MAL para backend real)
+    // AHORA: Rediriges pasando el ID en la URL
+    window.location.href = `/alojamientos/detalleAlojamientos?id=${id}`;
 }
-minusBtn.addEventListener("click", () => {
-    if (count > 1) {
-        count--;
-        updatePeople();
-    }
-});
-plusBtn.addEventListener("click", () => {
-    count++;
-    updatePeople();
-});
+
+/* =======================================================
+   EVENT LISTENERS (BOTONES Y FILTROS)
+   ======================================================= */
+
+// Contador de personas
+function updatePeople() { peopleCountEl.textContent = count; }
+minusBtn.addEventListener("click", () => { if (count > 1) { count--; updatePeople(); } });
+plusBtn.addEventListener("click", () => { count++; updatePeople(); });
 updatePeople();
 
-// Click en Buscar: aquí se sincroniza todo y se filtra
+// Botón Buscar
 searchBtn.addEventListener("click", () => {
-    // Sincroniza estado controlado
     lastQuery = (searchInput.value || "").trim().toLowerCase();
     lastCheckin = checkinEl.value || "";
     lastCheckout = checkoutEl.value || "";
 
-    // Sanea fechas (si el usuario puso mal el rango)
-    if (lastCheckin && lastCheckout && lastCheckin > lastCheckout) {
-        lastCheckout = "";
-        checkoutEl.value = ""; // refleja la corrección en UI
-    }
-
-    applyFilters();
-    // (Opcional) actualiza la URL con los parámetros de búsqueda
+    // Sincronizar URL del navegador (estético)
     const p = new URLSearchParams(location.search);
-    if (lastQuery) p.set("q", lastQuery);
-    else p.delete("q");
+    if (lastQuery) p.set("q", lastQuery); else p.delete("q");
     p.set("people", String(count));
-    if (lastCheckin) p.set("checkin", lastCheckin);
-    else p.delete("checkin");
-    if (lastCheckout) p.set("checkout", lastCheckout);
-    else p.delete("checkout");
     history.replaceState(null, "", `${location.pathname}?${p.toString()}`);
-});
 
-// Enter dentro de la barra de búsqueda dispara "Buscar"
-document.querySelector(".search-bar").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-        e.preventDefault();
-        searchBtn.click();
-    }
-});
-
-// Filtros de la SIDEBAR siguen siendo en vivo (checkbox/range/select)
-maxPrice.addEventListener("input", () => {
-    maxPriceVal.textContent = maxPrice.value;
     applyFilters();
 });
-minRating.addEventListener("input", () => {
-    minRatingVal.textContent = minRating.value;
-    applyFilters();
-});
+
+// Filtros laterales en vivo
+maxPrice.addEventListener("input", () => { maxPriceVal.textContent = maxPrice.value; applyFilters(); });
+minRating.addEventListener("input", () => { minRatingVal.textContent = minRating.value; applyFilters(); });
 sortBy.addEventListener("change", applyFilters);
-document
-    .querySelectorAll(".filter-type")
-    .forEach((cb) => cb.addEventListener("change", applyFilters));
+document.querySelectorAll(".filter-type").forEach((cb) => cb.addEventListener("change", applyFilters));
 
-// Precarga desde la URL (solo una vez al inicio) y primer render
+// Carga inicial al abrir la página
 (function hydrateFromParams() {
     const p = new URLSearchParams(location.search);
     const q = p.get("q") || "";
-    const type = p.get("type");
     const people = parseInt(p.get("people") || "", 10);
-    const cIn = p.get("checkin") || "";
-    const cOut = p.get("checkout") || "";
 
-    if (q) {
-        searchInput.value = q;
-        lastQuery = q.toLowerCase();
-    }
-    if (!isNaN(people) && people > 0) {
-        count = people;
-        updatePeople();
-    }
-    if (cIn) {
-        checkinEl.value = cIn;
-        lastCheckin = cIn;
-    }
-    if (cOut) {
-        checkoutEl.value = cOut;
-        lastCheckout = cOut;
-    }
-
-    if (type) {
-        document.querySelectorAll(".filter-type").forEach((cb) => {
-            cb.checked = cb.value === type;
-        });
-    }
+    if (q) { searchInput.value = q; lastQuery = q.toLowerCase(); }
+    if (!isNaN(people) && people > 0) { count = people; updatePeople(); }
 
     maxPriceVal.textContent = maxPrice.value;
     minRatingVal.textContent = minRating.value;
 
-    if (
-        checkinEl.value &&
-        checkoutEl.value &&
-        checkinEl.value > checkoutEl.value
-    ) {
-        checkoutEl.value = "";
-        lastCheckout = "";
-    }
-
-    applyFilters(); // pinta resultados iniciales con lo que haya en URL
+    applyFilters(); // Primera búsqueda automática
 })();
-
-function book(id) {
-    // CAMBIA 'data' POR 'alojamientosCargados'
-    const selected = alojamientosCargados.find((item) => item.id === id);
-    if (selected) {
-        localStorage.setItem("selectedLodging", JSON.stringify(selected));
-        window.location.href = "/alojamientos/detalleAlojamientos";
-    }
-}

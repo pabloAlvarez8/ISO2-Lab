@@ -92,8 +92,25 @@ public class AlojamientoController {
     /**
      * Muestra la página de detalle (que cargará datos desde el localStorage).
      */
+    // En AlojamientoController.java
+
     @GetMapping("/detalleAlojamientos")
-    public String detalleAlojamientos() {
+    public String detalleAlojamientos(@RequestParam Long id, Model model) {
+        // 1. Buscamos el alojamiento en la BD
+
+        if (id == null) {
+            return "redirect:/alojamientos"; // Lo mandamos de vuelta al buscador
+        }
+
+        Alojamiento alojamiento = alojamientoService.findById(id);
+
+        if (alojamiento == null) {
+            // Aquí es donde antes fallaba. Ahora lo protegemos.
+            return "redirect:/alojamientos";
+        }
+        // 2. Lo pasamos a la vista
+        model.addAttribute("alojamiento", alojamiento);
+
         return "detalleAlojamientos";
     }
 }
