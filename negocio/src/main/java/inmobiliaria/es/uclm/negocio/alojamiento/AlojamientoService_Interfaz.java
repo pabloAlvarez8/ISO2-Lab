@@ -39,13 +39,6 @@ public interface AlojamientoService_Interfaz {
     List<Alojamiento> buscarPorCiudad(String ciudad);
 
     /**
-     * Busca un alojamiento específico por su clave primaria.
-     * * @param id Identificador del alojamiento.
-     * @return Un Optional que contiene el alojamiento si existe, o vacío si no se encuentra.
-     */
-    Optional<Alojamiento> buscarPorId(Long id);
-
-    /**
      * Genera un listado resumido de los destinos más frecuentes o populares.
      * Utiliza un DTO para devolver solo la información necesaria para la vista (imagen, nombre, recuento).
      * * @return Lista de objetos de transferencia con datos de destinos.
@@ -77,4 +70,6 @@ public interface AlojamientoService_Interfaz {
      * @return Lista de alojamientos de ese usuario.
      */
     List<Alojamiento> listarAlojamientosDeAnfitrion(Long idUsuario);
+
+    Alojamiento findById(Long id);
 }
