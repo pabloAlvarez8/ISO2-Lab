@@ -1,92 +1,82 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title th:text="${alojamiento.nombre}">Detalle Alojamiento</title>
+  <title>Detalles del alojamiento — Inmobiliarias Paqui</title>
 
   <link rel="stylesheet" th:href="@{/css/stylePaginaPrincipal.css}" />
   <link rel="stylesheet" th:href="@{/css/styleDetalle.css}" />
   <link rel="stylesheet" th:href="@{/css/styleHeader.css}" />
-
+  
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 
 <body>
 
-<div th:replace="~{fragments/header-2 :: header_2-nav}"></div>
+  <div th:replace="~{fragments/header-2 :: header_2-nav}"></div>
 
-<main>
+  <main>
+    <div class="lodging-header">
 
-  <div class="lodging-header">
+      <div class="carousel">
+         <img id="detalleImg" 
+              th:src="${alojamiento.fotoUrl != null && !alojamiento.fotoUrl.isEmpty() ? alojamiento.fotoUrl : 'https://via.placeholder.com/800x400?text=Sin+Imagen'}" 
+              alt="Imagen del alojamiento" />
+      </div>
 
-    <div class="carousel" style="display: flex; justify-content: center;">
-      <img id="detalleImg"
-           th:src="${alojamiento.fotoUrl != null ? alojamiento.fotoUrl : '/images/no-image.png'}"
-           alt="Imagen del alojamiento"
-           style="max-width: 100%; height: auto; border-radius: 8px;" />
-    </div>
+      <h1 th:text="${alojamiento.nombre}">Título</h1>
+      <p th:text="'📍 ' + ${alojamiento.ciudad} + ' - ' + ${alojamiento.direccion}">Ubicación</p>
+      <p th:text="'🏠 Tipo: ' + ${alojamiento.tipo}">Tipo</p>
+      <p th:text="'👥 Capacidad: ' + ${alojamiento.capacidad} + ' personas'">Capacidad</p>
 
-    <h1 th:text="${alojamiento.nombre}">Título Alojamiento</h1>
+      <div class="reservation-box" style="background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #ddd; margin-top: 20px;">
+        
+        <div th:if="${error}" style="color: red; font-weight: bold; margin-bottom: 10px;" th:text="${error}"></div>
 
-    <p><strong>Ciudad:</strong> <span th:text="${alojamiento.ciudad}">Ciudad</span></p>
-    <p><strong>Tipo:</strong> <span th:text="${alojamiento.tipo}">Tipo</span></p>
-    <p><strong>Capacidad:</strong> <span th:text="${alojamiento.capacidad} + ' personas'">Capacidad</span></p>
+        <form th:action="@{/reservas/crear}" method="post">
+            <input type="hidden" name="alojamientoId" th:value="${alojamiento.id}" id="alojamientoIdHidden">
 
-    <p id="detallePrecio" style="font-size: 20px; font-weight: 700; color: #0071c2">
-      <span th:text="${alojamiento.precio}">0</span> € / noche
-    </p>
+            <label style="font-weight: bold; display: block; margin-bottom: 5px;">Selecciona tus fechas:</label>
+            <input type="text" id="rangoFechas" placeholder="Llegada  ➜  Salida" required 
+                   style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 15px;">
 
-    <p th:text="${alojamiento.descripcion}" style="margin-top: 10px; line-height: 1.6; color: #444">
-      Descripción...
-    </p>
+            <input type="hidden" name="fechaEntrada" id="inputEntrada">
+            <input type="hidden" name="fechaSalida" id="inputSalida">
 
-    <div class="price-reserve" style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin-top: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <span style="font-size: 22px; font-weight: 700; color: #0071c2" 
+                      th:text="${alojamiento.precio} + ' € / noche'">0 €</span>
+            </div>
 
-      <h3>Selecciona tus fechas</h3>
-
-      <form th:action="@{/reservas/crear}" method="post" style="display: flex; flex-direction: column; gap: 10px;">
-
-        <input type="hidden" name="alojamientoId" th:value="${alojamiento.id}" />
-
-        <div style="display: flex; gap: 10px;">
-          <div style="flex: 1;">
-            <label>Llegada:</label>
-            <input type="text" id="fechaEntrada" name="fechaEntrada" required placeholder="Seleccionar..." style="width: 100%; padding: 8px;">
-          </div>
-          <div style="flex: 1;">
-            <label>Salida:</label>
-            <input type="text" id="fechaSalida" name="fechaSalida" required placeholder="Seleccionar..." style="width: 100%; padding: 8px;">
-          </div>
-        </div>
-
-        <button type="submit" class="btn-reserve" style="margin-top: 10px; cursor: pointer;">
-          Reservar y Pagar
-        </button>
-      </form>
+            <button type="submit" class="btn-reserve" sec:authorize="isAuthenticated()" style="width: 100%; padding: 12px; font-size: 16px;">
+                Reservar ahora
+            </button>
+            
+            <a href="/login" class="btn-reserve" sec:authorize="!isAuthenticated()" 
+               style="display:block; text-align:center; background-color: #666; text-decoration: none; color: white; padding: 12px;">
+                Inicia sesión para reservar
+            </a>
+        </form>
+      </div>
 
     </div>
 
-  </div>
+    <h2>Información sobre el alojamiento</h2>
+    <p style="margin-top: 10px; line-height: 1.6; color: #444" th:text="${alojamiento.descripcion}">
+       Descripción...
+    </p>
 
-  <section class="comments">
-    <h2>Comentarios de usuarios</h2>
-    <p>Sin comentarios por el momento.</p>
-  </section>
+    <button class="btn-volver" onclick="window.location.href='/alojamientos'">
+      ← Volver al buscador
+    </button>
+  </main>
 
-  <a th:href="@{/alojamientos}" class="btn-volver" style="display: inline-block; margin-top: 20px; text-decoration: none;">
-    ← Volver al buscador
-  </a>
+  <footer>
+    © 2025 Inmobiliarias Paqui
+  </footer>
 
-</main>
-
-<footer>
-  © 2025 Inmobiliarias Paqui
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
-<script src="/js/detalleAlojamientos.js" defer></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script th:src="@{/js/detalleAlojamientos.js}"></script>
 </body>
 </html>
