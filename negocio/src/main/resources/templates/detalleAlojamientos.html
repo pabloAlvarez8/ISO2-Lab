@@ -8,6 +8,8 @@
   <link rel="stylesheet" th:href="@{/css/stylePaginaPrincipal.css}" />
   <link rel="stylesheet" th:href="@{/css/styleDetalle.css}" />
   <link rel="stylesheet" th:href="@{/css/styleHeader.css}" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 
 <body>
@@ -50,11 +52,11 @@
         <div style="display: flex; gap: 10px;">
           <div style="flex: 1;">
             <label>Llegada:</label>
-            <input type="date" name="fechaEntrada" required style="width: 100%; padding: 8px;">
+            <input type="text" id="fechaEntrada" name="fechaEntrada" required placeholder="Seleccionar..." style="width: 100%; padding: 8px;">
           </div>
           <div style="flex: 1;">
             <label>Salida:</label>
-            <input type="date" name="fechaSalida" required style="width: 100%; padding: 8px;">
+            <input type="text" id="fechaSalida" name="fechaSalida" required placeholder="Seleccionar..." style="width: 100%; padding: 8px;">
           </div>
         </div>
 
@@ -81,5 +83,10 @@
 <footer>
   © 2025 Inmobiliarias Paqui
 </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+<script src="/js/detalleAlojamientos.js" defer></script>
+
 </body>
 </html>
