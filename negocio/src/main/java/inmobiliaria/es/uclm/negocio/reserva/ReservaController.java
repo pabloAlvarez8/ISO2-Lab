@@ -6,13 +6,22 @@ import inmobiliaria.es.uclm.negocio.user.User;
 import inmobiliaria.es.uclm.negocio.user.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.stream.Collectors;
+
 
 @Controller
 @RequestMapping("/reservas")
@@ -21,14 +30,26 @@ public class ReservaController {
     private final ReservaService reservaService; // Asumo que tienes este servicio
     private final AlojamientoService_Interfaz alojamientoService;
     private final UserService userService;
+    private final ReservaRepository reservaRepository;
 
     // Constructor para inyección de dependencias
     public ReservaController(ReservaService reservaService,
                              AlojamientoService_Interfaz alojamientoService,
-                             UserService userService) {
+                             UserService userService,
+                             ReservaRepository reservaRepository) {
         this.reservaService = reservaService;
         this.alojamientoService = alojamientoService;
         this.userService = userService;
+        this.reservaRepository = reservaRepository;
+    }
+
+    // --- API para el Calendario (Devuelve fechas ocupadas) ---
+    @GetMapping("/api/ocupadas/{idAlojamiento}")
+    @ResponseBody
+    public List<String> getFechasOcupadas(@PathVariable Long idAlojamiento) {
+        return reservaRepository.findReservasFuturas(idAlojamiento).stream()
+                .map(r -> r.getFechaEntrada().toString() + ":" + r.getFechaSalida().toString())
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/crear")
@@ -36,7 +57,8 @@ public class ReservaController {
             @RequestParam Long alojamientoId,
             @RequestParam String fechaEntrada,
             @RequestParam String fechaSalida,
-            Authentication authentication) {
+            Authentication authentication,
+            RedirectAttributes redirectAttrs) {
 
         // 1. Obtener quién es el usuario y qué casa quiere
         String emailUsuario = authentication.getName();
@@ -49,6 +71,18 @@ public class ReservaController {
         // 2. Convertir las fechas (Vienen como String "2023-12-25")
         LocalDate entrada = LocalDate.parse(fechaEntrada);
         LocalDate salida = LocalDate.parse(fechaSalida);
+
+        // 2. Validar fechas lógicas
+        if (entrada.isAfter(salida) || entrada.isBefore(LocalDate.now())) {
+            redirectAttrs.addFlashAttribute("error", "Fechas no válidas.");
+            return "redirect:/alojamientos/detalle/" + alojamientoId;
+        }
+
+        // 3. Validar disponibilidad en base de datos
+        if (reservaRepository.countSolapamientos(alojamientoId, entrada, salida) > 0) {
+            redirectAttrs.addFlashAttribute("error", "¡Lo sentimos! Esas fechas ya están ocupadas.");
+            return "redirect:/alojamientos/detalle/" + alojamientoId;
+        }
 
         // 3. LÓGICA DE PRECIO (La parte importante)
         long dias = ChronoUnit.DAYS.between(entrada, salida);
