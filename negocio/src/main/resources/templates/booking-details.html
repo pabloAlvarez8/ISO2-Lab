@@ -8,9 +8,9 @@
     <link rel="stylesheet" th:href="@{/css/stylePaginaPrincipal.css}" />
     <link rel="stylesheet" th:href="@{/css/styleDetalle.css}" />
     <link rel="stylesheet" th:href="@{/css/styleHeader.css}" />
+    <link rel="stylesheet" th:href="@{/css/stylePerfil.css}" />
 
     <style>
-        /* Estilos específicos para esta tarjeta de resumen */
         .booking-container {
             max-width: 900px;
             margin: 40px auto;
@@ -71,7 +71,6 @@
         }
         .btn-volver-perfil:hover { background-color: #002255; }
 
-        /* Imagen pequeña del alojamiento */
         .mini-thumb {
             width: 100%;
             height: 200px;
@@ -168,12 +167,14 @@
         <div style="text-align: center; margin-top: 20px;">
              <a th:if="${reserva.estado == 'PENDIENTE_PAGO'}" 
                 th:href="@{/pagos/pago/{id}(id=${reserva.id})}"
-                class="btn-reserve" style="background-color: #28a745; text-decoration: none; padding: 10px 20px; color: white; border-radius: 5px;">
-                💳 Ir a Pagar
+                class="btn-detalle" 
+                style="background-color: #28a745; color: white;"> 💳 Ir a Pagar
              </a>
         </div>
 
-        <a href="/perfil" class="btn-volver-perfil">← Volver a mi Perfil</a>
+        <a href="/perfil" class="btn-detalle" style="margin-top: 30px;">
+            Volver a mi Perfil
+        </a>
 
     </div>
   </main>
