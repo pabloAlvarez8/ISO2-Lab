@@ -75,4 +75,6 @@ public interface AlojamientoService_Interfaz {
 
     long obtenerPrecioMaximoAlojamientoRedondeado();
 
+    List<String> obtenerTodosLosTipos();
+
 }

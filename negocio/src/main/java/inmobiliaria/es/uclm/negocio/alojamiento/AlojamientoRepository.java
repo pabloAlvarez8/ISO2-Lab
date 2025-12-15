@@ -25,4 +25,7 @@ public interface AlojamientoRepository extends JpaRepository<Alojamiento, Long>,
 
     @Query("SELECT MAX(a.precio) FROM Alojamiento a")
     BigDecimal findMaxPrecio();
+
+    @Query("SELECT DISTINCT a.tipo FROM Alojamiento a WHERE a.tipo IS NOT NULL")
+    List<String> findAllTipos();
 }

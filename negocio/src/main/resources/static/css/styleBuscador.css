@@ -2,44 +2,51 @@
   box-sizing: border-box;
 }
 
+:root {
+  --header-height: 100px; /* <--- CAMBIA ESTO por la altura real de tu header */
+}
+
 body {
   font-family: "Inter", "Helvetica Neue", sans-serif;
-  padding: 48px;
+  margin: 0;
   background-color: #ffffff;
   color: #222;
   display: flex;
+  min-height: 100vh;
+
+  padding: 0;
+  padding-top: var(--header-height);
 }
 
 /* Layout principal */
 .main-wrapper {
-  margin-left: 284px; /* espacio para sidebar */
-  padding: 24px;
-  overflow-x: auto; /* scroll horizontal cuando sea necesario */
-  flex: 1;
+  flex: 1;              /* Toma todo el espacio restante a la derecha */
+  padding: 48px;        /* Aquí recuperamos el espacio visual */
+  margin: 0;            /* Ya no necesitamos márgenes externos */
+  min-width: 0;         /* Evita desbordamientos en flexbox */
 }
 
 main.container {
-  gap: 24px;
-  margin-top: 100px;
-  min-width: max-content; /* espacio para sidebar */
-  width: calc(100% - 300px); /* ancho disponible para main */
-  overflow-x: auto; /* permite scroll horizontal si hay overflow */
-  scroll-behavior: smooth;
+  width: 100%;
+  margin: 0;
+  overflow: visible;
 }
 
 /* Filtros */
 .filters {
-  position: fixed;
-  flex-shrink: 0; /* siempre visible */
-  top: 100px; /* debajo del header */
-  left: 0px;
-  width: 260px;
-  height: calc(100vh - 100px); /* altura menos header */
+  position: sticky;
+  /* Se pega justo debajo del header, no arriba del todo */
+  top: var(--header-height);
+
+  /* Su altura es el 100% de la ventana MENOS lo que mide el header */
+  height: calc(100vh - var(--header-height));
+
+  width: 300px;
   background: #ffffff;
-  padding: 40px;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  overflow-y: auto;
+  padding: 24px;       /* Un poco de aire interno */
+  border-right: 1px solid #eee;
+  flex-shrink: 0;
+  overflow-y: auto;    /* Scroll interno solo si los filtros no caben */
 }
 
 /* Título */
@@ -57,15 +64,21 @@ main.container {
 .filter-group label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 8px;           /* Separación entre checkbox y texto */
   font-size: 14px;
+  font-weight: 400 !important;   /* IMPORTANTE: Esto quita la negrita globalmente */
+  color: #333;        /* Un color gris oscuro suave */
+  cursor: pointer;    /* Manita al pasar el ratón */
+  margin-bottom: 4px; /* Espacio entre opciones */
 }
 
-/* Checkboxes estilo moderno */
+/* Si quieres que el checkbox sea un poco más grande */
 .filter-group input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: #2d5bd8;
+  accent-color: #2d5bd8; /* Tu color azul corporativo */
+  margin: 0; /* Resetea márgenes por si acaso */
+  cursor: pointer;
 }
 
 /* Range slider */
@@ -102,11 +115,16 @@ main.container {
 }
 
 /* Resultados estilo Airbnb */
+/* Resultados estilo Airbnb */
 .results {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  /* CAMBIO IMPORTANTE: */
+  /* 1. Usamos 'auto-fill' en vez de 'auto-fit' para que no estire las columnas si hay pocas */
+  /* 2. Subimos un poco el mínimo (de 250px a 280px) para que las tarjetas se vean mejor */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+
   width: 100%;
-  gap: 10px;
+  gap: 24px; /* Un poco más de aire entre tarjetas queda mejor */
   box-sizing: border-box;
 }
 
@@ -118,8 +136,13 @@ main.container {
   transition: transform 0.2s ease;
   display: flex;
   flex-direction: column;
+
+  /* CAMBIO: Quitamos max-width y min-width fijos para que obedezca al Grid */
+  width: 100%;
+  /* Opcional: Si no quieres que sean gigantes en pantallas ultra-wide */
   max-width: 400px;
-  min-width: 250px; /* evita que se agranden demasiado */
+  /* Para centrar la tarjeta en su propia celda si sobra espacio */
+  margin: 0 auto;
 }
 
 .card:hover {
@@ -199,4 +222,8 @@ main.container {
     order: 3;
     margin-top: 20px;
   }
+}
+
+.filter-group label span {
+  font-weight: 400 !important;
 }

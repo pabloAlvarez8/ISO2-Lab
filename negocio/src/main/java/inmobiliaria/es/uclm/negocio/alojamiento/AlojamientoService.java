@@ -80,7 +80,7 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
         Specification<Alojamiento> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            // 1.Filtro de Ciudad
+            // 1. Filtro de Ciudad
             if (ciudad != null && !ciudad.isEmpty()) {
                 predicates.add(criteriaBuilder.like(
                         criteriaBuilder.lower(root.get("ciudad")),
@@ -102,6 +102,12 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("capacidad"), capacity));
             }
 
+            // 5. Filtro de Tipos (YA INTEGRADO Y DESCOMENTADO)
+            if (types != null && !types.isEmpty()) {
+                // Esto crea una cláusula "WHERE tipo IN ('Hotel', 'Apartamento', ...)"
+                predicates.add(root.get("tipo").in(types));
+            }
+
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
 
@@ -116,18 +122,21 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
         return repo.findAll(spec, sort);
     }
 
-    // --- NUEVO MÉTODO AÑADIDO ---
+    // --- Obtener Precio Máximo ---
     @Override
     public long obtenerPrecioMaximoAlojamientoRedondeado() {
-        // Obtenemos el valor como BigDecimal desde el repo
         BigDecimal maxPrecioBd = repo.findMaxPrecio();
 
-        // Si no hay alojamientos (null), devolvemos un valor por defecto (ej. 1000)
         if (maxPrecioBd == null) {
             return 1000L;
         }
 
-        // Convertimos a double para usar Math.ceil y luego a long
         return (long) Math.ceil(maxPrecioBd.doubleValue());
+    }
+
+    // --- Obtener Lista de Tipos ---
+    @Override
+    public List<String> obtenerTodosLosTipos() {
+        return repo.findAllTipos();
     }
 }
