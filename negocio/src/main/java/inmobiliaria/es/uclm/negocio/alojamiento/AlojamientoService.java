@@ -9,7 +9,6 @@ import org.springframework.data.domain.Sort;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,7 +29,6 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
 
     @Override
     public Alojamiento findById(Long id) {
-        // .orElse(null) saca el objeto si existe, o devuelve null si no.
         return repo.findById(id).orElse(null);
     }
 
@@ -89,38 +87,25 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
                         "%" + ciudad.toLowerCase() + "%"));
             }
 
-            // 2. Filtro de Precio ('precioNoche' a 'precio')
+            // 2. Filtro de Precio
             if (maxPrice != null) {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("precio"), maxPrice));
             }
 
-
-            // 3. Filtro de Puntuación (minRating)
+            // 3. Filtro de Puntuación
             if (minRating != null && minRating > 0) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("valoracionMedia"), minRating)); // <--
-                // ARREGLADO:
-                // 'valoracionMedia'
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("valoracionMedia"), minRating));
             }
-
 
             // 4. Filtro de Capacidad
             if (capacity > 1) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("capacidad"), capacity)); // <-- ARREGLADO:
-                // 'capacidad'
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("capacidad"), capacity));
             }
-
-            /*
-            // 5. Filtro de Tipos
-            if (types != null && !types.isEmpty()) {
-                predicates.add(root.get("tipo").in(types));
-            }
-            */
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
 
-
-        // ORDENACIÓN SIMPLIFICADA
+        // ORDENACIÓN
         Sort sort = Sort.unsorted();
         if ("price_asc".equals(sortBy)) {
             sort = Sort.by(Sort.Direction.ASC, "precio");
@@ -128,7 +113,21 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
             sort = Sort.by(Sort.Direction.DESC, "precio");
         }
 
-        // Ejecutamos la consulta con los filtros y la ordenación
         return repo.findAll(spec, sort);
+    }
+
+    // --- NUEVO MÉTODO AÑADIDO ---
+    @Override
+    public long obtenerPrecioMaximoAlojamientoRedondeado() {
+        // Obtenemos el valor como BigDecimal desde el repo
+        BigDecimal maxPrecioBd = repo.findMaxPrecio();
+
+        // Si no hay alojamientos (null), devolvemos un valor por defecto (ej. 1000)
+        if (maxPrecioBd == null) {
+            return 1000L;
+        }
+
+        // Convertimos a double para usar Math.ceil y luego a long
+        return (long) Math.ceil(maxPrecioBd.doubleValue());
     }
 }

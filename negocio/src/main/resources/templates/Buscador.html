@@ -36,15 +36,15 @@
       <div class="filter-group">
         <div style="font-size: 13px; margin-bottom: 6px">Precio máximo (€)</div>
         <input
-          type="range"
-          id="maxPrice"
-          min="0"
-          max="1000"
-          value="1000"
-          step="1"
+                type="range"
+                id="maxPrice"
+                min="0"
+                th:max="${precioMaximo}"
+                th:value="${precioMaximo}"
+                step="1"
         />
         <div style="font-size: 12px; color: #555">
-          Hasta: <span id="maxPriceVal">1000</span> €
+          Hasta: <span id="maxPriceVal" th:text="${precioMaximo}">1000</span> €
         </div>
       </div>
 

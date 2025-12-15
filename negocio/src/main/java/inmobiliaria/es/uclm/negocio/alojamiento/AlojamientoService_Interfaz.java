@@ -72,4 +72,7 @@ public interface AlojamientoService_Interfaz {
     List<Alojamiento> listarAlojamientosDeAnfitrion(Long idUsuario);
 
     Alojamiento findById(Long id);
+
+    long obtenerPrecioMaximoAlojamientoRedondeado();
+
 }
