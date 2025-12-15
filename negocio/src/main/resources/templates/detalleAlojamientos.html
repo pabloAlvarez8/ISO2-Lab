@@ -67,6 +67,63 @@
        Descripción...
     </p>
 
+    <div class="valoraciones-container" style="margin-top: 40px; border-top: 1px solid #ddd; padding-top: 20px;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <h2>Opiniones</h2>
+            <div class="media-puntuacion" style="background: #0071c2; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 1.2em;">
+                ⭐ <span id="mediaValoracionTexto" th:text="${mediaValoracion}">0.0</span> / 5
+            </div>
+        </div>
+
+        <div sec:authorize="isAuthenticated()" style="background: #f0f4f8; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3>Escribe tu opinión</h3>
+            <form id="formValoracion">
+                <input type="hidden" id="usuarioLogueadoId" th:value="${#authentication.principal.id}" /> 
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: bold; display: block; margin-bottom: 5px;">Puntuación:</label>
+                    
+                    <div class="rating-container">
+                        <input type="hidden" id="puntuacionInput" name="puntuacion" value="0">
+                        
+                        <div id="starWidget" class="star-widget">
+                            <div class="star-wrapper">
+                                <div class="stars-gray">★★★★★</div>
+                                <div class="stars-gold" id="starsGold" style="width: 0%;">★★★★★</div>
+                            </div>
+                        </div>
+                    
+                        <span style="margin-left: 15px; font-size: 1.2em; color: #f5a623; font-weight: bold;">
+                            <span id="valorVisual">0.0</span> / 5
+                        </span>
+                    </div>
+                </div>
+                
+                <textarea id="comentarioInput" rows="3" placeholder="Cuéntanos tu experiencia..." style="width: 100%; padding: 10px; margin-bottom: 10px;"></textarea>
+                
+                <button type="submit" class="btn-reserve" style="width: auto; padding: 10px 30px;">Publicar reseña</button>
+            </form>
+        </div>
+        
+        <div sec:authorize="!isAuthenticated()" style="margin: 30px 0; text-align: center; background: #f9f9f9; padding: 20px; border-radius: 8px;">
+            <p style="margin-bottom: 15px; color: #666; font-size: 1.1em;">¿Ya te has alojado aquí? Cuéntanos tu experiencia.</p>
+            <a href="/login" class="btn-login-comment">
+                🔒 Inicia sesión para opinar
+            </a>
+        </div>
+
+        <div id="listaComentarios">
+            <div th:each="val : ${valoraciones}" class="comentario-item" style="border-bottom: 1px solid #eee; padding: 15px 0;">
+                <div style="display: flex; justify-content: space-between;">
+                    <strong th:text="${val.usuario.nombre}">Usuario</strong> 
+                    <span style="color: #f5a623; font-weight: bold;" th:text="'⭐ ' + ${val.puntuacion}">5.0</span>
+                </div>
+                <small style="color: #999;" th:text="${#temporals.format(val.createdAt, 'dd-MM-yyyy HH:mm')}">Fecha</small>
+                <p th:text="${val.comentario}" style="margin-top: 5px;">Comentario...</p>
+            </div>
+        </div>
+    </div>
+
     <button class="btn-volver" onclick="window.location.href='/alojamientos'">
       ← Volver al buscador
     </button>
