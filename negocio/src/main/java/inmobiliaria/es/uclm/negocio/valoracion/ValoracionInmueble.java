@@ -24,14 +24,16 @@ public class ValoracionInmueble {
     @JsonIgnoreProperties({"contrasena", "reservas", "valoracionesRealizadas", "password"}) 
     private User usuario;
 
-    private Integer puntuacion;
+    private Double puntuacion;
+
     @Column(length = 3000)
     private String comentario;
+
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
     public ValoracionInmueble() {}
-    public ValoracionInmueble(Alojamiento inmueble, User usuario, Integer puntuacion, String comentario) {
+    public ValoracionInmueble(Alojamiento inmueble, User usuario, Double puntuacion, String comentario) {
         this.inmueble = inmueble;
         this.usuario = usuario;
         this.puntuacion = puntuacion;
@@ -45,8 +47,8 @@ public class ValoracionInmueble {
     public void setInmueble(Alojamiento inmueble) { this.inmueble = inmueble; }
     public User getUsuario() { return usuario; }
     public void setUsuario(User usuario) { this.usuario = usuario; }
-    public Integer getPuntuacion() { return puntuacion; }
-    public void setPuntuacion(Integer puntuacion) { this.puntuacion = puntuacion; }
+    public Double getPuntuacion() { return puntuacion; }
+    public void setPuntuacion(Double puntuacion) { this.puntuacion = puntuacion; }
     public String getComentario() { return comentario; }
     public void setComentario(String comentario) { this.comentario = comentario; }
     public LocalDateTime getCreatedAt() { return createdAt; }
