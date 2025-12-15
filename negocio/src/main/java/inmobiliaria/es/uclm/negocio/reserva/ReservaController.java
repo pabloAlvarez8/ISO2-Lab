@@ -13,14 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import org.springframework.ui.Model; // Importante para pasar datos a la vista
+import java.util.Optional;
 import java.util.List;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.stream.Collectors;
+import org.springframework.ui.Model;
+import java.util.Optional;
 
 
 @Controller
@@ -50,6 +52,34 @@ public class ReservaController {
         return reservaRepository.findReservasFuturas(idAlojamiento).stream()
                 .map(r -> r.getFechaEntrada().toString() + ":" + r.getFechaSalida().toString())
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/booking-detail/{id}") 
+    public String verDetalleReserva(@PathVariable Long id, Model model, Authentication authentication) { 
+        Optional<Reserva> reservaOpt = reservaRepository.findById(id);
+
+        if (reservaOpt.isPresent()) {
+            Reserva reserva = reservaOpt.get();
+
+            // Verificación de seguridad (Inquilino o Anfitrión)
+            String emailUsuarioActual = authentication.getName();
+            String emailInquilino = reserva.getInquilino().getEmail();
+            String emailAnfitrion = reserva.getAlojamiento().getAnfitrion().getEmail();
+
+            if (!emailUsuarioActual.equals(emailInquilino) && !emailUsuarioActual.equals(emailAnfitrion)) {
+                return "redirect:/perfil?error=NoTienesPermiso";
+            }
+
+            model.addAttribute("reserva", reserva);
+            
+            // Calcular duración de la estancia
+            long dias = java.time.temporal.ChronoUnit.DAYS.between(reserva.getFechaEntrada(), reserva.getFechaSalida());
+            model.addAttribute("diasEstancia", dias);
+
+            return "booking-details"; // La vista HTML (booking-details.html)
+        } else {
+            return "redirect:/perfil?error=ReservaNoEncontrada";
+        }
     }
 
     @PostMapping("/crear")

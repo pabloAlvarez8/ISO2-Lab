@@ -83,7 +83,9 @@
                         <p class="fecha"><i class="far fa-calendar-check"></i> Entrada: <strong th:text="${reserva.fechaEntrada}">Fecha</strong></p>
                         <p class="fecha"><i class="far fa-calendar-times"></i> Salida: <strong th:text="${reserva.fechaSalida}">Fecha</strong></p>
                         
-                        <button class="btn-detalle">Ver Detalles</button>
+                        <a th:href="@{/reservas/booking-detail/{id}(id=${reserva.id})}" class="btn-detalle">
+                            Ver Detalles
+                        </a>
                     </div>
                 </div>
 

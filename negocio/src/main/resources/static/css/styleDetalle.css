@@ -133,3 +133,43 @@ main {
 .btn-volver:hover {
   background: #ddd;
 }
+
+.logo-impresion {
+    display: none;
+}
+
+@media print {
+    /* 1. Ocultamos lo que no sirve en papel */
+    header, footer, nav, .btn-detalle, .btn-volver, .btn-reserve {
+        display: none !important;
+    }
+
+    /* 2. Ajustamos el contenedor para que ocupe todo el papel */
+    body {
+        background-color: white;
+        margin: 0;
+        padding: 0;
+    }
+
+    .booking-container {
+        box-shadow: none;       /* Quitamos la sombra para ahorrar tinta */
+        border: 1px solid #ddd; /* Borde finito y elegante */
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* 3. Aseguramos que los textos se vean bien (negro puro) */
+    h1, h2, h3, p, span {
+        color: black !important;
+    }
+    
+    /* 4. Opcional: Expandir la grilla para que use todo el ancho */
+    .details-grid {
+        display: block; /* A veces grid da problemas en impresoras viejas, block es seguro */
+    }
+    .info-group {
+        margin-bottom: 20px;
+        page-break-inside: avoid; /* Evita que se corte la info a mitad de página */
+    }
+}
