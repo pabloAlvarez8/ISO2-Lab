@@ -67,10 +67,10 @@ Asegúrate de tener instalado:
 
 2.  **Configurar Base de Datos:**
     Crea una base de datos en MySQL y ajusta el archivo `src/main/resources/application.properties` con tus credenciales:
-    ```properties
+    ```text
     spring.datasource.url=jdbc:mysql://localhost:3306/tu_base_de_datos
     spring.datasource.username=tu_usuario
-    spring.datasource.password=tu_contraseña
+    spring.datasource.password=[PON_AQUI_TU_CONTRASEÑA]
     ```
 
 3.  **Ejecutar la aplicación:**
