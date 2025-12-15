@@ -6,7 +6,7 @@ import inmobiliaria.es.uclm.negocio.alojamiento.dto.DestinoDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -42,7 +42,15 @@ public class PrincipalWebController {
     }
 
     @GetMapping("/dashboard")
-    public String mostrarDashboard() {
-        return "dashboard"; // Devuelve templates/dashboard.html
+    public String mostrarDashboard(Model model, HttpSession session) {
+        // Recuperar la URL guardada en la sesión
+        String urlPrevio = (String) session.getAttribute("urlPrevio");
+        
+        // Si existe, la añadimos al modelo para usarla en el HTML
+        if (urlPrevio != null) {
+            model.addAttribute("botonVolver", urlPrevio);
+        }
+
+        return "dashboard"; 
     }
 }

@@ -2,27 +2,23 @@ package inmobiliaria.es.uclm.negocio.login;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class LoginWebController {
 
-    /**
-     * Muestra la página de login (login.html).
-     * * Este método solo sirve la página HTML. Spring Security se encarga
-     * de mostrar los mensajes de error (?error=true) o de logout (?logout=true)
-     * si se configuran en el SecurityConfig.
-     */
     @GetMapping("/login")
-    public String showLoginPage() {
-        // Simplemente devuelve el nombre de la plantilla "login.html"
-        // que está en src/main/resources/templates/
+    public String showLoginPage(HttpServletRequest request, HttpSession session) {
+        // 1. Obtener la URL desde la que viene el usuario
+        String referrer = request.getHeader("Referer");
+
+        // 2. Comprobamos que no sea null y que no sea la propia página de login
+        // (para evitar un bucle si recargan la página de login)
+        if (referrer != null && !referrer.contains("/login") && !referrer.contains("/register")) {
+            session.setAttribute("urlPrevio", referrer);
+        }
+
         return "login";
     }
-
-    // --- ¡NO SE NECESITA UN @PostMapping("/login")! ---
-    //
-    // A diferencia del registro, no necesitamos un método para procesar
-    // el login. Spring Security intercepta la petición POST a /login
-    // automáticamente y llama a tu UserService (UserDetailsService)
-    // para validar al usuario.
 }
