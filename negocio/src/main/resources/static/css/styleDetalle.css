@@ -186,3 +186,64 @@ main {
         page-break-inside: avoid; /* Evita que se corte la info a mitad de página */
     }
 }
+
+/* --- NUEVOS ESTILOS PARA ESTRELLAS AVANZADAS --- */
+
+.rating-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.star-widget {
+    display: inline-block;
+    font-size: 2.5rem; /* Tamaño de las estrellas */
+    cursor: pointer;
+    /* Zona "muerta" a la izquierda para poder poner 0 */
+    padding-left: 15px; 
+    line-height: 1;
+}
+
+/* Wrapper para posicionamiento relativo exacto */
+.star-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.stars-gray, .stars-gold {
+    user-select: none;
+    font-family: sans-serif;
+    letter-spacing: 1px; 
+}
+
+.stars-gray {
+    color: #e0e0e0;
+}
+
+.stars-gold {
+    color: #f5a623;
+    position: absolute;
+    top: 0;
+    left: 0; /* CRÍTICO: Alineado al wrapper, no al widget */
+    white-space: nowrap;
+    overflow: hidden;
+    width: 0%; 
+    pointer-events: none;
+    transition: width 0.1s ease-out;
+}
+
+/* --- NUEVO BOTÓN LOGIN EN COMENTARIOS --- */
+.btn-login-comment {
+    display: inline-block;
+    background-color: #0071c2;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-login-comment:hover {
+    background-color: #005b9a;
+}

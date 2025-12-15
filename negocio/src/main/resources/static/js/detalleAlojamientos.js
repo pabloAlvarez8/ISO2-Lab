@@ -11,18 +11,86 @@ document.addEventListener("DOMContentLoaded", () => {
   fetch(`/reservas/api/ocupadas/${alojamientoId}`)
       .then(response => response.json())
       .then(data => {
-          // Transformamos al formato de Flatpickr
           const disabledDates = data.map(rango => {
               const partes = rango.split(":");
               return { from: partes[0], to: partes[1] };
           });
-
-          // 3. Iniciar el calendario con las fechas bloqueadas
           iniciarCalendario(disabledDates);
       })
       .catch(err => console.error("Error cargando disponibilidad:", err));
 
-  // 4. Lógica para enviar o modificar valoración (ACTUALIZADO)
+  // --- LÓGICA AVANZADA DE ESTRELLAS (CORREGIDO) ---
+  const starWidget = document.getElementById("starWidget");
+  const starsGold = document.getElementById("starsGold");
+  const hiddenInput = document.getElementById("puntuacionInput");
+  const valorVisual = document.getElementById("valorVisual");
+
+  if (starWidget && starsGold && hiddenInput) {
+      
+      // Función para calcular la puntuación
+      function calcularPuntuacion(e) {
+          const rect = starWidget.getBoundingClientRect();
+          const paddingLeft = 15; // Debe coincidir con CSS .star-widget padding-left
+          
+          // Posición X relativa al inicio de las estrellas
+          let x = e.clientX - rect.left - paddingLeft;
+          
+          // Ancho real de la zona de estrellas (ancho total - padding)
+          const widthStars = rect.width - paddingLeft;
+
+          // Si estamos en la zona de padding (izquierda), es 0
+          if (x < 0) {
+              return 0;
+          }
+
+          // Porcentaje sobre la zona de estrellas únicamente
+          let percent = x / widthStars;
+          if (percent > 1) percent = 1;
+
+          let rawScore = percent * 5;
+          let score = Math.ceil(rawScore * 2) / 2; // Redondear a 0.5
+
+          if (score < 0) score = 0;
+          if (score > 5) score = 5;
+
+          return score;
+      }
+
+      function pintarEstrellas(score) {
+          const porcentaje = (score / 5) * 100;
+          starsGold.style.width = `${porcentaje}%`;
+          if (valorVisual) valorVisual.innerText = score.toFixed(1);
+      }
+
+      // Hover
+      starWidget.addEventListener("mousemove", (e) => {
+          const score = calcularPuntuacion(e);
+          pintarEstrellas(score);
+      });
+
+      // Salir del widget (restaurar)
+      starWidget.addEventListener("mouseleave", () => {
+          const valorGuardado = parseFloat(hiddenInput.value) || 0;
+          pintarEstrellas(valorGuardado);
+      });
+
+      // Click (guardar)
+      starWidget.addEventListener("click", (e) => {
+          const score = calcularPuntuacion(e);
+          hiddenInput.value = score;
+          pintarEstrellas(score);
+          // Feedback visual
+          starsGold.style.opacity = "0.6";
+          setTimeout(() => starsGold.style.opacity = "1", 150);
+      });
+
+      // Inicializar
+      pintarEstrellas(parseFloat(hiddenInput.value));
+  }
+  // --- FIN LÓGICA ESTRELLAS ---
+
+
+  // 4. Enviar valoración
   const formValoracion = document.getElementById("formValoracion");
   
   if (formValoracion) {
@@ -39,8 +107,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const puntuacion = document.getElementById("puntuacionInput").value;
         const comentario = document.getElementById("comentarioInput").value;
 
-        if(!comentario || !puntuacion) {
-            alert("Por favor completa la puntuación y el comentario");
+        // Validamos que exista puntuación (0 es válido, vacío no)
+        if(!comentario || puntuacion === "" || puntuacion === null) {
+            alert("Por favor selecciona una puntuación y escribe un comentario.");
             return;
         }
 
@@ -51,18 +120,14 @@ document.addEventListener("DOMContentLoaded", () => {
             comentario: comentario
         };
 
-        // CAMBIO PRINCIPAL: Usamos el endpoint /guardar que gestiona Creación y Edición
         fetch('/valoraciones/guardar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         })
         .then(response => {
-            // MANEJO DE ERROR 403 (Regla de negocio: No ha visitado)
             if (response.status === 403) {
-                return response.json().then(err => {
-                    throw new Error(err.mensaje); // Lanzamos error con el mensaje del servidor
-                });
+                return response.json().then(err => { throw new Error(err.mensaje); });
             }
             if (!response.ok) {
                 throw new Error("Error al procesar la reseña.");
@@ -70,24 +135,17 @@ document.addEventListener("DOMContentLoaded", () => {
             return response.json();
         })
         .then(responseData => {
-            // responseData contiene: { valoracion: {...}, nuevaMedia: 4.5 }
-            
-            // 1. Actualizamos la media visualmente al instante
             const spanMedia = document.getElementById("mediaValoracionTexto");
             if(spanMedia && responseData.nuevaMedia !== undefined) {
-                spanMedia.innerText = responseData.nuevaMedia; // Actualizamos el número
+                spanMedia.innerText = responseData.nuevaMedia;
             }
 
             alert("¡Tu reseña se ha guardado correctamente!");
-
-            // 2. Recargamos para que:
-            //    - Se actualice la lista de comentarios (evitando duplicados si era edición)
-            //    - El formulario muestre los datos actualizados
             window.location.reload();
         })
         .catch(err => {
             console.error(err);
-            alert(err.message); // Muestra: "Para poder escribir una reseña... tienes que visitarlo"
+            alert(err.message);
         });
     });
   }
@@ -101,30 +159,14 @@ function iniciarCalendario(fechasOcupadas) {
       dateFormat: "Y-m-d",
       minDate: "today",
       disable: fechasOcupadas,
-      locale: {
-          firstDayOfWeek: 1
-      },
+      locale: { firstDayOfWeek: 1 },
       onChange: function(selectedDates, dateStr, instance) {
           if (selectedDates.length === 2) {
               const entrada = instance.formatDate(selectedDates[0], "Y-m-d");
               const salida = instance.formatDate(selectedDates[1], "Y-m-d");
-              
               document.getElementById("inputEntrada").value = entrada;
               document.getElementById("inputSalida").value = salida;
           }
       }
   });
-}
-
-
-function actualizarMedia(id) {
-    fetch(`/valoraciones/media/${id}`)
-        .then(res => res.json())
-        .then(media => {
-            const spanMedia = document.getElementById("mediaValoracionTexto");
-            if(spanMedia) {
-                spanMedia.innerText = media ? media.toFixed(1) : "0.0";
-            }
-        })
-        .catch(err => console.error("Error actualizando media:", err));
 }

@@ -79,15 +79,22 @@
             <h3>Escribe tu opinión</h3>
             <form id="formValoracion">
                 <input type="hidden" id="usuarioLogueadoId" th:value="${#authentication.principal.id}" /> 
+                
                 <div style="margin-bottom: 15px;">
                     <label style="font-weight: bold; display: block; margin-bottom: 5px;">Puntuación:</label>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <input type="range" id="puntuacionInput" min="1" max="5" step="0.5" value="5" 
-                              oninput="document.getElementById('valorVisual').innerText = this.value"
-                              style="cursor: pointer; width: 200px;">
+                    
+                    <div class="rating-container">
+                        <input type="hidden" id="puntuacionInput" name="puntuacion" value="0">
                         
-                        <span style="font-size: 1.2em; color: #f5a623; font-weight: bold;">
-                            ⭐ <span id="valorVisual">5</span> / 5
+                        <div id="starWidget" class="star-widget">
+                            <div class="star-wrapper">
+                                <div class="stars-gray">★★★★★</div>
+                                <div class="stars-gold" id="starsGold" style="width: 0%;">★★★★★</div>
+                            </div>
+                        </div>
+                    
+                        <span style="margin-left: 15px; font-size: 1.2em; color: #f5a623; font-weight: bold;">
+                            <span id="valorVisual">0.0</span> / 5
                         </span>
                     </div>
                 </div>
@@ -98,14 +105,18 @@
             </form>
         </div>
         
-        <div sec:authorize="!isAuthenticated()" style="margin: 20px 0; font-style: italic; color: #666;">
-            <a href="/login">Inicia sesión</a> para dejar una reseña.
+        <div sec:authorize="!isAuthenticated()" style="margin: 30px 0; text-align: center; background: #f9f9f9; padding: 20px; border-radius: 8px;">
+            <p style="margin-bottom: 15px; color: #666; font-size: 1.1em;">¿Ya te has alojado aquí? Cuéntanos tu experiencia.</p>
+            <a href="/login" class="btn-login-comment">
+                🔒 Inicia sesión para opinar
+            </a>
         </div>
 
         <div id="listaComentarios">
             <div th:each="val : ${valoraciones}" class="comentario-item" style="border-bottom: 1px solid #eee; padding: 15px 0;">
                 <div style="display: flex; justify-content: space-between;">
-                    <strong th:text="${val.usuario.email}">Usuario</strong> <span style="color: #f5a623; font-weight: bold;" th:text="'⭐ ' + ${val.puntuacion}">5.0</span>
+                    <strong th:text="${val.usuario.nombre}">Usuario</strong> 
+                    <span style="color: #f5a623; font-weight: bold;" th:text="'⭐ ' + ${val.puntuacion}">5.0</span>
                 </div>
                 <small style="color: #999;" th:text="${#temporals.format(val.createdAt, 'dd-MM-yyyy HH:mm')}">Fecha</small>
                 <p th:text="${val.comentario}" style="margin-top: 5px;">Comentario...</p>
