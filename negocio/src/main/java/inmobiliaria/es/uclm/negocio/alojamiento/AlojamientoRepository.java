@@ -1,6 +1,8 @@
 package inmobiliaria.es.uclm.negocio.alojamiento;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -20,4 +22,10 @@ public interface AlojamientoRepository extends JpaRepository<Alojamiento, Long>,
 
     // 4. Buscar alojamientos de un anfitrión (esto ya estaba bien, pero lo mantenemos)
     List<Alojamiento> findByAnfitrion_Id(Long idUsuario);
+
+    @Query("SELECT MAX(a.precio) FROM Alojamiento a")
+    BigDecimal findMaxPrecio();
+
+    @Query("SELECT DISTINCT a.tipo FROM Alojamiento a WHERE a.tipo IS NOT NULL")
+    List<String> findAllTipos();
 }

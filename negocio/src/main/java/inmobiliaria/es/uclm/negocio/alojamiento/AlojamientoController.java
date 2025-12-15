@@ -16,6 +16,8 @@ import org.springframework.security.core.Authentication;
 import inmobiliaria.es.uclm.negocio.user.User;
 import inmobiliaria.es.uclm.negocio.user.UserService;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/alojamientos")
 public class AlojamientoController {
@@ -45,6 +47,14 @@ public class AlojamientoController {
             Model model) {
 
         // Ya NO se llama a alojamientoService.buscarConFiltros() aquí.
+        // --- INICIO AÑADIDO: Lógica para el filtro de precio ---
+        // 1. Obtenemos el precio máximo (método nuevo del servicio)
+        long precioMax = alojamientoService.obtenerPrecioMaximoAlojamientoRedondeado();
+        // 2. Lo pasamos a la vista con el nombre "precioMaximo" para que Thymeleaf lo use
+        model.addAttribute("precioMaximo", precioMax);
+        // --- FIN AÑADIDO ---
+        List<String> listaTipos = alojamientoService.obtenerTodosLosTipos();
+        model.addAttribute("listaTipos", listaTipos);
 
         // Solo pasamos los filtros iniciales de la URL al HTML
         model.addAttribute("filtroCiudad", ciudad);
