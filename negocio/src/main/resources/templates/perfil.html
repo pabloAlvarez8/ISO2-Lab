@@ -119,9 +119,21 @@
                                 <span class="req-dates" th:text="'Del ' + ${solicitud.fechaEntrada} + ' al ' + ${solicitud.fechaSalida}">Fechas</span>
                             </div>
                             <div class="req-actions">
-                                <button class="btn-accept"><i class="fas fa-check"></i></button>
-                                <button class="btn-reject"><i class="fas fa-times"></i></button>
-                            </div>
+    <a th:href="@{/reservas/aceptar/{id}(id=${solicitud.id})}" 
+       class="btn-accept" 
+       th:if="${solicitud.aceptada == null}">
+       <i class="fas fa-check"></i>
+    </a>
+
+    <a th:href="@{/reservas/rechazar/{id}(id=${solicitud.id})}" 
+       class="btn-reject" 
+       th:if="${solicitud.aceptada == null}">
+       <i class="fas fa-times"></i>
+    </a>
+
+    <span th:if="${solicitud.aceptada == true}" style="color: green; font-weight: bold;">¡Aceptada!</span>
+    <span th:if="${solicitud.aceptada == false}" style="color: red; font-weight: bold;">Rechazada</span>
+</div>
                         </div>
                     </div>
 

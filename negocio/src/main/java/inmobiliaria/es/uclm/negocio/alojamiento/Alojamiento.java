@@ -3,7 +3,11 @@ package inmobiliaria.es.uclm.negocio.alojamiento;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
+import inmobiliaria.es.uclm.negocio.reserva.Reserva;
 import inmobiliaria.es.uclm.negocio.user.User;
+
+import java.util.ArrayList; 
+import java.util.List;
 
 @Entity
 @Table(name = "inmueble")
@@ -61,6 +65,10 @@ public class Alojamiento {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    // Esto le dice a Java: Si borras el Alojamiento, borra también sus Reservas.
+    @OneToMany(mappedBy = "alojamiento", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reserva> reservas = new ArrayList<>();
 
     // --- AUTOMATIZACIÓN DE FECHAS ---
     @PrePersist
@@ -129,4 +137,9 @@ public class Alojamiento {
     // Setters necesarios por si Hibernate los pide
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public List<Reserva> getReservas() { return reservas; }
+    public void setReservas(List<Reserva> reservas) { this.reservas = reservas; }
+
+
 }
