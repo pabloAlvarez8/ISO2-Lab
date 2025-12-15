@@ -1,6 +1,7 @@
 package inmobiliaria.es.uclm.negocio.alojamiento;
 
 // Imports para el controlador
+import lombok.Data;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
