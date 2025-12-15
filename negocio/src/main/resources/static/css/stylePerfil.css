@@ -294,15 +294,27 @@ form {
 }
 
 .btn-detalle {
-    margin-top:10px;
-    width:100%;
+    margin-top: 15px;
+    width: 100%;
     cursor: pointer;
     color: #4b8fe7;
-    background:none;
+    background: none;
     border: 1px solid #4b8fe7;
     padding: 8px;
     border-radius: 20px;
     font-weight: 600;
+
+    display: block;
+    text-decoration: none;
+    text-align: center;
+    box-sizing: border-box;
+    transition: all 0.3s;
+}
+
+.btn-detalle:hover {
+    background-color: #4b8fe7;
+    color: white !important;
+    text-decoration: none;
 }
 
 /* --- Estilos Tarjeta Alojamiento (Anfitrión) --- */

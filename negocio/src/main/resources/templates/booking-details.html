@@ -83,7 +83,7 @@
 
 <body>
 
-  <div th:replace="~{fragments/header-2 :: header_2-nav}"></div>
+  <div th:replace="~{fragments/header :: navbar}"></div>
 
   <main>
     <div class="booking-container">
@@ -171,6 +171,10 @@
                 style="background-color: #28a745; color: white;"> 💳 Ir a Pagar
              </a>
         </div>
+
+        <button onclick="window.print()" class="btn-detalle" style="margin-top: 15px; border-color: #555; color: #555;">
+            🖨️ Imprimir Comprobante
+        </button>
 
         <a href="/perfil" class="btn-detalle" style="margin-top: 30px;">
             Volver a mi Perfil
