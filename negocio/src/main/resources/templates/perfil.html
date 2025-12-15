@@ -73,8 +73,17 @@
 
                 <div class="cards-grid" th:if="${!misReservas.isEmpty()}">
                     <div class="card-reserva" th:each="reserva : ${misReservas}">
-                        <div class="card-status status-confirmada" th:text="${reserva.estado != null ? reserva.estado : 'CONFIRMADA'}">Confirmada</div>
+                        <div class="card-status" 
+                            th:classappend="${reserva.aceptada == null ? 'status-pendiente' : (reserva.aceptada ? 'status-confirmada' : 'status-cancelada')}"
+                            th:text="${reserva.aceptada == null ? 'PENDIENTE' : (reserva.aceptada ? 'ACEPTADA' : 'RECHAZADA')}"> ESTADO
+                        </div>
                         
+                        <style>
+                        .status-pendiente { background-color: #fceabb; color: #d48806; }
+                        .status-confirmada { background-color: #d4edda; color: #155724; }
+                        .status-cancelada { background-color: #f8d7da; color: #721c24; }
+                        </style>
+
                         <h3 th:text="${reserva.alojamiento.nombre}">Nombre Alojamiento</h3>
                         <p class="direccion"><i class="fas fa-map-marker-alt"></i> <span th:text="${reserva.alojamiento.ciudad}">Ciudad</span></p>
                         
@@ -93,7 +102,7 @@
                     <a href="/" class="btn-action">¡Busca tu próxima escapada!</a>
                 </div>
             </div>
-
+            
             <div id="vista-anfitrion" class="view-container" style="display: none;">
                 
                 <div class="section-host">
@@ -124,7 +133,8 @@
                 <div class="section-host">
                     <div class="header-with-action">
                         <h3 class="section-title"><i class="fas fa-building"></i> Mis Propiedades</h3>
-                        <a href="/alojamientos/nuevo" class="btn-add-new">+ Publicar anuncio</a>
+                        <a href="/alojamientos/nuevo" class="btn-add-new" 
+                           th:if="${usuario.role.name() == 'PROPIETARIO'}">+ Publicar anuncio</a>
                     </div>
 
                     <div class="cards-grid" th:if="${!misAlojamientos.isEmpty()}">
@@ -135,21 +145,25 @@
                                 <p style="color: #666; font-size: 14px;" th:text="${casa.ciudad}">Ciudad</p>
                                 <p style="font-weight: bold; color: #2c5394;" th:text="${casa.precio + '€ / noche'}">Precio</p>
                                 <div class="card-actions">
-                                    <button class="btn-edit">Editar</button>
+                                    <a th:href="@{/alojamientos/editar/{id}(id=${casa.id})}" class="btn-edit">Editar</a>
                                     <a th:href="@{'/alojamientos/eliminar/' + ${casa.id}}" class="btn-delete" onclick="return confirm('¿Borrar este alojamiento?');">Borrar</a>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="empty-state" th:if="${misAlojamientos.isEmpty()}">
-                        <p>Aún no has publicado ningún alojamiento.</p>
-                        <a href="/alojamientos/nuevo" class="btn-action">¡Conviértete en anfitrión hoy!</a>
+                    <div class="empty-state" th:if="${usuario.role.name() == 'INQUILINO'}">
+                        <p>Para publicar alojamientos necesitas activar tu cuenta de anfitrión.</p>
+                        <a href="/anfitrion" class="btn-action">¡Conviértete en anfitrión hoy!</a>
                     </div>
+
+                    <div class="empty-state" th:if="${usuario.role.name() == 'PROPIETARIO' and misAlojamientos.isEmpty()}">
+                        <p>Aún no has publicado ningún alojamiento.</p>
+                        <a href="/alojamientos/nuevo" class="btn-action">¡Publica tu primer anuncio!</a>
+                    </div>
+
                 </div>
             </div>
-        </div>
-
       </section>
     </main>
 

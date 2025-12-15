@@ -24,7 +24,7 @@ public class UserService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // --- Tu método de registro (ya está perfecto) ---
+    // --- REGISTRO ---
     @Transactional
     public User registerUser(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
@@ -35,7 +35,7 @@ public class UserService implements UserDetailsService {
             // Hashear la contraseña
             user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-            // Asignar rol por defecto (aunque tu entidad ya lo hace, esto es una doble seguridad)
+            // Asignar rol por defecto (INQUILINO)
             if (user.getRole() == null) {
                 user.setRole(User.Role.INQUILINO);
             }
@@ -51,7 +51,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    // --- Tus otros métodos (findByEmail, existsByEmail) ---
+    // --- MÉTODOS DE BÚSQUEDA ---
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
@@ -60,16 +60,7 @@ public class UserService implements UserDetailsService {
         return userRepository.existsByEmail(email);
     }
 
-
-    // --- MÉTODO DE LOGIN (UserDetailsService) ---
-    
-    /**
-     * Este es el método que Spring Security llama automáticamente durante el login.
-     * Busca al usuario por EMAIL.
-     *
-     * @param email El email que el usuario escribió en el formulario.
-     * @return un objeto UserDetails que Spring Security usa para verificar la contraseña.
-     */
+    // --- LOGIN (Spring Security) ---
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         
@@ -81,18 +72,30 @@ public class UserService implements UserDetailsService {
                     return new UsernameNotFoundException("Usuario (email) no encontrado: " + email);
                 });
 
-        // --- ¡AQUÍ ESTÁ EL ÚNICO CAMBIO! ---
-        // Antes: usuario.getUsername()
-        // Ahora: usuario.getEmail()
-        //
-        // (Lombok nos da getEmail() y getPassword() automáticamente)
         return new org.springframework.security.core.userdetails.User(
-            
-            usuario.getEmail(), // Usamos el email como el "principal"
-            
-            usuario.getPassword(), // Spring se encarga de comparar este hash
-            
-            Collections.emptyList() // Lista de roles (vacía por ahora)
+            usuario.getEmail(), 
+            usuario.getPassword(), 
+            Collections.emptyList() // Roles vacíos por ahora
         );
+    }
+
+    // CONVERTIR USUARIO EN ANFITRIÓN)
+    @Transactional 
+    public void convertirEnAnfitrion(Long idUsuario, String dni, String telefono, String iban) {
+        User usuario = userRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        
+        // Actualizamos sus datos nuevos
+        usuario.setDni(dni);
+        usuario.setTelefono(telefono);
+        usuario.setCuentaBancaria(iban);
+
+        // Cambiamos el rol
+        usuario.setRole(User.Role.PROPIETARIO);
+        
+        // GUARDAMOS EN BASE DE DATOS
+        userRepository.save(usuario);
+        
+        log.info("Usuario {} actualizado a PROPIETARIO con datos completos.", usuario.getEmail());
     }
 }

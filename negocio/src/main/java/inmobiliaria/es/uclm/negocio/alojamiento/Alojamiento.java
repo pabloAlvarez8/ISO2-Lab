@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import inmobiliaria.es.uclm.negocio.user.User;
 
 @Entity
-@Table(name = "inmueble") // Asegúrate de que en data.sql insertas en 'inmueble' (singular)
+@Table(name = "inmueble")
 public class Alojamiento {
 
     @Id
@@ -26,54 +26,49 @@ public class Alojamiento {
     @Column(nullable = false)
     private String ciudad;
 
-    // CORRECCIÓN 1: Derby no soporta TEXT.
-    // Al quitar columnDefinition, Hibernate usará VARCHAR(255).
-    // Si necesitas más espacio, usa length = 1000 (o hasta 32000).
     @Column(nullable = false, length = 1000)
     private String direccion;
 
-    @Column(length = 2000) // Le damos más espacio para la descripción
+    @Column(length = 2000)
     private String descripcion;
 
     @Column(nullable = false)
     private int capacidad;
 
-    @Column(name = "precio_noche", nullable = false)
-    private BigDecimal precio;
+    
+    @Column(name = "precio", nullable = false)
+    private BigDecimal precio; 
 
-    @Column(name = "url_imagen_principal")
+    // CAMBIO 2: Renombrado a 'urlImagenPrincipal' para coincidir con el HTML
+    @Column(name = "fotoUrl")
     private String fotoUrl;
 
     @Column(name = "distancia_centro")
     private BigDecimal distanciaCentro;
 
+    // Inicializamos a true por defecto
     @Column(name = "is_active")
-    private Boolean isActive = true;
+    private Boolean active = true; 
 
-    // CORRECCIÓN 2: Derby no soporta ENUM en SQL nativo fácilmente.
-    // Lo guardamos como String simple. Hibernate lo gestiona bien.
     @Column(name = "politica_cancelacion")
     private String politicaCancelacion;
 
     @Transient
     private Double valoracionMedia;
 
-    // CORRECCIÓN 3: Derby O-D-I-A 'DATETIME'. Solo entiende 'TIMESTAMP'.
-    // Quitamos los columnDefinition y dejamos que Hibernate elija el tipo correcto (TIMESTAMP).
-    // Además, quitamos el DEFAULT SQL porque ya lo haces en el @PrePersist de Java.
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // --- Timestamps (Esto es lo que realmente guarda la fecha, no el SQL) ---
+    // --- AUTOMATIZACIÓN DE FECHAS ---
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         if (updatedAt == null) updatedAt = LocalDateTime.now();
-        // Valor por defecto para política si es nula
         if (politicaCancelacion == null) politicaCancelacion = "ESTRICTA";
+        if (active == null) active = true;
     }
 
     @PreUpdate
@@ -81,7 +76,7 @@ public class Alojamiento {
         updatedAt = LocalDateTime.now();
     }
 
-    // --- GETTERS Y SETTERS ---
+    // --- GETTERS Y SETTERS CORREGIDOS ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -106,17 +101,20 @@ public class Alojamiento {
     public int getCapacidad() { return capacidad; }
     public void setCapacidad(int capacidad) { this.capacidad = capacidad; }
 
+    // Getter/Setter ajustados a precio
     public BigDecimal getPrecio() { return precio; }
     public void setPrecio(BigDecimal precio) { this.precio = precio; }
 
+    // Getter/Setter ajustados a urlImagenPrincipal
     public String getFotoUrl() { return fotoUrl; }
     public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
 
     public BigDecimal getDistanciaCentro() { return distanciaCentro; }
     public void setDistanciaCentro(BigDecimal distanciaCentro) { this.distanciaCentro = distanciaCentro; }
 
-    public Boolean getIsActive() { return isActive; }
-    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+    // CAMBIO 3: El getter/setter estándar de boolean es isActive / setActive
+    public Boolean isActive() { return active; }
+    public void setActive(Boolean active) { this.active = active; }
 
     public String getPoliticaCancelacion() { return politicaCancelacion; }
     public void setPoliticaCancelacion(String politicaCancelacion) { this.politicaCancelacion = politicaCancelacion; }
@@ -124,6 +122,11 @@ public class Alojamiento {
     public Double getValoracionMedia() { return valoracionMedia; }
     public void setValoracionMedia(Double valoracionMedia) { this.valoracionMedia = valoracionMedia; }
 
+    // Solo Getters para las fechas (se gestionan solas)
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
+    
+    // Setters necesarios por si Hibernate los pide
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

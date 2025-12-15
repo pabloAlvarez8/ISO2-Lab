@@ -12,7 +12,6 @@ public interface AlojamientoRepository extends JpaRepository<Alojamiento, Long>,
     List<Alojamiento> findByCiudadContainingIgnoreCase(String ciudad);
 
     // 2. Buscar por precio menor o igual al indicado
-    // Usamos LessThanEqual para incluir el precio exacto (ej: si buscas 100€, que salgan los de 100€)
     List<Alojamiento> findByPrecioLessThanEqual(BigDecimal precio);
 
     // 3. Combinado: Ciudad (flexible) Y Precio máximo
