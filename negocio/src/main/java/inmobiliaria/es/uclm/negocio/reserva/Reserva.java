@@ -37,6 +37,17 @@ public class Reserva {
 
     private String estado;
 
-    // ¡AQUÍ YA NO ESCRIBES NADA MÁS!
-    // Lombok se encarga del resto.
+    @Column(name = "aceptada")
+    private Boolean aceptada; 
+
+
+    public Boolean getAceptada() {
+        return aceptada;
+    }
+
+    public void setAceptada(Boolean aceptada) {
+        this.aceptada = aceptada;
+    }
+
+
 }

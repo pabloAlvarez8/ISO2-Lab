@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="es"
-      xmlns:th="http://www.thymeleaf.org"
+<html lang="es" 
+      xmlns:th="http://www.thymeleaf.org" 
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="utf-8" />
@@ -17,18 +17,18 @@
 
 <div th:replace="~{fragments/header :: navbar(false)}"></div>
 
-<main>
-    <section class="profile-section">
-
+    <main>
+      <section class="profile-section">
+        
         <div class="profile-header-text">
             <h1>Mi Perfil</h1>
             <p>Gestiona tu información personal y cuenta</p>
         </div>
 
         <div class="profile-card">
-
+            
             <div class="profile-avatar-container">
-                <img th:src="${usuario.urlFotoPerfil != null ? usuario.urlFotoPerfil : 'https://cdn-icons-png.flaticon.com/512/1077/1077114.png'}"
+                <img th:src="${usuario.urlFotoPerfil != null ? usuario.urlFotoPerfil : 'https://cdn-icons-png.flaticon.com/512/1077/1077114.png'}" 
                      alt="Avatar Usuario" class="avatar-img">
                 <h2 th:text="${usuario.nombre + ' ' + usuario.apellido}">Nombre Usuario</h2>
                 <span class="role-badge" th:text="${usuario.role}">ROL</span>
@@ -60,7 +60,7 @@
         </div>
 
         <div style="margin-top: 50px; width: 100%; max-width: 900px;">
-
+            
             <div class="role-switcher">
                 <button id="btn-inquilino" class="switch-btn active" onclick="cambiarVista('inquilino')">
                     <i class="fas fa-suitcase"></i> Modo Viajero
@@ -76,12 +76,12 @@
                 <div class="cards-grid" th:if="${!misReservas.isEmpty()}">
                     <div class="card-reserva" th:each="reserva : ${misReservas}">
                         <div class="card-status status-confirmada" th:text="${reserva.estado != null ? reserva.estado : 'CONFIRMADA'}">Confirmada</div>
-
+                        
                         <h3 th:text="${reserva.alojamiento.nombre}">Nombre Alojamiento</h3>
                         <p class="direccion"><i class="fas fa-map-marker-alt"></i> <span th:text="${reserva.alojamiento.ciudad}">Ciudad</span></p>
-
+                        
                         <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
-
+                        
                         <p class="fecha"><i class="far fa-calendar-check"></i> Entrada: <strong th:text="${reserva.fechaEntrada}">Fecha</strong></p>
                         <p class="fecha"><i class="far fa-calendar-times"></i> Salida: <strong th:text="${reserva.fechaSalida}">Fecha</strong></p>
 
@@ -99,10 +99,10 @@
             </div>
 
             <div id="vista-anfitrion" class="view-container" style="display: none;">
-
+                
                 <div class="section-host">
                     <h3 class="section-title"><i class="fas fa-bell"></i> Solicitudes de Reserva</h3>
-
+                    
                     <div class="list-requests" th:if="${!solicitudesRecibidas.isEmpty()}">
                         <div class="request-item" th:each="solicitud : ${solicitudesRecibidas}">
                             <div class="req-info">
@@ -114,8 +114,8 @@
                                 <span class="req-dates" th:text="'Del ' + ${solicitud.fechaEntrada} + ' al ' + ${solicitud.fechaSalida}">Fechas</span>
                             </div>
                             <div class="req-actions">
-                                <button class="btn btn-primary" style="width: 40px; height: 40px; border-radius: 50%; padding: 0;"><i class="fas fa-check"></i></button>
-                                <button class="btn btn-danger" style="width: 40px; height: 40px; border-radius: 50%; padding: 0;"><i class="fas fa-times"></i></button>
+                                <button class="btn-accept"><i class="fas fa-check"></i></button>
+                                <button class="btn-reject"><i class="fas fa-times"></i></button>
                             </div>
                         </div>
                     </div>
@@ -128,7 +128,7 @@
                 <div class="section-host">
                     <div class="header-with-action">
                         <h3 class="section-title"><i class="fas fa-building"></i> Mis Propiedades</h3>
-                        <a href="/alojamientos/nuevo" class="btn btn-primary">+ Publicar anuncio</a>
+                        <a href="/alojamientos/nuevo" class="btn-add-new">+ Publicar anuncio</a>
                     </div>
 
                     <div class="cards-grid" th:if="${!misAlojamientos.isEmpty()}">
@@ -138,7 +138,6 @@
                                 <h4 th:text="${casa.nombre}">Título</h4>
                                 <p style="color: #666; font-size: 14px;" th:text="${casa.ciudad}">Ciudad</p>
                                 <p style="font-weight: bold; color: #2c5394;" th:text="${casa.precio + '€ / noche'}">Precio</p>
-
                                 <div class="card-actions">
                                     <button class="btn btn-secondary btn-sm" style="flex: 1;">Editar</button>
                                     <a th:href="@{'/alojamientos/eliminar/' + ${casa.id}}" class="btn btn-danger btn-sm" onclick="return confirm('¿Borrar este alojamiento?');">Borrar</a>
@@ -155,26 +154,26 @@
             </div>
         </div>
 
-    </section>
-</main>
+      </section>
+    </main>
 
-<footer>© 2025 Inmobiliarias Paqui</footer>
+    <footer>© 2025 Inmobiliarias Paqui</footer>
 
-<script>
-    function cambiarVista(vista) {
-        document.getElementById('vista-inquilino').style.display = 'none';
-        document.getElementById('vista-anfitrion').style.display = 'none';
-        document.getElementById('btn-inquilino').classList.remove('active');
-        document.getElementById('btn-anfitrion').classList.remove('active');
+    <script>
+        function cambiarVista(vista) {
+            document.getElementById('vista-inquilino').style.display = 'none';
+            document.getElementById('vista-anfitrion').style.display = 'none';
+            document.getElementById('btn-inquilino').classList.remove('active');
+            document.getElementById('btn-anfitrion').classList.remove('active');
 
-        if(vista === 'inquilino') {
-            document.getElementById('vista-inquilino').style.display = 'block';
-            document.getElementById('btn-inquilino').classList.add('active');
-        } else {
-            document.getElementById('vista-anfitrion').style.display = 'block';
-            document.getElementById('btn-anfitrion').classList.add('active');
+            if(vista === 'inquilino') {
+                document.getElementById('vista-inquilino').style.display = 'block';
+                document.getElementById('btn-inquilino').classList.add('active');
+            } else {
+                document.getElementById('vista-anfitrion').style.display = 'block';
+                document.getElementById('btn-anfitrion').classList.add('active');
+            }
         }
-    }
-</script>
+    </script>
 </body>
 </html>
