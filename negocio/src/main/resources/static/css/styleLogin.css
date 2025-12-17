@@ -1,88 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
 
-.form-login {
-  padding: 30px;
-  margin: auto;
-  font-family: "arial", sans-serif;
-  display: flex;
-  flex-direction: column;
+body {
+    /* CORRECCIÓN: Gradiente vertical (to bottom).
+       Parte más clara (#0084ff) arriba y más oscura (#0056b3) abajo */
+    background: linear-gradient(to bottom, #0084ff 0%, #0056b3 100%);
+
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    /* Evita que el fondo se repita o se corte si haces scroll */
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
-.container {
-  width: 468px;
-  max-width: 568px;
-  min-width: 200px;
-  background: #ffffff;
-  padding: 30px;
-  margin: auto;
-  margin-top: 100px;
-  border-radius: 20px;
-  font-family: Arial, sans-serif;
-  color: rgb(0, 0, 0);
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Añadido rgba para suavidad */
-  overflow: hidden;
+.login-container {
+    background: #ffffff;
+    width: 100%;
+    max-width: 420px;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    text-align: center;
 }
 
-.container h2 {
-  font-size: 20px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  color: rgb(0, 0, 0);
-  font-weight: bold;
+.logo-container {
+    margin-bottom: 20px;
 }
 
-/* Estilos específicos de los inputs apilados del Login */
-.form-login input {
-  padding: 12px;
-  min-height: 50px;
-  font-size: 16px;
-  border: 1px solid #888888;
-  border-bottom: none;
-  border-radius: 0;
-  box-sizing: border-box;
-  width: 100%; /* Asegura que ocupen el ancho */
+.logo-container img {
+    width: 120px;
+    height: auto;
+    object-fit: contain;
 }
 
-.form-login input:first-child {
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+.login-container h2 {
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 10px;
 }
 
-.form-login input:nth-last-of-type(1) {
-  border-bottom: 1px solid #888888;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
+.subtitle {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 30px;
+    display: block;
 }
 
-/* ELIMINADO: .form-login button y sus hovers */
-/* Ahora usarás class="btn btn-primary btn-block" en el HTML */
-
-/* Mensaje de error */
-.alert {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-  padding: 12px;
-  margin-bottom: 20px;
-  border-radius: 12px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 16px;
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
 }
 
-/* ELIMINADO: .login-link a */
-/* Ahora usarás class="btn btn-secondary" o "btn-ghost" en el HTML */
+.form-group label {
+    display: block;
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
 
-/* Utilidad para el margen del botón (ya que lo borramos del CSS) */
-.mt-login {
-  margin-top: 50px;
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e1e1e1;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    outline: none;
 }
-.mt-link {
-  margin-top: 20px;
-  display: inline-block; /* Para que el margin funcione si es un <a> */
+
+.form-control:focus {
+    border-color: #0084ff;
+    background-color: #f0f8ff;
 }
+
+/* Fila para Nombre y Apellidos */
+.row-input {
+    display: flex;
+    gap: 15px;
+}
+.row-input .form-group {
+    flex: 1;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+
+    /* CORRECCIÓN: Botón SÓLIDO, sin gradiente */
+    background: #0084ff;
+
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 132, 255, 0.3);
+}
+
+.btn-primary:hover {
+    /* Al pasar el ratón oscurecemos un poco el color sólido */
+    background: #006bce;
+    box-shadow: 0 8px 20px rgba(0, 132, 255, 0.4);
+}
+
+.login-footer {
+    margin-top: 25px;
+    font-size: 13px;
+    color: #666;
+}
+
+.login-footer a {
+    color: #0084ff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}
+
+.alert-error {
+    background-color: #ffe6e6;
+    color: #d93025;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 20px;
+    border-left: 4px solid #d93025;
+}
+
+.login-link a:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+

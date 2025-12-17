@@ -3,37 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Inmobiliarias Paqui</title>
-
-    <link rel="stylesheet" th:href="@{/css/buttons.css}">
+    <title>Dashboard</title>
+    
     <link rel="stylesheet" th:href="@{/css/styleDashboard.css}">
 </head>
 <body>
 
-<div class="container">
+    <div class="container">
+        
+        <h2>¡Bienvenido!</h2>
+        
+        <p>Has iniciado sesión correctamente.</p>
 
-    <h2>¡Bienvenido!</h2>
+        <div class="dashboard-actions">
 
-    <p>Has iniciado sesión correctamente.</p>
-
-    <div class="dashboard-actions">
-
-        <a th:href="@{/perfil}" class="btn btn-primary btn-block">
+            <a th:href="@{/perfil}" class="btn btn-primary btn-block">
             Ver mi Perfil
-        </a>
+            </a>
 
-        <a th:href="@{/}" class="btn btn-secondary btn-block">
-            Volver a Inicio
-        </a>
+            <a th:if="${botonVolver != null}"
+               th:href="${botonVolver}"
+               class="btn btn-secondary" >
+                Volver a la página anterior
+            </a>
 
-        <form th:action="@{/logout}" method="POST" style="width: 100%;">
-            <button type="submit" class="btn btn-danger btn-block">
-                Cerrar Sesión
-            </button>
-        </form>
+            <a th:href="@{/}" class="btn btn-secondary btn-block">
+                Volver a Inicio
+            </a>
 
-    </div>
-</div>
+            <form th:action="@{/logout}" method="POST" style="width: 100%;">
+                <button type="submit" class="btn btn-danger btn-block">
+                    Cerrar Sesión
+                </button>
+            </form>
 
-</body>
+        </div> </div> </body>
 </html>

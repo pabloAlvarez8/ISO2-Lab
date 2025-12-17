@@ -8,37 +8,40 @@
     <link rel="stylesheet" th:href="@{/css/styleLogin.css}" />
 </head>
 <body>
-<div class="container">
-    <h2>Inicia sesión</h2>
 
-    <div th:if="${param.error}" class="alert">
-        Email o contraseña incorrectos.
+    <div class="login-container">
+
+        <div class="logo-container">
+            <img th:src="@{/images/logo_2.png}" alt="Logo Inmobiliaria">
+        </div>
+
+        <h2>¡Hola de nuevo!</h2>
+        <span class="subtitle">Ingresa tus credenciales para continuar</span>
+
+        <div th:if="${param.error}" class="alert-error">
+            Usuario o contraseña incorrectos.
+        </div>
+        <div th:if="${param.logout}" class="alert-error" style="background-color: #e6fffa; color: #007d6a; border-left-color: #007d6a;">
+            Has cerrado sesión correctamente.
+        </div>
+
+        <div th:if="${successMessage}" class="alert" style="background-color: #d4edda; color: #155724;">
+            <p th:text="${successMessage}"></p>
+        </div>
+
+
+        <form th:action="@{/login}" method="post" class="form-login">
+            <input type="email" id="username" name="username" placeholder="Correo electrónico" required />
+            <input type="password" id="password" name="password" placeholder="Contraseña" required />
+            <button type="submit" class="btn-third mt-login">Iniciar sesión</button>
+        </form>
+
+        <div class="login-footer">
+            <p>¿No tienes cuenta? <a th:href="@{/register}" class="auth-link">Regístrate aquí</a></p>
+            <p style="margin-top: 10px;"><a th:href="@{/}">Volver al Inicio</a></p>
+        </div>
+
     </div>
 
-    <div th:if="${param.logout}" class="alert">
-        Has cerrado sesión correctamente.
-    </div>
-
-    <div th:if="${successMessage}" class="alert" style="background-color: #d4edda; color: #155724;">
-        <p th:text="${successMessage}"></p>
-    </div>
-
-    <form th:action="@{/login}" method="post" class="form-login">
-        <input type="email" id="username" name="username" placeholder="Correo electrónico" required />
-        <input type="password" id="password" name="password" placeholder="Contraseña" required />
-
-        <button type="submit" class="btn-third btn-block mt-login">
-            Iniciar sesión
-        </button>
-    </form>
-
-    <div style="margin-top: 25px;">
-        <span style="font-size: 14px; color: #666;">¿No tienes cuenta?</span>
-
-        <a th:href="@{/register}" class="auth-link">
-            Regístrate aquí
-        </a>
-    </div>
-</div>
 </body>
 </html>

@@ -8,10 +8,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.security.core.GrantedAuthority; // Importación necesaria
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.Collections;
+import java.util.Collection;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -24,7 +26,7 @@ public class UserService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // --- Tu método de registro (ya está perfecto) ---
+    // --- Tu método de registro (sin cambios) ---
     @Transactional
     public User registerUser(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
@@ -35,7 +37,7 @@ public class UserService implements UserDetailsService {
             // Hashear la contraseña
             user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-            // Asignar rol por defecto (aunque tu entidad ya lo hace, esto es una doble seguridad)
+            // Asignar rol por defecto
             if (user.getRole() == null) {
                 user.setRole(User.Role.INQUILINO);
             }
@@ -51,7 +53,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    // --- Tus otros métodos (findByEmail, existsByEmail) ---
+    // --- Tus otros métodos (sin cambios) ---
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
@@ -60,15 +62,11 @@ public class UserService implements UserDetailsService {
         return userRepository.existsByEmail(email);
     }
 
-
     // --- MÉTODO DE LOGIN (UserDetailsService) ---
     
     /**
      * Este es el método que Spring Security llama automáticamente durante el login.
-     * Busca al usuario por EMAIL.
-     *
-     * @param email El email que el usuario escribió en el formulario.
-     * @return un objeto UserDetails que Spring Security usa para verificar la contraseña.
+     * Busca al usuario por EMAIL y devuelve un CustomUserDetails con el ID.
      */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -81,18 +79,27 @@ public class UserService implements UserDetailsService {
                     return new UsernameNotFoundException("Usuario (email) no encontrado: " + email);
                 });
 
-        // --- ¡AQUÍ ESTÁ EL ÚNICO CAMBIO! ---
-        // Antes: usuario.getUsername()
-        // Ahora: usuario.getEmail()
-        //
-        // (Lombok nos da getEmail() y getPassword() automáticamente)
-        return new org.springframework.security.core.userdetails.User(
-            
-            usuario.getEmail(), // Usamos el email como el "principal"
-            
-            usuario.getPassword(), // Spring se encarga de comparar este hash
-            
-            Collections.emptyList() // Lista de roles (vacía por ahora)
+        // --- CAMBIO PRINCIPAL ---
+        // Devolvemos nuestra clase personalizada que sí tiene el campo ID
+        return new CustomUserDetails(
+            usuario.getId(),       // Pasamos el ID de la base de datos
+            usuario.getEmail(),    // Email como username
+            usuario.getPassword(), // Contraseña hasheada
+            Collections.emptyList() // Roles (puedes ajustarlo si usas roles reales)
         );
+    }
+
+    // --- CLASE INTERNA PARA GESTIONAR EL ID ---
+    public static class CustomUserDetails extends org.springframework.security.core.userdetails.User {
+        private final Long id; // Asumimos que tu ID es Long (ajusta si es String o Integer)
+
+        public CustomUserDetails(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities) {
+            super(username, password, authorities);
+            this.id = id;
+        }
+
+        public Long getId() {
+            return id;
+        }
     }
 }
