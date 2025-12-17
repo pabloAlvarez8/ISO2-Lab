@@ -5,10 +5,12 @@ import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import inmobiliaria.es.uclm.negocio.reserva.Reserva;
 import inmobiliaria.es.uclm.negocio.user.User;
+import lombok.Data;
 
 import java.util.ArrayList; 
 import java.util.List;
 
+@Data
 @Entity
 @Table(name = "inmueble")
 public class Alojamiento {
@@ -84,7 +86,7 @@ public class Alojamiento {
         updatedAt = LocalDateTime.now();
     }
 
-    // --- GETTERS Y SETTERS CORREGIDOS ---
+    // GETTERS Y SETTERS 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

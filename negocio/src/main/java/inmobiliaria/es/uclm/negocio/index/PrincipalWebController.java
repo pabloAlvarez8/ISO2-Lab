@@ -1,4 +1,3 @@
-// Archivo: .../negocio/index/PrincipalWebController.java
 package inmobiliaria.es.uclm.negocio.index;
 
 import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService_Interfaz;
@@ -6,7 +5,7 @@ import inmobiliaria.es.uclm.negocio.alojamiento.dto.DestinoDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -42,7 +41,22 @@ public class PrincipalWebController {
     }
 
     @GetMapping("/dashboard")
-    public String mostrarDashboard() {
-        return "dashboard"; // Devuelve templates/dashboard.html
+    public String mostrarDashboard(HttpSession session) {
+        // 1. Recuperar la URL guardada en la sesión (guardada por LoginWebController)
+        String urlPrevio = (String) session.getAttribute("urlPrevio");
+
+        // 2. Comprobar si existe y redirigir
+        if (urlPrevio != null && !urlPrevio.isEmpty()) {
+            // "redirect:" le dice al navegador que vaya a esa dirección (Código 302)
+            return "redirect:" + urlPrevio;
+        } else {
+            // Si no hay historial, mandamos al usuario al Index
+            return "redirect:/";
+        }
+    }
+
+    @GetMapping("/detalleAlojamientos.html")
+    public String mostrarDetalle() {
+    return "detalleAlojamientos";
     }
 }

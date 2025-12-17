@@ -9,7 +9,6 @@ import org.springframework.data.domain.Sort;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import inmobiliaria.es.uclm.negocio.user.User;
@@ -21,7 +20,7 @@ import java.util.Date;
 public class AlojamientoService implements AlojamientoService_Interfaz {
 
     private final AlojamientoRepository repo;
-    private final UserRepository userRepo; // <--- 1. AÑADE ESTO
+    private final UserRepository userRepo; 
 
     // 2. MODIFICA EL CONSTRUCTOR PARA QUE RECIBA LOS DOS REPOSITORIOS
     public AlojamientoService(AlojamientoRepository repo, UserRepository userRepo) {
@@ -38,7 +37,6 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
 
     @Override
     public Alojamiento findById(Long id) {
-        // .orElse(null) saca el objeto si existe, o devuelve null si no.
         return repo.findById(id).orElse(null);
     }
 
@@ -90,7 +88,7 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
         Specification<Alojamiento> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            // 1.Filtro de Ciudad
+            // 1. Filtro de Ciudad
             if (ciudad != null && !ciudad.isEmpty()) {
                 predicates.add(criteriaBuilder.like(
                         criteriaBuilder.lower(root.get("ciudad")),
@@ -98,37 +96,31 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
             }
 
             // 2. Filtro de Precio 
+            // 2. Filtro de Precio
             if (maxPrice != null) {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("precio"), maxPrice));
             }
 
-
-            // 3. Filtro de Puntuación (minRating)
+            // 3. Filtro de Puntuación
             if (minRating != null && minRating > 0) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("valoracionMedia"), minRating)); // <--
-                // ARREGLADO:
-                // 'valoracionMedia'
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("valoracionMedia"), minRating));
             }
-
 
             // 4. Filtro de Capacidad
             if (capacity > 1) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("capacidad"), capacity)); // <-- ARREGLADO:
-                // 'capacidad'
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("capacidad"), capacity));
             }
 
-            /*
-            // 5. Filtro de Tipos
+            // 5. Filtro de Tipos (YA INTEGRADO Y DESCOMENTADO)
             if (types != null && !types.isEmpty()) {
+                // Esto crea una cláusula "WHERE tipo IN ('Hotel', 'Apartamento', ...)"
                 predicates.add(root.get("tipo").in(types));
             }
-            */
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
 
-
-        // ORDENACIÓN SIMPLIFICADA
+        // ORDENACIÓN
         Sort sort = Sort.unsorted();
         if ("price_asc".equals(sortBy)) {
             sort = Sort.by(Sort.Direction.ASC, "precio");
@@ -136,7 +128,6 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
             sort = Sort.by(Sort.Direction.DESC, "precio");
         }
 
-        // Ejecutamos la consulta con los filtros y la ordenación
         return repo.findAll(spec, sort);
     }
 
@@ -166,4 +157,21 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
         }
     }
 
+    // Obtener Precio Máximo 
+    @Override
+    public long obtenerPrecioMaximoAlojamientoRedondeado() {
+        BigDecimal maxPrecioBd = repo.findMaxPrecio();
+
+        if (maxPrecioBd == null) {
+            return 1000L;
+        }
+
+        return (long) Math.ceil(maxPrecioBd.doubleValue());
+    }
+
+    // Obtener Lista de Tipos 
+    @Override
+    public List<String> obtenerTodosLosTipos() {
+        return repo.findAllTipos();
+    }
 }

@@ -1,135 +1,179 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* Limpieza básica */
+* { box-sizing: border-box; }
 
 body {
-  font-family: "Inter", sans-serif;
+  font-family: "Circular", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
   background-color: #ffffff;
   color: #222;
-  /* Añadimos padding superior para compensar el header fijo (100px + espacio) */
-  padding-top: 120px;
+  padding-top: 120px; 
+  margin: 0;
+  scroll-behavior: smooth; /* Scroll suave general */
 }
 
-main {
-  max-width: 1000px;
-  /* Margen ajustado ya que el body se encarga del espacio superior */
-  margin: 0 auto 40px auto;
-  background: #fff;
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+/* LAYOUT PRINCIPAL */
+.airbnb-layout {
+    max-width: 1120px;
+    margin: 0 auto 40px auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 80px; 
+    /* ELIMINADO: align-items: start; -> Esto impedía que la columna creciera y el sticky funcionara */
 }
 
-/* Carrusel */
-.carousel {
-  position: relative;
-  width: 100%;
-  max-width: 600px;
-  margin-bottom: 20px;
-}
+.content-column { min-width: 0; }
 
 .carousel img {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
-  border-radius: 10px;
-  transition: transform 0.3s ease;
+    width: 100%;
+    height: 400px; 
+    object-fit: cover;
+    border-radius: 12px; 
+    margin-bottom: 20px;
+    display: block;
 }
 
-.carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
-  border: none;
-  font-size: 24px;
-  padding: 8px 12px;
-  cursor: pointer;
-  border-radius: 50%;
+.divider { height: 1px; background-color: #dddddd; margin: 32px 0; }
+
+/* STICKY COLUMN */
+.sidebar-column {
+    position: relative; 
+    height: 100%; /* Asegura que la columna ocupa toda la altura disponible */
 }
 
-.carousel-btn.prev {
-  left: 10px;
+/* Animación de entrada "monilla" */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.carousel-btn.next {
-  right: 10px;
+.reservation-card-sticky {
+    position: sticky;
+    top: 140px; 
+    border: 1px solid #dddddd;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    background: white;
+    z-index: 10;
+    
+    /* Animación de entrada */
+    animation: fadeInUp 0.8s ease-out;
+    
+    /* Transición suave para sombras o efectos hover */
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-.carousel-btn:hover {
-  background: rgba(0, 0, 0, 0.7);
+/* Efecto sutil al pasar el ratón para que no se sienta estático */
+.reservation-card-sticky:hover {
+    box-shadow: 0 12px 24px rgba(0,0,0,0.18);
+    transform: translateY(-2px);
 }
 
-/* Sección de precio y reserva */
-.price-reserve {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
+.card-header-price {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 24px;
 }
 
-#detallePrecio {
-  font-size: 20px;
-  font-weight: 700;
-  color: #0071c2;
+.price-big { font-size: 22px; font-weight: 600; }
+.price-suffix { font-size: 16px; color: #717171; }
+
+.input-dates-wrapper {
+    border: 1px solid #b0b0b0;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 16px;
+    cursor: pointer;
 }
 
-.btn-reserve {
-  background-color: #0071c2;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.3s;
+.airbnb-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    color: #222;
+    background: transparent;
+    cursor: pointer;
 }
 
-.btn-reserve:hover {
-  background-color: #005b9a;
+/* BOTONES */
+.btn-reservar-final {
+    width: 100%;
+    background-color: #0071c2;
+    color: white;
+    border: none;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.2s, transform 0.1s;
 }
 
-/* Información y comentarios */
-.info-section,
-.comments {
-  margin-top: 40px;
+.btn-reservar-final:hover { 
+    background-color: #005a9c; 
+    transform: scale(1.02);
 }
 
-#lodgingDescription {
-  margin-top: 10px;
-  line-height: 1.6;
-  color: #444;
+.btn-reservar-login {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background-color: #666;
+    color: white;
+    padding: 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 10px;
+    transition: background 0.2s;
 }
+.btn-reservar-login:hover { background-color: #444; }
 
-.comment {
-  border-top: 1px solid #ddd;
-  padding: 15px 0;
-}
-
-.comment strong {
-  font-size: 15px;
-  color: #333;
-}
-
-.comment span {
-  color: #888;
-  margin-left: 8px;
+.btn-login-comment {
+    background-color: #0071c2;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 .btn-volver {
-  display: inline-block;
-  margin-top: 40px;
-  background: #eee;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s;
+    margin-top: 40px;
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
 }
 
-.btn-volver:hover {
-  background: #ddd;
+/* Valoraciones */
+.rating-container { display: flex; align-items: center; }
+.star-widget { display: inline-block; font-size: 2rem; cursor: pointer; position: relative; }
+.star-wrapper { position: relative; display: inline-block; }
+.stars-gray { color: #e0e0e0; }
+.stars-gold { color: #f5a623; position: absolute; top: 0; left: 0; white-space: nowrap; overflow: hidden; width: 0%; pointer-events: none; }
+
+@media (max-width: 900px) {
+    .airbnb-layout {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    .reservation-card-sticky {
+        position: static; 
+        margin-top: 20px;
+        animation: none; /* En móvil quitamos la animación de entrada compleja */
+    }
 }

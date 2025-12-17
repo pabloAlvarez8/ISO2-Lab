@@ -1,36 +1,51 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión</title>
-    <link rel="stylesheet" th:href="@{/css/styleLogin.css}" />
+    <link rel="stylesheet" th:href="@{/css/styleLogin.css}">
 </head>
 <body>
-    <div class="container">
-        <h2>Inicia sesión</h2>
 
-        <div th:if="${param.error}" class="alert">
-            Email o contraseña incorrectos.
-        </div>
+    <div class="login-container">
         
-        <div th:if="${param.logout}" class="alert">
-             Has cerrado sesión correctamente.
+        <div class="logo-container">
+            <img th:src="@{/images/logo_2.png}" alt="Logo Inmobiliaria">
         </div>
 
-        <div th:if="${successMessage}" class="alert" style="background-color: #d4edda; color: #155724;">
-            <p th:text="${successMessage}"></p>
+        <h2>¡Hola de nuevo!</h2>
+        <span class="subtitle">Ingresa tus credenciales para continuar</span>
+
+        <div th:if="${param.error}" class="alert-error">
+            Usuario o contraseña incorrectos.
+        </div>
+        <div th:if="${param.logout}" class="alert-error" style="background-color: #e6fffa; color: #007d6a; border-left-color: #007d6a;">
+            Has cerrado sesión correctamente.
         </div>
 
+        <form th:action="@{/login}" method="post">
+            
+            <div class="form-group">
+                <label for="username">Usuario (Email)</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="correo@ejemplo.com" required autofocus>
+            </div>
 
-        <form th:action="@{/login}" method="post" class="form-login">
-            <input type="email" id="username" name="username" placeholder="Correo electrónico" required />
-            <input type="password" id="password" name="password" placeholder="Contraseña" required />
-            <button type="submit">Iniciar sesión</button>
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn-primary">Entrar</button>
+
         </form>
 
-        <div class="register-link">
-            ¿No tienes cuenta? <a th:href="@{/register}">Regístrate aquí</a>
+        <div class="login-footer">
+            <p>¿No tienes cuenta? <a th:href="@{/register}">Regístrate aquí</a></p>
+            <p style="margin-top: 10px;"><a th:href="@{/}">Volver al Inicio</a></p>
         </div>
+
     </div>
+
 </body>
 </html>

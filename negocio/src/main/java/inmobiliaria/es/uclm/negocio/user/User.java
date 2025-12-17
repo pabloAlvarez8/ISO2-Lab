@@ -27,6 +27,9 @@ public class User {
     @Column(nullable = false)
     private String apellido;
 
+    @Column(name = "telefono", unique = true)
+    private String telefono;
+
     private String direccion;
 
     @Column(name = "url_foto_perfil")
