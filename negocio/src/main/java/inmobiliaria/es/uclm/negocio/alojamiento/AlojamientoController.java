@@ -2,19 +2,10 @@ package inmobiliaria.es.uclm.negocio.alojamiento;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-// Imports para la autenticación y el guardado
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
-import inmobiliaria.es.uclm.negocio.user.User;
-import inmobiliaria.es.uclm.negocio.user.UserService;
 
-// Imports para valoraciones
+
 import inmobiliaria.es.uclm.negocio.valoracion.ValoracionService;
 import inmobiliaria.es.uclm.negocio.valoracion.ValoracionInmueble;
 
@@ -25,6 +16,13 @@ import java.util.List;
 public class AlojamientoController {
 
     private final AlojamientoService_Interfaz alojamientoService;
+    // No necesitamos UserService aquí porque lo gestionaremos dentro del AlojamientoService
+
+    public AlojamientoController(AlojamientoService_Interfaz alojamientoService) {
+        this.alojamientoService = alojamientoService;
+    }
+
+    // --- MÉTODOS DE BÚSQUEDA (Los dejamos igual) ---
     private final UserService userService;
     private final ValoracionService valoracionService; // Servicio de valoraciones
 
@@ -60,19 +58,21 @@ public class AlojamientoController {
         model.addAttribute("filtroCiudad", ciudad);
         model.addAttribute("filtroTipo", type);
         model.addAttribute("filtroCapacidad", capacity);
-
-        return "Buscador"; // Devuelve la plantilla 'Buscador.html'
+        return "Buscador";
     }
 
-    /**
-     * Muestra el formulario para crear un nuevo alojamiento.
-     */
+    // Muestra el formulario 
     @GetMapping("/nuevo")
     public String mostrarFormulario(Model model) {
         model.addAttribute("alojamiento", new Alojamiento());
-        return "form-alojamiento";
+        // IMPORTANTE: Aquí debe ir el nombre exacto de tu archivo HTML creado en templates
+        return "nuevoAlojamiento"; 
     }
 
+    // Guarda el alojamiento 
+    @PostMapping("/guardar")
+    public String guardar(@ModelAttribute Alojamiento alojamiento, Authentication authentication) {
+        // Obtenemos el email del usuario conectado
     /**
      * Procesa el guardado del nuevo alojamiento.
      */
@@ -83,24 +83,33 @@ public class AlojamientoController {
         }
         
         String userEmail = authentication.getName();
-        User anfitrion = userService.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        
+        // Delegamos TODA la lógica al servicio (buscar usuario, asignar casa, cambiar rol)
+        alojamientoService.guardarNuevoAlojamiento(alojamiento, userEmail);
 
+        // Al terminar, volvemos al perfil para ver la nueva casa en la lista
+        return "redirect:/perfil"; 
         alojamiento.setAnfitrion(anfitrion);
         alojamientoService.guardar(alojamiento);
 
         return "redirect:/alojamientos";
     }
 
-    /**
-     * Elimina un alojamiento.
-     */
+    // ELIMINAR 
     @GetMapping("/eliminar/{id}")
     public String eliminar(@PathVariable Long id) {
         alojamientoService.eliminar(id);
-        return "redirect:/alojamientos";
+        return "redirect:/perfil"; // Mejor volver al perfil si borras desde ahí
     }
 
+    // DETALLE 
+    @GetMapping("/detalleAlojamientos")
+    public String detalleAlojamientos(@RequestParam Long id, Model model) {
+        if (id == null) return "redirect:/alojamientos";
+        Alojamiento alojamiento = alojamientoService.findById(id);
+        if (alojamiento == null) return "redirect:/alojamientos";
+        
+        model.addAttribute("alojamiento", alojamiento);
     /**
      * Muestra la página de detalle.
      * INCLUYE la lógica de valoraciones.
@@ -130,5 +139,20 @@ public class AlojamientoController {
         model.addAttribute("mediaValoracion", media);
 
         return "detalleAlojamientos";
+    }
+
+    // EDITAR ALOJAMIENTO 
+    @GetMapping("/editar/{id}")
+    public String editarAlojamiento(@PathVariable Long id, Model model) {
+        // 1. Buscamos el alojamiento por su ID
+        Alojamiento alojamiento = alojamientoService.findById(id);
+        
+        // 2. Si existe, lo pasamos al modelo y abrimos el formulario
+        if (alojamiento != null) {
+            model.addAttribute("alojamiento", alojamiento);
+            return "nuevoAlojamiento"; // Reutilizamos la vista de crear
+        }
+        
+        return "redirect:/perfil";
     }
 }
