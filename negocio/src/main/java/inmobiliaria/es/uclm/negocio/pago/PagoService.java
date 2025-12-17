@@ -1,7 +1,7 @@
 package inmobiliaria.es.uclm.negocio.pago;
 
 import org.springframework.stereotype.Service;
-
+import java.util.Random;
 
 @Service
 public class PagoService {

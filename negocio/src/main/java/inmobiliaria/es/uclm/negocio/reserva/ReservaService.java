@@ -23,8 +23,8 @@ public class ReservaService {
     }
 
     // Se usará en el PagoController (desaparecerá el aviso gris pronto)
-    public Reserva findById(Long id) {
-    return reservaRepository.findById(id).orElse(null);
+    public Optional<Reserva> findById(Long id) {
+        return reservaRepository.findById(id);
     }
 
     public void eliminar(Long id) {
@@ -40,6 +40,4 @@ public class ReservaService {
     public List<Reserva> obtenerReservasDeAnfitrion(Long idAnfitrion) {
         return reservaRepository.findByAlojamiento_Anfitrion_Id(idAnfitrion);
     }
-
-    
 }

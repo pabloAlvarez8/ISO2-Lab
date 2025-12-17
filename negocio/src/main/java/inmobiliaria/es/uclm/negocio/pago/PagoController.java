@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 public class PagoController {
 
     private final ReservaService reservaService;
-    private final PagoService pagoService;
+    private final PagoService pagoService; // Inyectamos el simulador
 
     public PagoController(ReservaService reservaService, PagoService pagoService) {
         this.reservaService = reservaService;
@@ -21,13 +21,8 @@ public class PagoController {
     // 1. MOSTRAR PANTALLA
     @GetMapping("/pago/{idReserva}")
     public String mostrarPasarela(@PathVariable Long idReserva, Model model) {
-        // CORRECCIÓN: Ya no usamos .orElseThrow() porque findById devuelve la Reserva directa
-        Reserva reserva = reservaService.findById(idReserva);
-
-        // Comprobación manual: Si es null, lanzamos el error
-        if (reserva == null) {
-            throw new RuntimeException("Reserva no encontrada");
-        }
+        Reserva reserva = reservaService.findById(idReserva)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
 
         model.addAttribute("reserva", reserva);
         model.addAttribute("precioAPagar", reserva.getPrecioTotal());
@@ -38,24 +33,25 @@ public class PagoController {
     @PostMapping("/procesar")
     public String procesarPago(
             @RequestParam Long idReserva,
-            @RequestParam String metodoPago, 
+            @RequestParam String metodoPago, // "tarjeta" o "paypal"
+            // Datos opcionales según el método
             @RequestParam(required = false) String numeroTarjeta,
             @RequestParam(required = false) String emailPaypal,
             Model model) {
 
-        // CORRECCIÓN: Igual aquí, quitamos .orElseThrow()
-        Reserva reserva = reservaService.findById(idReserva);
-
-        if (reserva == null) {
-            throw new RuntimeException("Reserva no encontrada");
-        }
+        // Buscar reserva
+        Reserva reserva = reservaService.findById(idReserva)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
 
         boolean pagoExitoso = false;
 
-        // Lógica de pago
+        // SWITCH PARA ELEGIR LA LÓGICA
         if ("tarjeta".equals(metodoPago)) {
+            // Llamamos a tu lógica de tarjeta
             pagoExitoso = pagoService.procesarPagoTarjeta(numeroTarjeta, "12/25", "123");
+
         } else if ("paypal".equals(metodoPago)) {
+            // Llamamos a tu lógica de PayPal
             pagoExitoso = pagoService.procesarPagoPayPal(emailPaypal);
         }
 
@@ -63,10 +59,10 @@ public class PagoController {
         if (pagoExitoso) {
             reserva.setEstado("PAGADO");
             reservaService.guardar(reserva);
-            // Redirigimos al perfil para que veas la reserva actualizada
-            return "redirect:/perfil"; 
+            return "redirect:/alojamientos"; // O a "Mis Viajes"
         } else {
-            return "redirect:/pagos/pago/" + idReserva + "?error=true";
+            // Si falla, volvemos a la pasarela con un error
+            return "redirect:/pagos/pasarela/" + idReserva + "?error=true";
         }
     }
 }
