@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
     <title>Iniciar Sesión</title>
-    <link rel="stylesheet" th:href="@{/css/styleLogin.css}">
+
+    <link rel="stylesheet" th:href="@{/css/buttons.css}" />
+    <link rel="stylesheet" th:href="@{/css/styleLogin.css}" />
 </head>
 <body>
 
     <div class="login-container">
-        
+
         <div class="logo-container">
             <img th:src="@{/images/logo_2.png}" alt="Logo Inmobiliaria">
         </div>
@@ -24,25 +25,24 @@
             Has cerrado sesión correctamente.
         </div>
 
+        <div th:if="${successMessage}" class="alert" style="background-color: #d4edda; color: #155724;">
+            <p th:text="${successMessage}"></p>
+        </div>
+
+
         <form th:action="@{/login}" method="post">
-            
             <div class="form-group">
-                <label for="username">Usuario (Email)</label>
-                <input type="text" id="username" name="username" class="form-control" placeholder="correo@ejemplo.com" required autofocus>
+                <input type="email" id="username" name="username" class="form-control" placeholder="nombre@ejemplo.com" required>
             </div>
-
             <div class="form-group">
-                <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Contraseña" required />
             </div>
-
-            <button type="submit" class="btn-primary">Entrar</button>
-
+            <button type="submit" class="btn-third mt-login">Iniciar sesión</button>
         </form>
 
         <div class="login-footer">
-            <p>¿No tienes cuenta? <a th:href="@{/register}">Regístrate aquí</a></p>
-            <p style="margin-top: 10px;"><a th:href="@{/}">Volver al Inicio</a></p>
+            <p>¿No tienes cuenta? <a th:href="@{/register}" class="auth-link">Regístrate aquí</a></p>
+            <p style="margin-top: 10px;"><a th:href="@{/}" class="btn-secondary">Volver al Inicio</a></p>
         </div>
 
     </div>

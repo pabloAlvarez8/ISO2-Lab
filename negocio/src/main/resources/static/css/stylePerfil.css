@@ -132,41 +132,8 @@ main {
     margin-top: 10px;
 }
 
-/* Botones del perfil */
-.btn-secondary {
-    flex: 1;
-    text-align: center;
-    text-decoration: none;
-    background-color: #fff;
-    border: 2px solid #eef4ff;
-    color: #4b8fe7;
-    padding: 12px 0;
-    border-radius: 30px;
-    font-weight: 600;
-    transition: all 0.2s ease;
-}
-
-.btn-secondary:hover {
-    border-color: #4b8fe7;
-    background-color: #f5f8ff;
-}
-
-.btn-logout {
-    width: 100%;
-    background-color: #fff0f0;
-    color: #d93025;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 30px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btn-logout:hover {
-    background-color: #ffe5e5;
-    transform: translateY(-2px);
-}
+/* ELIMINADO: .btn-secondary (Usar class="btn btn-secondary") */
+/* ELIMINADO: .btn-logout (Usar class="btn btn-danger") */
 
 form {
     flex: 1;
@@ -293,29 +260,7 @@ form {
     text-align: center;
 }
 
-.btn-detalle {
-    margin-top: 15px;
-    width: 100%;
-    cursor: pointer;
-    color: #4b8fe7;
-    background: none;
-    border: 1px solid #4b8fe7;
-    padding: 8px;
-    border-radius: 20px;
-    font-weight: 600;
-
-    display: block;
-    text-decoration: none;
-    text-align: center;
-    box-sizing: border-box;
-    transition: all 0.3s;
-}
-
-.btn-detalle:hover {
-    background-color: #4b8fe7;
-    color: white !important;
-    text-decoration: none;
-}
+/* ELIMINADO: .btn-detalle (Usar class="btn btn-secondary btn-block mt-3") */
 
 /* --- Estilos Tarjeta Alojamiento (Anfitrión) --- */
 .card-alojamiento {
@@ -347,29 +292,8 @@ form {
     margin-top: 15px;
 }
 
-.btn-edit {
-    background: #eef4ff;
-    color: #2c5394;
-    border:none;
-    padding:8px 15px;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight: 600;
-    flex: 1;
-}
-
-.btn-delete {
-    background: #fff5f5;
-    color: #d93025;
-    border:none;
-    padding:8px 15px;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight: 600;
-    text-decoration: none;
-    text-align: center;
-    font-size: 13px;
-}
+/* ELIMINADO: .btn-edit, .btn-delete */
+/* Ahora usarás class="btn btn-secondary" y "btn btn-danger" respectivamente en HTML */
 
 /* --- Solicitudes de Reserva (Anfitrión) --- */
 .section-host {
@@ -383,16 +307,8 @@ form {
     margin-bottom: 20px;
 }
 
-.btn-add-new {
-    background: #4b8fe7;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 30px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 14px;
-    box-shadow: 0 4px 10px rgba(75, 143, 231, 0.3);
-}
+/* ELIMINADO: .btn-add-new */
+/* Ahora usar class="btn btn-primary" */
 
 .request-item {
     background: white;
@@ -429,32 +345,10 @@ form {
     gap: 10px;
 }
 
-.btn-accept, .btn-reject {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor:pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    border: none;
-    transition: transform 0.2s;
-}
-
-.btn-accept {
-    background: #e6fffa;
-    color: #00a082;
-}
-
-.btn-reject {
-    background: #fff5f5;
-    color: #d93025;
-}
-
-.btn-accept:hover, .btn-reject:hover {
-    transform: scale(1.1);
-}
+/* ELIMINADO: .btn-accept, .btn-reject */
+/* IMPORTANTE: Si eran botones circulares con icono,
+   asegúrate de que en buttons.css tienes una clase .btn-circle
+   o usa estilo inline para hacerlos redondos. */
 
 /* --- Estados vacíos (Empty States) --- */
 .empty-state {
@@ -474,16 +368,8 @@ form {
     color: #888;
 }
 
-.btn-action {
-    display: inline-block;
-    margin-top: 15px;
-    color: white;
-    background: #2c5394;
-    padding: 10px 25px;
-    border-radius: 30px;
-    text-decoration: none;
-    font-weight: 600;
-}
+/* ELIMINADO: .btn-action */
+/* Usar class="btn btn-primary" */
 
 /* =========================================
    FOOTER

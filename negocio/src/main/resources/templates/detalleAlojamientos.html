@@ -1,31 +1,32 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Detalles del alojamiento — Inmobiliarias Paqui</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalles del alojamiento — Inmobiliarias Paqui</title>
 
-  <link rel="stylesheet" th:href="@{/css/stylePaginaPrincipal.css}" />
-  <link rel="stylesheet" th:href="@{/css/styleDetalle.css}" />
-  <link rel="stylesheet" th:href="@{/css/styleHeader.css}" />
-  
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" th:href="@{/css/stylePaginaPrincipal.css}" />
+    <link rel="stylesheet" th:href="@{/css/styleDetalle.css}" />
+    <link rel="stylesheet" th:href="@{/css/styleHeader.css}" />
+    <link rel="stylesheet" th:href="@{/css/buttons.css}">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 
 <body>
 
-  <div th:replace="~{fragments/header-2 :: header_2-nav}"></div>
+<div th:replace="~{fragments/header-2 :: header_2-nav}"></div>
 
-  <main>
+<main>
     <div class="airbnb-layout">
 
         <div class="content-column">
-            
+
             <div class="carousel">
-                <img id="detalleImg" 
-                     th:src="${alojamiento.fotoUrl != null && !alojamiento.fotoUrl.isEmpty() ? alojamiento.fotoUrl : 'https://via.placeholder.com/800x400?text=Sin+Imagen'}" 
+                <img id="detalleImg"
+                     th:src="${alojamiento.fotoUrl != null && !alojamiento.fotoUrl.isEmpty() ? alojamiento.fotoUrl : 'https://via.placeholder.com/800x400?text=Sin+Imagen'}"
                      alt="Imagen del alojamiento" />
-             </div>
+            </div>
 
             <div style="margin-top: 24px;">
                 <h1 th:text="${alojamiento.nombre}" style="font-size: 26px; margin-bottom: 10px;">Título</h1>
@@ -38,7 +39,7 @@
             <div class="description-section">
                 <h2 style="font-size: 22px; margin-bottom: 16px;">Descripción del alojamiento</h2>
                 <p style="line-height: 1.6; color: #444; white-space: pre-line;" th:text="${alojamiento.descripcion}">
-                   Descripción...
+                    Descripción...
                 </p>
             </div>
 
@@ -48,12 +49,12 @@
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
                     <h2 style="margin: 0;">⭐ <span id="mediaValoracionTexto" th:text="${mediaValoracion}">0.0</span> · Opiniones</h2>
                 </div>
-        
+
                 <div sec:authorize="isAuthenticated()" style="background: #f7f7f7; padding: 20px; border-radius: 12px; margin-bottom: 30px;">
                     <h3 style="margin-top: 0;">Escribe tu opinión</h3>
                     <form id="formValoracion">
-                        <input type="hidden" id="usuarioLogueadoId" th:value="${#authentication.principal.id}" /> 
-                        
+                        <input type="hidden" id="usuarioLogueadoId" th:value="${#authentication.principal.id}" />
+
                         <div style="margin-bottom: 15px;">
                             <label style="font-weight: 600; display: block; margin-bottom: 8px;">Puntuación:</label>
                             <div class="rating-container">
@@ -73,16 +74,16 @@
                         <button type="submit" class="btn-login-comment" style="border: none; cursor: pointer;">Publicar reseña</button>
                     </form>
                 </div>
-                
+
                 <div sec:authorize="!isAuthenticated()" style="text-align: center; margin: 30px 0; padding: 20px; border: 1px solid #dddddd; border-radius: 12px;">
                     <p style="margin-bottom: 15px; color: #222; font-weight: 600;">¿Te has alojado aquí?</p>
                     <a href="/login" class="btn-login-comment" style="text-decoration: none;">Inicia sesión para opinar</a>
                 </div>
-        
+
                 <div id="listaComentarios" style="display: grid; gap: 24px;">
                     <div th:each="val : ${valoraciones}" class="comentario-item">
                         <div style="margin-bottom: 8px;">
-                            <strong th:text="${val.usuario.nombre}" style="font-size: 16px;">Usuario</strong> 
+                            <strong th:text="${val.usuario.nombre}" style="font-size: 16px;">Usuario</strong>
                             <span style="color: #717171; font-size: 14px; margin-left: 10px;" th:text="${#temporals.format(val.createdAt, 'dd-MM-yyyy')}">Fecha</span>
                         </div>
                         <div style="display: flex; align-items: center; margin-bottom: 8px;">
@@ -92,7 +93,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <button class="btn-volver" onclick="window.location.href='/alojamientos'" style="margin-bottom: 20px;">
                 ← Volver al buscador
             </button>
@@ -100,7 +101,7 @@
 
         <div class="sidebar-column">
             <div class="reservation-card-sticky">
-                
+
                 <div th:if="${error}" style="color: #c13515; font-weight: bold; margin-bottom: 15px;" th:text="${error}"></div>
 
                 <div class="card-header-price">
@@ -127,10 +128,10 @@
                     </div>
 
                     <button type="submit" class="btn-reservar-final" sec:authorize="isAuthenticated()">Reservar</button>
-                    
+
                     <a href="/login" class="btn-reservar-login" sec:authorize="!isAuthenticated()">Inicia sesión para reservar</a>
                 </form>
-                
+
                 <div sec:authorize="isAuthenticated()" style="text-align: center; margin-top: 15px; font-size: 14px; color: #717171;">
                     No se te cobrará nada todavía
                 </div>
@@ -147,16 +148,16 @@
                 </div>
 
             </div>
-        </div> 
+        </div>
     </div>
-  </main>
+</main>
 
-  <footer style="text-align: center; padding: 20px; border-top: 1px solid #ddd; margin-top: 40px;">
+<footer style="text-align: center; padding: 20px; border-top: 1px solid #ddd; margin-top: 40px;">
     © 2025 Inmobiliarias Paqui
-  </footer>
+</footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/rangePlugin.js"></script>
-  <script th:src="@{/js/detalleAlojamientos.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/rangePlugin.js"></script>
+<script th:src="@{/js/detalleAlojamientos.js}"></script>
 </body>
 </html>

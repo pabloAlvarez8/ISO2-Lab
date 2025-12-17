@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Usuario</title>
-    <link rel="stylesheet" th:href="@{/css/styleRegister.css}"> 
+    <link rel="stylesheet" th:href="@{/css/styleRegister.css}">
+    <link rel="stylesheet" th:href="@{/css/buttons.css}" />
 </head>
 <body>
 
     <div class="login-container" style="max-width: 550px;">
-        
+
         <div class="logo-container">
             <img th:src="@{/images/logo_2.png}" alt="Logo Inmobiliaria">
         </div>
@@ -25,7 +26,7 @@
         </div>
 
         <form th:action="@{/register}" th:object="${user}" method="post">
-            
+
             <div class="row-input">
                 <div class="form-group">
                     <label for="nombre">Nombre</label>
@@ -55,7 +56,7 @@
 
             <input type="hidden" th:field="*{role}" th:value="${T(inmobiliaria.es.uclm.negocio.user.User.Role).INQUILINO}" />
 
-            <button type="submit" class="btn-primary">Continuar</button>
+            <button type="submit" class="btn-third">Continuar</button>
 
         </form>
 

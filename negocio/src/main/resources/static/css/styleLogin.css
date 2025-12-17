@@ -11,7 +11,7 @@ body {
     /* CORRECCIÓN: Gradiente vertical (to bottom).
        Parte más clara (#0084ff) arriba y más oscura (#0056b3) abajo */
     background: linear-gradient(to bottom, #0084ff 0%, #0056b3 100%);
-    
+
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -90,16 +90,16 @@ body {
     gap: 15px;
 }
 .row-input .form-group {
-    flex: 1; 
+    flex: 1;
 }
 
 .btn-primary {
     width: 100%;
     padding: 14px;
-    
+
     /* CORRECCIÓN: Botón SÓLIDO, sin gradiente */
-    background: #0084ff; 
-    
+    background: #0084ff;
+
     color: white;
     border: none;
     border-radius: 10px;
@@ -112,7 +112,7 @@ body {
 
 .btn-primary:hover {
     /* Al pasar el ratón oscurecemos un poco el color sólido */
-    background: #006bce; 
+    background: #006bce;
     box-shadow: 0 8px 20px rgba(0, 132, 255, 0.4);
 }
 
@@ -141,3 +141,10 @@ body {
     margin-bottom: 20px;
     border-left: 4px solid #d93025;
 }
+
+.login-link a:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+

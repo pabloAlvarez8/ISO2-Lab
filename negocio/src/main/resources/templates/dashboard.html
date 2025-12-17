@@ -17,18 +17,22 @@
 
         <div class="dashboard-actions">
 
-            <a th:href="@{/perfil}" class="btn">Ver mi Perfil</a>
-            
-            <a th:if="${botonVolver != null}" 
-               th:href="${botonVolver}" 
-               class="btn" >
-               Volver a la página anterior
+            <a th:href="@{/perfil}" class="btn btn-primary btn-block">
+            Ver mi Perfil
             </a>
 
-            <a th:href="@{/}" class="btn">Volver a Inicio</a>
-            
-            <form th:action="@{/logout}" method="POST">
-                <button type="submit" class="btn btn-logout">
+            <a th:if="${botonVolver != null}"
+               th:href="${botonVolver}"
+               class="btn btn-secondary" >
+                Volver a la página anterior
+            </a>
+
+            <a th:href="@{/}" class="btn btn-secondary btn-block">
+                Volver a Inicio
+            </a>
+
+            <form th:action="@{/logout}" method="POST" style="width: 100%;">
+                <button type="submit" class="btn btn-danger btn-block">
                     Cerrar Sesión
                 </button>
             </form>
