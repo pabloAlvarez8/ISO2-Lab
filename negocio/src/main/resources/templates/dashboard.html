@@ -3,29 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    
+    <title>Dashboard - Inmobiliarias Paqui</title>
+
+    <link rel="stylesheet" th:href="@{/css/buttons.css}">
     <link rel="stylesheet" th:href="@{/css/styleDashboard.css}">
 </head>
 <body>
 
-    <div class="container">
-        
-        <h2>¡Bienvenido!</h2>
-        
-        <p>Has iniciado sesión correctamente.</p>
+<div class="container">
 
-        <div class="dashboard-actions">
+    <h2>¡Bienvenido!</h2>
 
-            <a th:href="@{/perfil}" class="btn">Ver mi Perfil</a>
-            
-            <a th:href="@{/}" class="btn">Volver a Inicio</a>
-            
-            <form th:action="@{/logout}" method="POST">
-                <button type="submit" class="btn btn-logout">
-                    Cerrar Sesión
-                </button>
-            </form>
+    <p>Has iniciado sesión correctamente.</p>
 
-        </div> </div> </body>
+    <div class="dashboard-actions">
+
+        <a th:href="@{/perfil}" class="btn btn-primary btn-block">
+            Ver mi Perfil
+        </a>
+
+        <a th:href="@{/}" class="btn btn-secondary btn-block">
+            Volver a Inicio
+        </a>
+
+        <form th:action="@{/logout}" method="POST" style="width: 100%;">
+            <button type="submit" class="btn btn-danger btn-block">
+                Cerrar Sesión
+            </button>
+        </form>
+
+    </div>
+</div>
+
+</body>
 </html>

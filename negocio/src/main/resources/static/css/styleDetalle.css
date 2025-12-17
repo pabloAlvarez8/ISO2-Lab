@@ -1,137 +1,108 @@
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-  font-family: "Inter", sans-serif;
-  background-color: #ffffff;
-  color: #222;
-  /* Añadimos padding superior para compensar el header fijo (100px + espacio) */
-  padding-top: 120px;
+    font-family: "Inter", sans-serif;
+    background-color: #ffffff;
+    color: #222;
+    /* Padding superior para compensar el header fijo (100px) */
+    padding-top: 120px;
 }
 
 main {
-  max-width: 1000px;
-  /* Margen ajustado ya que el body se encarga del espacio superior */
-  margin: 0 auto 40px auto;
-  background: #fff;
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 1000px;
+    /* Margen ajustado ya que el body se encarga del espacio superior */
+    margin: 0 auto 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Carrusel */
 .carousel {
-  position: relative;
-  width: 100%;
-  max-width: 600px;
-  margin-bottom: 20px;
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 20px;
 }
 
 .carousel img {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
-  border-radius: 10px;
-  transition: transform 0.3s ease;
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
 }
 
+/* Botones del carrusel: Solo mantenemos la POSICIÓN.
+   El estilo visual (color, borde) lo pondrá buttons.css */
 .carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
-  border: none;
-  font-size: 24px;
-  padding: 8px 12px;
-  cursor: pointer;
-  border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    /* Se han eliminado colores y bordes */
 }
 
 .carousel-btn.prev {
-  left: 10px;
+    left: 10px;
 }
 
 .carousel-btn.next {
-  right: 10px;
-}
-
-.carousel-btn:hover {
-  background: rgba(0, 0, 0, 0.7);
+    right: 10px;
 }
 
 /* Sección de precio y reserva */
 .price-reserve {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
 }
 
 #detallePrecio {
-  font-size: 20px;
-  font-weight: 700;
-  color: #0071c2;
+    font-size: 20px;
+    font-weight: 700;
+    color: #0071c2;
 }
 
-.btn-reserve {
-  background-color: #0071c2;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.btn-reserve:hover {
-  background-color: #005b9a;
-}
+/* ELIMINADO: .btn-reserve (Usar class="btn btn-primary" en HTML) */
 
 /* Información y comentarios */
 .info-section,
 .comments {
-  margin-top: 40px;
+    margin-top: 40px;
 }
 
 #lodgingDescription {
-  margin-top: 10px;
-  line-height: 1.6;
-  color: #444;
+    margin-top: 10px;
+    line-height: 1.6;
+    color: #444;
 }
 
 .comment {
-  border-top: 1px solid #ddd;
-  padding: 15px 0;
+    border-top: 1px solid #ddd;
+    padding: 15px 0;
 }
 
 .comment strong {
-  font-size: 15px;
-  color: #333;
+    font-size: 15px;
+    color: #333;
 }
 
 .comment span {
-  color: #888;
-  margin-left: 8px;
+    color: #888;
+    margin-left: 8px;
 }
 
+/* Botón volver: Solo mantenemos el margen para separar */
 .btn-volver {
-  display: inline-block;
-  margin-top: 40px;
-  background: #eee;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.btn-volver:hover {
-  background: #ddd;
+    margin-top: 40px;
+    /* El resto se elimina. Usar class="btn btn-secondary" en HTML */
 }
 
 .logo-impresion {
@@ -139,8 +110,9 @@ main {
 }
 
 @media print {
-    /* 1. Ocultamos lo que no sirve en papel */
-    header, footer, nav, .btn-detalle, .btn-volver, .btn-reserve {
+    /* 1. Ocultamos lo que no sirve en papel.
+       Nota: he añadido la clase .btn genérica para ocultar todos los botones */
+    header, footer, nav, .btn {
         display: none !important;
     }
 
@@ -163,13 +135,13 @@ main {
     h1, h2, h3, p, span {
         color: black !important;
     }
-    
+
     /* 4. Opcional: Expandir la grilla para que use todo el ancho */
     .details-grid {
-        display: block; /* A veces grid da problemas en impresoras viejas, block es seguro */
+        display: block;
     }
     .info-group {
         margin-bottom: 20px;
-        page-break-inside: avoid; /* Evita que se corte la info a mitad de página */
+        page-break-inside: avoid;
     }
 }

@@ -58,20 +58,7 @@ header .logo:hover {
   color: #005b9a;
 }
 
-header .btn-register {
-  background-color: #0071c2;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-header .btn-register:hover {
-  background-color: #005b9a;
-}
+/* ELIMINADO: header .btn-register (Usar class="btn btn-primary") */
 
 /* Precio + botón */
 .price-reserve {
@@ -87,20 +74,7 @@ header .btn-register:hover {
   color: #0071c2;
 }
 
-.btn-reserve {
-  background-color: #0071c2;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.btn-reserve:hover {
-  background-color: #005b9a;
-}
+/* ELIMINADO: .btn-reserve (Usar class="btn btn-primary btn-lg") */
 
 /* Información + comentarios */
 .info-section,
@@ -123,20 +97,10 @@ header .btn-register:hover {
   margin-left: 8px;
 }
 
-/* Botón volver */
+/* Botón volver: Solo dejamos el margen, el estilo visual vendrá de buttons.css */
 .btn-volver {
-  display: inline-block;
   margin-top: 40px;
-  background: #eee;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.btn-volver:hover {
-  background: #ddd;
+  /* El resto de estilos se han eliminado para usar class="btn btn-secondary" */
 }
 
 /* FOOTER */

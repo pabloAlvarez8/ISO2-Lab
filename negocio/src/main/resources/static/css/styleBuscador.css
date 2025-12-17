@@ -109,18 +109,22 @@ main.container {
 }
 
 /* Valor del rango */
+/* Valor del rango (Precios y Estrellas) */
 .filter-group span {
   font-weight: 600;
   color: #111;
 }
 
-/* Resultados estilo Airbnb */
+/* CORRECCIÓN: Si el span está dentro de un label (Checkboxes de Tipo), quitar la negrita */
+.filter-group label span {
+  font-weight: 400 !important;
+}
+
 /* Resultados estilo Airbnb */
 .results {
   display: grid;
-  /* CAMBIO IMPORTANTE: */
-  /* 1. Usamos 'auto-fill' en vez de 'auto-fit' para que no estire las columnas si hay pocas */
-  /* 2. Subimos un poco el mínimo (de 250px a 280px) para que las tarjetas se vean mejor */
+  /* 1. Usamos 'auto-fill' en vez de 'auto-fit' */
+  /* 2. Subimos un poco el mínimo a 280px */
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 
   width: 100%;
@@ -137,7 +141,7 @@ main.container {
   display: flex;
   flex-direction: column;
 
-  /* CAMBIO: Quitamos max-width y min-width fijos para que obedezca al Grid */
+  /* Quitamos max-width y min-width fijos para que obedezca al Grid */
   width: 100%;
   /* Opcional: Si no quieres que sean gigantes en pantallas ultra-wide */
   max-width: 400px;
@@ -182,15 +186,7 @@ main.container {
   font-size: 16px;
 }
 
-.btn-book {
-  background-color: #4b8fe7;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 30px;
-  font-size: 14px;
-  cursor: pointer;
-}
+/* ELIMINADO: .btn-book (Ahora usarás class="btn btn-primary btn-sm" en el JS) */
 
 /* Mapa */
 /* Mapa al final de la página */
@@ -222,8 +218,4 @@ main.container {
     order: 3;
     margin-top: 20px;
   }
-}
-
-.filter-group label span {
-  font-weight: 400 !important;
 }

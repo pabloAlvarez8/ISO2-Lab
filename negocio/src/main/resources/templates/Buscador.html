@@ -1,103 +1,105 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Inmobiliarias Paqui - Buscador</title>
-    <link rel="stylesheet" th:href="@{/css/styleBuscador.css}" />
-    <link rel="stylesheet" th:href="@{/css/styleHeader.css}" />
-  </head>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inmobiliarias Paqui - Buscador</title>
 
-  <body>
+  <link rel="stylesheet" th:href="@{/css/buttons.css}" />
+  <link rel="stylesheet" th:href="@{/css/styleBuscador.css}" />
+  <link rel="stylesheet" th:href="@{/css/styleHeader.css}" />
+</head>
 
-    <div th:replace="~{fragments/header-2 :: header_2-nav}"></div>
+<body>
 
-    <!-- Sidebar fijo -->
-    <aside class="filters" aria-label="Filtros">
-      <h3>Filtrar resultados</h3>
+<div th:replace="~{fragments/header :: navbar(true)}"></div>
 
-      <div class="filter-group">
-        <div style="font-size: 13px; margin-bottom: 6px">Tipo:</div>
+<aside class="filters" aria-label="Filtros">
+  <h3>Filtrar resultados</h3>
 
-        <div th:each="tipo : ${listaTipos}">
-          <label>
-            <input
-                    type="checkbox"
-                    class="filter-type"
-                    th:value="${tipo}"
-                    checked
-            />
-            <span th:text="${tipo}">Hotel</span>
-          </label>
-        </div>
+  <div class="filter-group">
+    <div style="font-size: 13px; margin-bottom: 6px">Tipo</div>
 
-        <div th:if="${#lists.isEmpty(listaTipos)}" style="font-size:12px; color:#888;">
-          No hay tipos disponibles
-        </div>
-      </div>
-
-      <div class="filter-group">
-        <div style="font-size: 13px; margin-bottom: 6px">Precio máximo (€):</div>
+    <div th:each="tipo : ${listaTipos}">
+      <label>
         <input
-                type="range"
-                id="maxPrice"
-                min="0"
-                th:max="${precioMaximo}"
-                th:value="${precioMaximo}"
-                step="1"
+                type="checkbox"
+                class="filter-type"
+                th:value="${tipo}"
+                checked
         />
-        <div style="font-size: 12px; color: #555">
-          Hasta: <span id="maxPriceVal" th:text="${precioMaximo}">1000</span> €
-        </div>
-      </div>
+        <span th:text="${tipo}">Hotel</span>
+      </label>
+    </div>
 
-      <div class="filter-group">
-        <div style="font-size: 13px; margin-bottom: 6px">Puntuación mínima:</div>
-        <input
-          type="range"
-          id="minRating"
-          min="0"
-          max="5"
-          value="0"
-          step="0.5"
-        />
-        <div style="font-size: 12px; color: #555">
-          Desde: <span id="minRatingVal">0</span> ⭐
-        </div>
-      </div>
+    <div th:if="${#lists.isEmpty(listaTipos)}" style="font-size:12px; color:#888;">
+      No hay tipos disponibles
+    </div>
+  </div>
 
-      <div class="filter-group">
-        <div style="font-size: 13px; margin-bottom: 6px">Ordenar:</div>
-        <select id="sortBy">
-          <option value="recommend">Recomendados</option>
-          <option value="price_asc">Precio (bajo → alto)</option>
-          <option value="price_desc">Precio (alto → bajo)</option>
-          <option value="rating">Puntuación</option>
-        </select>
-      </div>
-    </aside>
+  <div class="filter-group">
+    <div style="font-size: 13px; margin-bottom: 6px">Precio máximo (€)</div>
+    <input
+            type="range"
+            id="maxPrice"
+            min="0"
+            th:max="${precioMaximo}"
+            th:value="${precioMaximo}"
+            step="1"
+    />
+    <div style="font-size: 12px; color: #555">
+      Hasta: <span id="maxPriceVal" th:text="${precioMaximo}">1000</span> €
+    </div>
+  </div>
 
-    <!-- Contenido principal -->
-    <div class="main-wrapper">
-      <main class="container">
-        <section>
-          <div
-            style="
+  <div class="filter-group">
+    <div style="font-size: 13px; margin-bottom: 6px">Puntuación mínima</div>
+    <input
+            type="range"
+            id="minRating"
+            min="0"
+            max="5"
+            value="0"
+            step="0.5"
+    />
+    <div style="font-size: 12px; color: #555">
+      Desde: <span id="minRatingVal">0</span> ⭐
+    </div>
+  </div>
+
+  <div class="filter-group">
+    <div style="font-size: 13px; margin-bottom: 6px">Ordenar</div>
+    <select id="sortBy">
+      <option value="recommend">Recomendados</option>
+      <option value="price_asc">Precio (bajo → alto)</option>
+      <option value="price_desc">Precio (alto → bajo)</option>
+      <option value="rating">Puntuación</option>
+    </select>
+  </div>
+</aside>
+
+<div class="main-wrapper">
+  <main class="container">
+    <section>
+      <div
+              style="
               display: flex;
               justify-content: space-between;
               align-items: center;
               margin-bottom: 10px;
             "
-          >
-            <div id="resultsCount" style="font-weight: 700">
-              Mostrando 0 alojamientos
-            </div>
-          </div>
-          <div class="results" id="resultsList"></div>
-        </section>
-      </main>
-    </div>
+      >
+        <div id="resultsCount" style="font-weight: 700">
+          Mostrando 0 alojamientos
+        </div>
+      </div>
 
-    <script th:src="@{/js/buscador.js}" defer></script>
-  </body>
+      <div class="results" id="resultsList"></div>
+
+    </section>
+  </main>
+</div>
+
+<script th:src="@{/js/buscador.js}" defer></script>
+</body>
 </html>
