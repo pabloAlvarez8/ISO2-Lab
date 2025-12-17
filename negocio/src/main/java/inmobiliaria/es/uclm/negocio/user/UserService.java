@@ -26,8 +26,7 @@ public class UserService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    //  REGISTRO 
-  
+    // --- Tu método de registro (sin cambios) ---
     @Transactional
     public User registerUser(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
@@ -38,7 +37,6 @@ public class UserService implements UserDetailsService {
             // Hashear la contraseña
             user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-            // Asignar rol por defecto (INQUILINO)
             // Asignar rol por defecto
             if (user.getRole() == null) {
                 user.setRole(User.Role.INQUILINO);
@@ -55,7 +53,6 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    // --- MÉTODOS DE BÚSQUEDA ---
     // --- Tus otros métodos (sin cambios) ---
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -65,7 +62,7 @@ public class UserService implements UserDetailsService {
         return userRepository.existsByEmail(email);
     }
 
-    // MÉTODO DE LOGIN (UserDetailsService) 
+    // --- MÉTODO DE LOGIN (UserDetailsService) ---
     
     /**
      * Este es el método que Spring Security llama automáticamente durante el login.
@@ -82,32 +79,7 @@ public class UserService implements UserDetailsService {
                     return new UsernameNotFoundException("Usuario (email) no encontrado: " + email);
                 });
 
-        return new org.springframework.security.core.userdetails.User(
-            usuario.getEmail(), 
-            usuario.getPassword(), 
-            Collections.emptyList() // Roles vacíos por ahora
-        );
-    }
-
-    // CONVERTIR USUARIO EN ANFITRIÓN)
-    @Transactional 
-    public void convertirEnAnfitrion(Long idUsuario, String dni, String telefono, String iban) {
-        User usuario = userRepository.findById(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
-        // Actualizamos sus datos nuevos
-        usuario.setDni(dni);
-        usuario.setTelefono(telefono);
-        usuario.setCuentaBancaria(iban);
-
-        // Cambiamos el rol
-        usuario.setRole(User.Role.PROPIETARIO);
-        
-        // GUARDAMOS EN BASE DE DATOS
-        userRepository.save(usuario);
-        
-        log.info("Usuario {} actualizado a PROPIETARIO con datos completos.", usuario.getEmail());
-    
+        // --- CAMBIO PRINCIPAL ---
         // Devolvemos nuestra clase personalizada que sí tiene el campo ID
         return new CustomUserDetails(
             usuario.getId(),       // Pasamos el ID de la base de datos
@@ -117,7 +89,7 @@ public class UserService implements UserDetailsService {
         );
     }
 
-    // CLASE INTERNA PARA GESTIONAR EL ID 
+    // --- CLASE INTERNA PARA GESTIONAR EL ID ---
     public static class CustomUserDetails extends org.springframework.security.core.userdetails.User {
         private final Long id; // Asumimos que tu ID es Long (ajusta si es String o Integer)
 

@@ -143,31 +143,4 @@ public class ReservaController {
         // En lugar de ir a una página de "gracias", lo enviamos a PAGAR esa reserva específica
         return "redirect:/pagos/pago/" + reservaGuardada.getId();
     }
-
-
-// ACCIÓN DE ACEPTAR (TIC)
-    @GetMapping("/aceptar/{id}") // Antes era "/reservas/aceptar/{id}"
-    public String aceptarReserva(@PathVariable Long id) {
-        Reserva reserva = reservaService.findById(id);
-        if (reserva != null) {
-            reserva.setAceptada(true);
-            reservaService.guardar(reserva);
-        }
-        return "redirect:/perfil";
-    }
-
-    // ACCIÓN DE RECHAZAR (CRUZ)
-    @GetMapping("/rechazar/{id}") // Antes era "/reservas/rechazar/{id}"
-    public String rechazarReserva(@PathVariable Long id) {
-        Reserva reserva = reservaService.findById(id);
-        if (reserva != null) {
-            reserva.setAceptada(false);
-            reservaService.guardar(reserva);
-        }
-        return "redirect:/perfil";
-    }
-
-    
-
-    
 }

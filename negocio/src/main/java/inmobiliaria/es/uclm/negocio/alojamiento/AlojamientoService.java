@@ -11,21 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import inmobiliaria.es.uclm.negocio.user.User;
-import inmobiliaria.es.uclm.negocio.user.UserRepository;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.Date;
-
 @Service
 public class AlojamientoService implements AlojamientoService_Interfaz {
 
     private final AlojamientoRepository repo;
-    private final UserRepository userRepo; 
 
-    // 2. MODIFICA EL CONSTRUCTOR PARA QUE RECIBA LOS DOS REPOSITORIOS
-    public AlojamientoService(AlojamientoRepository repo, UserRepository userRepo) {
+    public AlojamientoService(AlojamientoRepository repo) {
         this.repo = repo;
-        this.userRepo = userRepo;
     }
 
 
@@ -95,7 +87,6 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
                         "%" + ciudad.toLowerCase() + "%"));
             }
 
-            // 2. Filtro de Precio 
             // 2. Filtro de Precio
             if (maxPrice != null) {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("precio"), maxPrice));
@@ -131,33 +122,7 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
         return repo.findAll(spec, sort);
     }
 
-    @Override
-    @Transactional
-    public void guardarNuevoAlojamiento(Alojamiento alojamiento, String emailAnfitrion) {
-        
-        // 1. Buscamos al usuario
-        User anfitrion = userRepo.findByEmail(emailAnfitrion)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        // 2. Asignamos el dueño
-        alojamiento.setAnfitrion(anfitrion);
-        
-        // 3. ¡BORRAMOS setCreatedAt y setActive! 
-        // La entidad Alojamiento ya lo hace sola en su método @PrePersist.
-        // Esto elimina todos tus errores de tipos de fecha.
-
-        // 4. Guardamos
-        repo.save(alojamiento);
-
-        // 5. Actualizar rol si hace falta
-        if (!"PROPIETARIO".equals(anfitrion.getRole().toString())) {
-             // Ajusta esto según si usas Enum o String
-             // anfitrion.setRole("PROPIETARIO"); 
-             // userRepo.save(anfitrion);
-        }
-    }
-
-    // Obtener Precio Máximo 
+    // --- Obtener Precio Máximo ---
     @Override
     public long obtenerPrecioMaximoAlojamientoRedondeado() {
         BigDecimal maxPrecioBd = repo.findMaxPrecio();
@@ -169,7 +134,7 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
         return (long) Math.ceil(maxPrecioBd.doubleValue());
     }
 
-    // Obtener Lista de Tipos 
+    // --- Obtener Lista de Tipos ---
     @Override
     public List<String> obtenerTodosLosTipos() {
         return repo.findAllTipos();
