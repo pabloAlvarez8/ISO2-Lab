@@ -73,6 +73,8 @@ public interface AlojamientoService_Interfaz {
 
     Alojamiento findById(Long id);
 
+
+    void guardarNuevoAlojamiento(Alojamiento alojamiento, String emailAnfitrion);
     long obtenerPrecioMaximoAlojamientoRedondeado();
 
     List<String> obtenerTodosLosTipos();

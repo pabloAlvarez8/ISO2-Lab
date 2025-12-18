@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alta Anfitrión - Inmobiliarias Paqui</title>
+    
+    <link rel="stylesheet" th:href="@{/css/styleAnfitrion.css}">
+    <link rel="stylesheet" th:href="@{/css/styleHeader.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <div th:replace="~{fragments/header-2 :: header_2-nav}"></div>
+
+    <main>
+        <div class="form-container">
+            <div class="form-header">
+                <i class="fas fa-house-user" style="font-size: 50px; color: #4b8fe7; margin-bottom: 20px;"></i>
+                <h2>Alta de Anfitrión</h2>
+                <p>Completa tus datos fiscales y de contacto para empezar a publicar alojamientos.</p>
+            </div>
+
+            <form th:action="@{/perfil/convertirse-anfitrion}" method="post">
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-id-card"></i> DNI / NIF</label>
+                        <input type="text" name="dni" placeholder="12345678X" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-phone"></i> Teléfono de contacto</label>
+                        <input type="tel" name="telefono" placeholder="+34 600 000 000" required>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label><i class="fas fa-university"></i> Cuenta Bancaria (IBAN) para cobros</label>
+                    <input type="text" name="iban" placeholder="ES00 0000 0000 0000 0000" required>
+                </div>
+
+                <div class="terms-group">
+                    <input type="checkbox" required>
+                    <span>Declaro que soy el propietario legal o gestor autorizado de los inmuebles que voy a publicar y acepto las condiciones de servicio de Inmobiliarias Paqui.</span>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-check-circle"></i> CONFIRMAR Y ACTIVAR CUENTA
+                </button>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <a th:href="@{/perfil}" style="color: #888; text-decoration: none; font-size: 14px;">Cancelar y volver</a>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <footer>© 2025 Inmobiliarias Paqui - Tu confianza, nuestro compromiso</footer>
+
+</body>
+</html>

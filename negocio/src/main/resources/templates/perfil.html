@@ -75,7 +75,16 @@
 
                 <div class="cards-grid" th:if="${!misReservas.isEmpty()}">
                     <div class="card-reserva" th:each="reserva : ${misReservas}">
-                        <div class="card-status status-confirmada" th:text="${reserva.estado != null ? reserva.estado : 'CONFIRMADA'}">Confirmada</div>
+                        <div class="card-status" 
+                            th:classappend="${reserva.aceptada == null ? 'status-pendiente' : (reserva.aceptada ? 'status-confirmada' : 'status-cancelada')}"
+                            th:text="${reserva.aceptada == null ? 'PENDIENTE' : (reserva.aceptada ? 'ACEPTADA' : 'RECHAZADA')}"> ESTADO
+                        </div>
+                        
+                        <style>
+                        .status-pendiente { background-color: #fceabb; color: #d48806; }
+                        .status-confirmada { background-color: #d4edda; color: #155724; }
+                        .status-cancelada { background-color: #f8d7da; color: #721c24; }
+                        </style>
 
                         <h3 th:text="${reserva.alojamiento.nombre}">Nombre Alojamiento</h3>
                         <p class="direccion"><i class="fas fa-map-marker-alt"></i> <span th:text="${reserva.alojamiento.ciudad}">Ciudad</span></p>
@@ -97,7 +106,7 @@
                     <a href="/" class="btn btn-primary" style="margin-top: 10px;">¡Busca tu próxima escapada!</a>
                 </div>
             </div>
-
+            
             <div id="vista-anfitrion" class="view-container" style="display: none;">
 
                 <div class="section-host">
@@ -114,8 +123,22 @@
                                 <span class="req-dates" th:text="'Del ' + ${solicitud.fechaEntrada} + ' al ' + ${solicitud.fechaSalida}">Fechas</span>
                             </div>
                             <div class="req-actions">
-                                <button class="btn btn-primary" style="width: 40px; height: 40px; border-radius: 50%; padding: 0;"><i class="fas fa-check"></i></button>
-                                <button class="btn btn-danger" style="width: 40px; height: 40px; border-radius: 50%; padding: 0;"><i class="fas fa-times"></i></button>
+                                <a th:href="@{/reservas/aceptar/{id}(id=${solicitud.id})}" 
+                                   class="btn btn-primary" 
+                                   style="width: 40px; height: 40px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center;"
+                                   th:if="${solicitud.aceptada == null}">
+                                   <i class="fas fa-check"></i>
+                                </a>
+
+                                <a th:href="@{/reservas/rechazar/{id}(id=${solicitud.id})}" 
+                                   class="btn btn-danger" 
+                                   style="width: 40px; height: 40px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center;"
+                                   th:if="${solicitud.aceptada == null}">
+                                   <i class="fas fa-times"></i>
+                                </a>
+
+                                <span th:if="${solicitud.aceptada == true}" style="color: green; font-weight: bold;">¡Aceptada!</span>
+                                <span th:if="${solicitud.aceptada == false}" style="color: red; font-weight: bold;">Rechazada</span>
                             </div>
                         </div>
                     </div>
@@ -128,7 +151,8 @@
                 <div class="section-host">
                     <div class="header-with-action">
                         <h3 class="section-title"><i class="fas fa-building"></i> Mis Propiedades</h3>
-                        <a href="/alojamientos/nuevo" class="btn btn-primary">+ Publicar anuncio</a>
+                        <a href="/alojamientos/nuevo" class="btn btn-primary" 
+                           th:if="${usuario.role.name() == 'PROPIETARIO'}">+ Publicar anuncio</a>
                     </div>
 
                     <div class="cards-grid" th:if="${!misAlojamientos.isEmpty()}">
@@ -140,17 +164,23 @@
                                 <p style="font-weight: bold; color: #2c5394;" th:text="${casa.precio + '€ / noche'}">Precio</p>
 
                                 <div class="card-actions">
-                                    <button class="btn btn-secondary btn-sm" style="flex: 1;">Editar</button>
+                                    <a th:href="@{/alojamientos/editar/{id}(id=${casa.id})}" class="btn btn-secondary btn-sm" style="flex: 1; text-align: center;">Editar</a>
                                     <a th:href="@{'/alojamientos/eliminar/' + ${casa.id}}" class="btn btn-danger btn-sm" onclick="return confirm('¿Borrar este alojamiento?');">Borrar</a>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="empty-state" th:if="${misAlojamientos.isEmpty()}">
-                        <p>Aún no has publicado ningún alojamiento.</p>
-                        <a href="/alojamientos/nuevo" class="btn btn-primary" style="margin-top: 10px;">¡Conviértete en anfitrión hoy!</a>
+                    <div class="empty-state" th:if="${usuario.role.name() == 'INQUILINO'}">
+                        <p>Para publicar alojamientos necesitas activar tu cuenta de anfitrión.</p>
+                        <a href="/anfitrion" class="btn btn-primary">¡Conviértete en anfitrión hoy!</a>
                     </div>
+
+                    <div class="empty-state" th:if="${usuario.role.name() == 'PROPIETARIO' and misAlojamientos.isEmpty()}">
+                        <p>Aún no has publicado ningún alojamiento.</p>
+                        <a href="/alojamientos/nuevo" class="btn btn-primary">¡Publica tu primer anuncio!</a>
+                    </div>
+
                 </div>
             </div>
         </div>

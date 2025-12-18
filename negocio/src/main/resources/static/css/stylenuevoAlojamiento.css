@@ -1,0 +1,188 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+
+/* Reset básico igual que en perfil */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    background-color: #f5f8ff; /* Fondo azulado muy suave */
+    color: #222;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-top: 100px; /* Espacio para el header fijo */
+}
+
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+/* =========================================
+   TARJETA DEL FORMULARIO
+   ========================================= */
+
+.form-container {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 800px; /* Más ancho que el perfil para que quepan los datos */
+    border-radius: 24px;
+    box-shadow: 0 10px 25px rgba(44, 83, 148, 0.1); /* Sombra azulada */
+    padding: 50px;
+    border: 1px solid #eee;
+    animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Encabezado del formulario */
+.form-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.form-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c5394; /* Azul oscuro corporativo */
+    margin-bottom: 10px;
+}
+
+.form-header p {
+    color: #666;
+    font-size: 15px;
+}
+
+/* =========================================
+   ESTILOS DE LOS CAMPOS (INPUTS)
+   ========================================= */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 columnas por defecto */
+    gap: 25px;
+    margin-bottom: 25px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.full-width {
+    grid-column: 1 / -1; /* Ocupa todo el ancho */
+}
+
+.triple-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* 3 columnas para precios/capacidad */
+    gap: 25px;
+    margin-bottom: 25px;
+}
+
+label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2c5394;
+    margin-bottom: 8px;
+    margin-left: 5px;
+}
+
+/* Inputs bonitos estilo "Paqui" */
+input[type="text"],
+input[type="number"],
+input[type="url"],
+select,
+textarea {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 16px;
+    border: 1px solid #e0e0e0;
+    background-color: #f9fbfc; /* Blanco azulado muy sutil */
+    font-family: "Inter", sans-serif;
+    font-size: 15px;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+/* Efecto al hacer clic en un campo */
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #4b8fe7;
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(75, 143, 231, 0.1);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Placeholder color */
+::placeholder {
+    color: #aaa;
+}
+
+/* =========================================
+   BOTÓN DE GUARDAR
+   ========================================= */
+
+.btn-submit {
+    width: 100%;
+    background: linear-gradient(135deg, #2c5394 0%, #1e3c72 100%);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(44, 83, 148, 0.3);
+}
+
+.btn-submit i {
+    font-size: 18px;
+}
+
+/* Footer igual que en perfil */
+footer {
+    background: #f7f7f7;
+    color: #555;
+    text-align: center;
+    padding: 30px 10px;
+    font-size: 14px;
+    border-top: 1px solid #eee;
+    margin-top: auto;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .form-grid, .triple-grid {
+        grid-template-columns: 1fr; /* Todo a 1 columna en móvil */
+        gap: 15px;
+    }
+    .form-container {
+        padding: 30px 20px;
+    }
+}

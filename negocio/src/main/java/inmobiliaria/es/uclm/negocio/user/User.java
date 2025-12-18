@@ -39,6 +39,15 @@ public class User {
     @Column(nullable = false)
     private Role role = Role.INQUILINO;
 
+    @Column(name = "dni")
+    private String dni;
+
+    @Column(name = "telefono")
+    private String telefono;
+
+    @Column(name = "cuenta_bancaria")
+    private String cuentaBancaria;
+
     // CORRECCIÓN 1: Quitamos el columnDefinition complejo.
     // Hibernate detectará que es LocalDateTime y usará TIMESTAMP automáticamente.
     @Column(name = "created_at", updatable = false)
