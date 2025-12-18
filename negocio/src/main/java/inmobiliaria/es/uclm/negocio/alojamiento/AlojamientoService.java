@@ -20,7 +20,7 @@ import java.util.Date;
 public class AlojamientoService implements AlojamientoService_Interfaz {
 
     private final AlojamientoRepository repo;
-    private final UserRepository userRepo; 
+    private final UserRepository userRepo;
 
     // 2. MODIFICA EL CONSTRUCTOR PARA QUE RECIBA LOS DOS REPOSITORIOS
     public AlojamientoService(AlojamientoRepository repo, UserRepository userRepo) {
@@ -28,42 +28,35 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
         this.userRepo = userRepo;
     }
 
-
     @Override
     public List<Alojamiento> buscarPorCiudad(String ciudad) {
         return repo.findByCiudadContainingIgnoreCase(ciudad);
     }
-
 
     @Override
     public Alojamiento findById(Long id) {
         return repo.findById(id).orElse(null);
     }
 
-
     @Override
     public void guardar(Alojamiento alojamiento) {
         repo.save(alojamiento);
     }
-
 
     @Override
     public void eliminar(Long id) {
         repo.deleteById(id);
     }
 
-
     @Override
     public List<Alojamiento> listarTodos() {
         return repo.findAll();
     }
 
-
     @Override
     public List<Alojamiento> listarAlojamientosDeAnfitrion(Long idUsuario) {
         return repo.findByAnfitrion_Id(idUsuario);
     }
-
 
     @Override
     public List<DestinoDTO> obtenerDestinosPopulares() {
@@ -95,7 +88,7 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
                         "%" + ciudad.toLowerCase() + "%"));
             }
 
-            // 2. Filtro de Precio 
+            // 2. Filtro de Precio
             // 2. Filtro de Precio
             if (maxPrice != null) {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("precio"), maxPrice));
@@ -134,15 +127,15 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
     @Override
     @Transactional
     public void guardarNuevoAlojamiento(Alojamiento alojamiento, String emailAnfitrion) {
-        
+
         // 1. Buscamos al usuario
         User anfitrion = userRepo.findByEmail(emailAnfitrion)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         // 2. Asignamos el dueño
         alojamiento.setAnfitrion(anfitrion);
-        
-        // 3. ¡BORRAMOS setCreatedAt y setActive! 
+
+        // 3. ¡BORRAMOS setCreatedAt y setActive!
         // La entidad Alojamiento ya lo hace sola en su método @PrePersist.
         // Esto elimina todos tus errores de tipos de fecha.
 
@@ -150,14 +143,13 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
         repo.save(alojamiento);
 
         // 5. Actualizar rol si hace falta
-        if (!"PROPIETARIO".equals(anfitrion.getRole().toString())) {
-             // Ajusta esto según si usas Enum o String
-             // anfitrion.setRole("PROPIETARIO"); 
-             // userRepo.save(anfitrion);
+        if (anfitrion.getRole() != User.Role.PROPIETARIO) {
+            anfitrion.setRole(User.Role.PROPIETARIO);
+            userRepo.save(anfitrion);
         }
     }
 
-    // Obtener Precio Máximo 
+    // Obtener Precio Máximo
     @Override
     public long obtenerPrecioMaximoAlojamientoRedondeado() {
         BigDecimal maxPrecioBd = repo.findMaxPrecio();
@@ -169,7 +161,7 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
         return (long) Math.ceil(maxPrecioBd.doubleValue());
     }
 
-    // Obtener Lista de Tipos 
+    // Obtener Lista de Tipos
     @Override
     public List<String> obtenerTodosLosTipos() {
         return repo.findAllTipos();
