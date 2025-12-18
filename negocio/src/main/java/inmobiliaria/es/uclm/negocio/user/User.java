@@ -15,7 +15,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "correo", nullable = false, unique = true, length = 191) 
+    @Column(name = "correo", nullable = false, unique = true, length = 191)
     private String email;
 
     @Column(name = "contrasena", nullable = false)
@@ -42,9 +42,6 @@ public class User {
     @Column(name = "dni")
     private String dni;
 
-    @Column(name = "telefono")
-    private String telefono;
-
     @Column(name = "cuenta_bancaria")
     private String cuentaBancaria;
 
@@ -59,7 +56,8 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // --- Timestamps (Esto se encarga de meter la fecha, no hace falta SQL default) ---
+    // --- Timestamps (Esto se encarga de meter la fecha, no hace falta SQL default)
+    // ---
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
