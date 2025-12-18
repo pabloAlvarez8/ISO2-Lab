@@ -6,7 +6,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "usuario")
+@Table(name = "usuario") // "usuario" evita conflictos con la palabra reservada "USER" de Derby
 @Getter
 @Setter
 public class User {
@@ -45,22 +45,20 @@ public class User {
     @Column(name = "cuenta_bancaria")
     private String cuentaBancaria;
 
-    // CORRECCIÓN 1: Quitamos el columnDefinition complejo.
-    // Hibernate detectará que es LocalDateTime y usará TIMESTAMP automáticamente.
+    // --- TIMESTAMPS ---
+    // Hibernate mapeará esto automáticamente a TIMESTAMP en Derby
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    // CORRECCIÓN 2: ¡CRÍTICO! Quitamos "DATETIME".
-    // Derby no tiene DATETIME, usaría TIMESTAMP. Al borrar el columnDefinition,
-    // dejamos que Hibernate haga la traducción correcta.
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // --- Timestamps (Esto se encarga de meter la fecha, no hace falta SQL default)
-    // ---
+    // Estos métodos se ejecutan automáticamente antes de guardar en la BD
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        // Inicializamos ambos al crear
         if (updatedAt == null) {
             updatedAt = LocalDateTime.now();
         }
