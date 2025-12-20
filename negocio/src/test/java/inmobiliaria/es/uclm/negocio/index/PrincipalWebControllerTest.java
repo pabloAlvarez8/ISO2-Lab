@@ -4,34 +4,36 @@ import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService_Interfaz;
 import inmobiliaria.es.uclm.negocio.alojamiento.dto.DestinoDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-// 1. NUEVO IMPORT para Spring Boot 3.4+
+// Si usas Spring Boot 3.4+ usa @MockitoBean. Si es anterior usa @MockBean
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PrincipalWebController.class)
+@AutoConfigureMockMvc(addFilters = false) // Desactiva la seguridad (Login) para el test
 public class PrincipalWebControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    // 2. CAMBIO: Usamos @MockitoBean en lugar de @MockBean
     @MockitoBean
     private AlojamientoService_Interfaz alojamientoService;
-
-    // --- Los tests permanecen idénticos ---
 
     @Test
     void testPaginaDeInicio_DeberiaRetornarVistaIndexYModelo() throws Exception {
         // GIVEN
-        DestinoDTO destino1 = new DestinoDTO(); 
+        // CORRECCIÓN: Al ser un record, debemos pasar los argumentos (Ciudad, Foto)
+        DestinoDTO destino1 = new DestinoDTO("Madrid", "http://foto-fake.com/madrid.jpg");
         List<DestinoDTO> listaSimulada = Arrays.asList(destino1);
 
         when(alojamientoService.obtenerDestinosPopulares()).thenReturn(listaSimulada);
@@ -53,14 +55,33 @@ public class PrincipalWebControllerTest {
 
     @Test
     void testPago_DeberiaRetornarVistaPago() throws Exception {
-        mockMvc.perform(get("/pago"))
+        // GIVEN (Simulamos datos de sesión para que Thymeleaf no falle)
+        Map<String, Object> alojamientoFake = new HashMap<>();
+        alojamientoFake.put("nombre", "Hotel Test");
+        alojamientoFake.put("precio", 100.0);
+
+        Map<String, Object> reservaFake = new HashMap<>();
+        reservaFake.put("alojamiento", alojamientoFake);
+
+        // WHEN & THEN
+        mockMvc.perform(get("/pago")
+                        .sessionAttr("reserva", reservaFake)) // Inyectamos 'reserva' en sesión
                 .andExpect(status().isOk())
                 .andExpect(view().name("pago"));
     }
 
     @Test
     void testDetalleAlojamientos_DeberiaRetornarVistaDetalle() throws Exception {
-        mockMvc.perform(get("/detalleAlojamientos.html"))
+        // GIVEN (Simulamos datos de sesión para que Thymeleaf no falle)
+        Map<String, Object> alojamientoFake = new HashMap<>();
+        alojamientoFake.put("fotoUrl", "https://via.placeholder.com/150");
+        alojamientoFake.put("nombre", "Casa Test");
+        alojamientoFake.put("descripcion", "Descripción de prueba");
+        alojamientoFake.put("precio", 50.0);
+
+        // WHEN & THEN
+        mockMvc.perform(get("/detalleAlojamientos.html")
+                        .sessionAttr("alojamiento", alojamientoFake)) // Inyectamos 'alojamiento' en sesión
                 .andExpect(status().isOk())
                 .andExpect(view().name("detalleAlojamientos"));
     }
