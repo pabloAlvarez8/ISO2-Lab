@@ -31,21 +31,25 @@ class PropertyTest {
 
     @Test
     @DisplayName("onUpdate should refresh the UpdatedAt timestamp 🔄")
-    void onUpdate_ExistingEntity_UpdatesTimestamp() throws InterruptedException {
+    void onUpdate_ExistingEntity_UpdatesTimestamp() {
         // 1. GIVEN
         Alojamiento property = new Alojamiento();
-        property.onCreate(); // Inicializamos fechas
-        LocalDateTime initialUpdateTime = property.getUpdatedAt();
+        property.onCreate(); // Inicializa las fechas a "AHORA"
 
-        // Esperamos un poco para asegurar que el reloj del sistema avanza
-        Thread.sleep(10);
+        // TRUCO: En lugar de esperar con sleep, "viajamos al pasado".
+        // Simulamos que la última actualización fue hace 1 segundo.
+        LocalDateTime fechaAntigua = LocalDateTime.now().minusSeconds(1);
 
-        // 2. WHEN (Simulamos una actualización)
+        // Forzamos esa fecha antigua en el objeto
+        property.setUpdatedAt(fechaAntigua);
+
+        // 2. WHEN (Simulamos una nueva actualización)
+        // onUpdate() sobrescribirá la fecha con LocalDateTime.now() (que es más reciente que hace 1 seg)
         property.onUpdate();
 
         // 3. THEN
-        assertTrue(property.getUpdatedAt().isAfter(initialUpdateTime),
-                "La fecha de actualización debería ser posterior a la original");
+        assertTrue(property.getUpdatedAt().isAfter(fechaAntigua),
+                "La fecha de actualización debería ser posterior a la antigua");
     }
 
     @Test
