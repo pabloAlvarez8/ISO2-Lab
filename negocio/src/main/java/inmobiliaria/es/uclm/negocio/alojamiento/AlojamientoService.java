@@ -67,7 +67,7 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
                 // Mapeamos a la clase original DestinoDTO
                 .map(alojamiento -> new DestinoDTO(alojamiento.getCiudad(), alojamiento.getFotoUrl()))
                 .limit(6)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
