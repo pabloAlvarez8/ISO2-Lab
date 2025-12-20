@@ -19,9 +19,7 @@ public class ValoracionController {
     }
 
     @PostMapping("/guardar")
-    // CAMBIO AQUÍ: En vez de <?> ponemos <Map<String, Object>>
     public ResponseEntity<Map<String, Object>> guardar(@RequestBody Map<String, Object> payload) {
-
         try {
             Long inmuebleId = ((Number) payload.get("inmuebleId")).longValue();
             Long usuarioId = ((Number) payload.get("usuarioId")).longValue();
@@ -33,8 +31,9 @@ public class ValoracionController {
             return ResponseEntity.ok(resultado);
 
         } catch (RuntimeException e) {
-            // Asegúrate de devolver también un Map en el error para que coincida con el tipo
-            return ResponseEntity.status(403).body(java.util.Map.of("error", e.getMessage()));
+            // CAMBIO: Usamos "mensaje" en lugar de "error"
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("mensaje", e.getMessage()));
         }
     }
 }
