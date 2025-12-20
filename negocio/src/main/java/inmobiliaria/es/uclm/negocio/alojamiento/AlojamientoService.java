@@ -1,20 +1,19 @@
 package inmobiliaria.es.uclm.negocio.alojamiento;
 
+// IMPORTANTE: Usamos el nombre original
 import inmobiliaria.es.uclm.negocio.alojamiento.dto.DestinoDTO;
+import inmobiliaria.es.uclm.negocio.user.User;
+import inmobiliaria.es.uclm.negocio.user.UserRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.criteria.Predicate;
-import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import inmobiliaria.es.uclm.negocio.user.User;
-import inmobiliaria.es.uclm.negocio.user.UserRepository;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.Date;
 
 @Service
 public class AlojamientoService implements AlojamientoService_Interfaz {
@@ -22,7 +21,6 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
     private final AlojamientoRepository repo;
     private final UserRepository userRepo;
 
-    // 2. MODIFICA EL CONSTRUCTOR PARA QUE RECIBA LOS DOS REPOSITORIOS
     public AlojamientoService(AlojamientoRepository repo, UserRepository userRepo) {
         this.repo = repo;
         this.userRepo = userRepo;
@@ -59,11 +57,14 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
     }
 
     @Override
+    // Mantenemos DestinoDTO (nombre original)
     public List<DestinoDTO> obtenerDestinosPopulares() {
         return repo.findAll().stream()
                 .collect(Collectors.groupingBy(Alojamiento::getCiudad))
                 .values().stream()
-                .map(lista -> lista.get(0))
+                // Java 21: Usamos getFirst() como sugirió IntelliJ
+                .map(List::getFirst)
+                // Mapeamos a la clase original DestinoDTO
                 .map(alojamiento -> new DestinoDTO(alojamiento.getCiudad(), alojamiento.getFotoUrl()))
                 .limit(6)
                 .collect(Collectors.toList());
@@ -81,39 +82,31 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
         Specification<Alojamiento> spec = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            // 1. Filtro de Ciudad
             if (ciudad != null && !ciudad.isEmpty()) {
                 predicates.add(criteriaBuilder.like(
                         criteriaBuilder.lower(root.get("ciudad")),
                         "%" + ciudad.toLowerCase() + "%"));
             }
 
-            // 2. Filtro de Precio
-            // 2. Filtro de Precio
             if (maxPrice != null) {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("precio"), maxPrice));
             }
 
-            // 3. Filtro de Puntuación
             if (minRating != null && minRating > 0) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("valoracionMedia"), minRating));
             }
 
-            // 4. Filtro de Capacidad
             if (capacity > 1) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("capacidad"), capacity));
             }
 
-            // 5. Filtro de Tipos (YA INTEGRADO Y DESCOMENTADO)
             if (types != null && !types.isEmpty()) {
-                // Esto crea una cláusula "WHERE tipo IN ('Hotel', 'Apartamento', ...)"
                 predicates.add(root.get("tipo").in(types));
             }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
 
-        // ORDENACIÓN
         Sort sort = Sort.unsorted();
         if ("price_asc".equals(sortBy)) {
             sort = Sort.by(Sort.Direction.ASC, "precio");
@@ -127,41 +120,30 @@ public class AlojamientoService implements AlojamientoService_Interfaz {
     @Override
     @Transactional
     public void guardarNuevoAlojamiento(Alojamiento alojamiento, String emailAnfitrion) {
-
-        // 1. Buscamos al usuario
         User anfitrion = userRepo.findByEmail(emailAnfitrion)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // 2. Asignamos el dueño
         alojamiento.setAnfitrion(anfitrion);
-
-        // 3. ¡BORRAMOS setCreatedAt y setActive!
-        // La entidad Alojamiento ya lo hace sola en su método @PrePersist.
-        // Esto elimina todos tus errores de tipos de fecha.
-
-        // 4. Guardamos
         repo.save(alojamiento);
 
-        // 5. Actualizar rol si hace falta
         if (anfitrion.getRole() != User.Role.PROPIETARIO) {
             anfitrion.setRole(User.Role.PROPIETARIO);
             userRepo.save(anfitrion);
         }
     }
 
-    // Obtener Precio Máximo
     @Override
     public long obtenerPrecioMaximoAlojamientoRedondeado() {
         BigDecimal maxPrecioBd = repo.findMaxPrecio();
 
+        // CORRECCIÓN: Si es null devuelve 0 (para que pase el test)
         if (maxPrecioBd == null) {
-            return 1000L;
+            return 0L;
         }
 
         return (long) Math.ceil(maxPrecioBd.doubleValue());
     }
 
-    // Obtener Lista de Tipos
     @Override
     public List<String> obtenerTodosLosTipos() {
         return repo.findAllTipos();
