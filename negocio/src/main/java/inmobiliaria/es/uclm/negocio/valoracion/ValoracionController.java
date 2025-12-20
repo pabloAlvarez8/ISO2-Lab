@@ -18,8 +18,10 @@ public class ValoracionController {
         return service.obtenerPorAlojamiento(id);
     }
 
-    @PostMapping("/guardar") // Cambiamos nombre a 'guardar' para ser más semánticos
-    public ResponseEntity<?> guardar(@RequestBody Map<String, Object> payload) {
+    @PostMapping("/guardar")
+    // CAMBIO AQUÍ: En vez de <?> ponemos <Map<String, Object>>
+    public ResponseEntity<Map<String, Object>> guardar(@RequestBody Map<String, Object> payload) {
+
         try {
             Long inmuebleId = ((Number) payload.get("inmuebleId")).longValue();
             Long usuarioId = ((Number) payload.get("usuarioId")).longValue();
@@ -27,12 +29,12 @@ public class ValoracionController {
             String comentario = (String) payload.get("comentario");
 
             Map<String, Object> resultado = service.guardarValoracion(inmuebleId, usuarioId, puntuacion, comentario);
+
             return ResponseEntity.ok(resultado);
-            
+
         } catch (RuntimeException e) {
-            // Capturamos la excepción de "No ha visitado" y devolvemos Error 403 (Forbidden)
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                                 .body(Map.of("mensaje", e.getMessage()));
+            // Asegúrate de devolver también un Map en el error para que coincida con el tipo
+            return ResponseEntity.status(403).body(java.util.Map.of("error", e.getMessage()));
         }
     }
 }
