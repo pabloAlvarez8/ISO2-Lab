@@ -6,7 +6,6 @@ import inmobiliaria.es.uclm.negocio.alojamiento.dto.AlojamientoSearchResultDTO;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Controlador REST que expone los endpoints para la gestión y
@@ -17,9 +16,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/alojamientos")
 public class AlojamientoApiController {
 
-        // Inyección de la capa de servicio que contiene la lógica de negocio.
-        @Autowired
-        private AlojamientoService_Interfaz alojamientoService;
+        private final AlojamientoService_Interfaz alojamientoService;
+
+        public AlojamientoApiController(AlojamientoService_Interfaz alojamientoService) {
+            this.alojamientoService = alojamientoService;
+        }
 
         /**
          * Endpoint principal (GET /) para la búsqueda y filtrado de alojamientos.
