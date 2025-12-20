@@ -38,6 +38,8 @@ class PropertyServiceTest {
     @Mock
     private UserService userService;
 
+    // --- TESTS EXISTENTES (Los que ya tenías) ---
+
     @Test
     @DisplayName("searchByCity_ValidCity_ReturnsListOfProperties 🏙️")
     void searchByCity_ValidCity_ReturnsList() {
@@ -109,7 +111,7 @@ class PropertyServiceTest {
 
         // 3. THEN
         assertEquals(2, result.size(), "Debería haber solo 2 destinos únicos");
-        assertTrue(result.stream().anyMatch(dto -> dto.getCiudad().equals("Madrid")));
+        assertTrue(result.stream().anyMatch(dto -> dto.ciudad().equals("Madrid")));
     }
 
     @Test
@@ -141,5 +143,52 @@ class PropertyServiceTest {
 
         // 3. THEN
         verify(propertyRepo).findAll(any(Specification.class), any(Sort.class));
+    }
+
+    // --- NUEVOS TESTS AÑADIDOS (Lo que faltaba) ---
+
+    @Test
+    @DisplayName("getMaxPrice_ReturnsZero_WhenNull 📉")
+    void getMaxPrice_ReturnsZero_WhenNull() {
+        // 1. GIVEN (Caso borde: no hay casas en la BD, devuelve null)
+        when(propertyRepo.findMaxPrecio()).thenReturn(null);
+
+        // 2. WHEN
+        long maxPrice = propertyService.obtenerPrecioMaximoAlojamientoRedondeado();
+
+        // 3. THEN
+        assertEquals(0L, maxPrice, "Si no hay precio, debería devolver 0");
+    }
+
+    @Test
+    @DisplayName("getAllTypes_ReturnsDistinctList 📋")
+    void getAllTypes_ReturnsDistinctList() {
+        // 1. GIVEN
+        List<String> tiposMock = Arrays.asList("Piso", "Chalet", "Cabaña");
+        when(propertyRepo.findAllTipos()).thenReturn(tiposMock);
+
+        // 2. WHEN
+        List<String> resultado = propertyService.obtenerTodosLosTipos();
+
+        // 3. THEN
+        assertEquals(3, resultado.size());
+        assertTrue(resultado.contains("Cabaña"));
+        verify(propertyRepo).findAllTipos();
+    }
+
+    @Test
+    @DisplayName("searchByHost_ReturnsHostProperties 👤")
+    void searchByHost_ReturnsHostProperties() {
+        // 1. GIVEN
+        Long idAnfitrion = 5L;
+        when(propertyRepo.findByAnfitrion_Id(idAnfitrion))
+                .thenReturn(Collections.emptyList());
+
+        // 2. WHEN
+        // CORREGIDO: Usamos el nombre real que ya tienes en tu servicio
+        propertyService.listarAlojamientosDeAnfitrion(idAnfitrion);
+
+        // 3. THEN
+        verify(propertyRepo).findByAnfitrion_Id(idAnfitrion);
     }
 }
