@@ -15,30 +15,24 @@ import inmobiliaria.es.uclm.negocio.user.UserService;
 
 /**
  * Controlador web encargado de gestionar el proceso de registro de usuarios.
- *
- * Esta clase maneja las peticiones HTTP para mostrar el formulario de registro
- * y procesar los datos enviados por el usuario.
- *
  */
 @Controller
 public class RegistroWebController {
 
     private static final Logger log = LoggerFactory.getLogger(RegistroWebController.class);
 
-    /**
-     * Servicio para la gestión de la lógica de negocio de usuarios.
-     */
+    // 1. CAMBIO: Declaramos la variable como 'final' para que sea inmutable.
+    private final UserService userService;
+
+    // 2. CAMBIO: Añadimos el CONSTRUCTOR.
+    // Aquí es donde Spring inyecta el servicio al crear el controlador.
     @Autowired
-    private UserService userService;
+    public RegistroWebController(UserService userService) {
+        this.userService = userService;
+    }
 
     /**
      * Maneja la petición GET para mostrar la página de registro.
-     *
-     * Prepara el modelo asegurando que exista un objeto 'user' vacío
-     * para ser vinculado con los campos del formulario en la vista.
-     *
-     * @param model El modelo de Spring MVC utilizado para pasar datos a la vista.
-     * @return El nombre de la plantilla HTML a renderizar ("register").
      */
     @GetMapping("/register")
     public String showRegisterPage(Model model) {
@@ -51,13 +45,6 @@ public class RegistroWebController {
 
     /**
      * Procesa la petición POST con los datos del formulario de registro.
-     *
-     * Recibe los datos del usuario, intenta realizar el registro a través del servicio
-     * y gestiona los mensajes de éxito o error mediante atributos flash (que sobreviven a la redirección).
-     *
-     * @param user Objeto User poblado automáticamente con los datos del formulario.
-     * @param redirectAttrs Utilidad para añadir atributos que persisten tras la redirección.
-     * @return Una cadena de redirección a la página de registro ("/register").
      */
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") User user, RedirectAttributes redirectAttrs) {

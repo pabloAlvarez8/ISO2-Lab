@@ -8,8 +8,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 public class UserController {
 
+    // 1. Declaramos la dependencia como 'final' (inmutable)
+    private final UserService userService;
+
+    // 2. Creamos el constructor para la inyección de dependencias
     @Autowired
-    private UserService userService;
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@ModelAttribute User user) {

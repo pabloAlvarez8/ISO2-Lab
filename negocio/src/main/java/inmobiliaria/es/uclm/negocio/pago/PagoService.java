@@ -24,7 +24,13 @@ public class PagoService {
 
         // Simulamos conexión con API de PayPal...
         // Simulamos que tarda un poco...
-        try { Thread.sleep(500); } catch (InterruptedException e) {}
+        try { Thread.sleep(500); } catch (InterruptedException e) {
+
+            // Restauramos el estado de interrupción para que el hilo sepa que debe pararse.
+            Thread.currentThread().interrupt();
+            // Si el proceso se interrumpió, el pago ha fallado.
+            return false;
+        }
 
         return true; // Pago aceptado
     }
