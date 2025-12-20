@@ -55,7 +55,7 @@ public class AlojamientoApiController {
                 // Esto desacopla la API de la persistencia y previene problemas de
                 // serialización (LazyInitializationExceptions o bucles infinitos).
                 return alojamientosEncontrados.stream()
-                                .map(AlojamientoSearchResultDTO::fromEntity) // Conversión estática
-                                .collect(Collectors.toList());
+                .map(AlojamientoSearchResultDTO::fromEntity) // Conversión estática
+                .toList();
         }
 }
