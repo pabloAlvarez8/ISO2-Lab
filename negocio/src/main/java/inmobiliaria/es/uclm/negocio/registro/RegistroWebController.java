@@ -24,6 +24,7 @@ import inmobiliaria.es.uclm.negocio.user.UserService;
 public class RegistroWebController {
 
     private static final Logger log = LoggerFactory.getLogger(RegistroWebController.class);
+    public static final String REDIRECT_REGISTER = "redirect:/register";
 
     /**
      * Servicio para la gestión de la lógica de negocio de usuarios.
@@ -68,20 +69,20 @@ public class RegistroWebController {
         try {
             userService.registerUser(user);
             redirectAttrs.addFlashAttribute("successMessage", "Usuario registrado correctamente.");
-            return "redirect:/register";
+            return REDIRECT_REGISTER;
 
         } catch (IllegalArgumentException e) {
             log.warn("Registro fallido para email {}: {}", user.getEmail(), e.getMessage());
             redirectAttrs.addFlashAttribute("errorMessage", e.getMessage());
             // Devolvemos el usuario para no perder los datos que ya escribió
             redirectAttrs.addFlashAttribute("user", user);
-            return "redirect:/register";
+            return REDIRECT_REGISTER;
 
         } catch (Exception e) {
             log.error("Error inesperado durante registro para email {}: {}", user.getEmail(), e.getMessage(), e);
             redirectAttrs.addFlashAttribute("errorMessage", "Error inesperado durante el registro.");
             redirectAttrs.addFlashAttribute("user", user);
-            return "redirect:/register";
+            return REDIRECT_REGISTER;
         }
     }
 }
