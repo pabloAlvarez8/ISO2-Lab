@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class AlojamientoApiController {
 
         // Inyección de la capa de servicio que contiene la lógica de negocio.
-        @Autowired
+
         private AlojamientoService_Interfaz alojamientoService;
 
         /**
