@@ -20,8 +20,8 @@
         <div class="booking-header">
             <span th:text="${reserva.estado}"
                   th:class="'booking-status ' +
-                  (${reserva.estado.name()} == 'PENDIENTE_PAGO' ? 'status-pendiente' :
-                  (${reserva.estado.name()} == 'CANCELADA' ? 'status-cancelado' : 'status-pagado'))">
+                  (${reserva.estado} == 'PENDIENTE_PAGO' ? 'status-pendiente' :
+                  (${reserva.estado} == 'CANCELADA' ? 'status-cancelado' : 'status-pagado'))">
                 ESTADO
             </span>
             <h1 th:text="'Reserva #' + ${reserva.id}">Reserva #000</h1>
@@ -93,7 +93,7 @@
 
         <div class="action-buttons">
 
-            <a th:if="${reserva.estado.name() == 'PENDIENTE_PAGO'}"
+            <a th:if="${reserva.estado == 'PENDIENTE_PAGO'}"
                th:href="@{/pagos/pago/{id}(id=${reserva.id})}"
                class="btn btn-primary btn-lg">
                 💳 Ir a Pagar
