@@ -71,9 +71,6 @@ class UserTest {
         LocalDateTime fechaCreacionOriginal = user.getCreatedAt();
         LocalDateTime fechaUpdateOriginal = user.getUpdatedAt();
 
-        // Pausa pequeña para asegurar que el tiempo cambie (solo para el test)
-        Thread.sleep(100);
-
         // Act
         user.onUpdate();
 
