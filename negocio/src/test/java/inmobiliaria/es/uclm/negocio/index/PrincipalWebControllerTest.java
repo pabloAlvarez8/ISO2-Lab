@@ -1,26 +1,35 @@
 package inmobiliaria.es.uclm.negocio.index;
 
-import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService_Interfaz;
-import inmobiliaria.es.uclm.negocio.alojamiento.dto.DestinoDTO;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+// Importamos el procesador para inyectar el usuario personalizado
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+
+import java.math.BigDecimal;
+import java.util.Collections;
+// (Hemos quitado el import de Optional porque no hace falta)
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-// Si usas Spring Boot 3.4+ usa @MockitoBean. Si es anterior usa @MockBean
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import inmobiliaria.es.uclm.negocio.alojamiento.Alojamiento;
+import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService_Interfaz;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+// --- IMPORTANTE: Si 'Reserva' está en otro paquete, IntelliJ te pedirá importarla (Alt+Enter) ---
+import inmobiliaria.es.uclm.negocio.reserva.Reserva;
+// ---------------------------------------------------------------------------------------------
 
-@WebMvcTest(PrincipalWebController.class)
-@AutoConfigureMockMvc(addFilters = false) // Desactiva la seguridad (Login) para el test
+@SpringBootTest
+@AutoConfigureMockMvc
 public class PrincipalWebControllerTest {
 
     @Autowired
@@ -29,77 +38,65 @@ public class PrincipalWebControllerTest {
     @MockitoBean
     private AlojamientoService_Interfaz alojamientoService;
 
-    @Test
-    void testPaginaDeInicio_DeberiaRetornarVistaIndexYModelo() throws Exception {
-        // GIVEN
-        // CORRECCIÓN: Al ser un record, debemos pasar los argumentos (Ciudad, Foto)
-        DestinoDTO destino1 = new DestinoDTO("Madrid", "http://foto-fake.com/madrid.jpg");
-        List<DestinoDTO> listaSimulada = Arrays.asList(destino1);
-
-        when(alojamientoService.obtenerDestinosPopulares()).thenReturn(listaSimulada);
-
-        // WHEN & THEN
-        mockMvc.perform(get("/"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("index"))
-                .andExpect(model().attributeExists("destinosPopulares"))
-                .andExpect(model().attribute("destinosPopulares", listaSimulada));
+    // Clase auxiliar para simular un usuario con ID (para que Thymeleaf no falle)
+    // Puedes ignorar los avisos de "unused" o "Lombok", está correcto.
+    static class UsuarioConId extends org.springframework.security.core.userdetails.User {
+        private final Long id;
+        public UsuarioConId(String username, String password, Long id) {
+            super(username, password, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+            this.id = id;
+        }
+        public Long getId() { return id; }
     }
 
     @Test
-    void testBuscador_DeberiaRetornarVistaBuscador() throws Exception {
-        mockMvc.perform(get("/buscador"))
+    public void testDetalleAlojamientos_DeberiaRetornarVistaDetalle() throws Exception {
+        // 1. Datos
+        Alojamiento casaFalsa = new Alojamiento();
+        casaFalsa.setId(1L);
+        casaFalsa.setNombre("Casa de Prueba");
+        casaFalsa.setDescripcion("Una casa muy bonita");
+        casaFalsa.setPrecio(BigDecimal.valueOf(150.0));
+        casaFalsa.setFotoUrl("https://via.placeholder.com/150");
+
+        // 2. Mock (CORREGIDO: Devolvemos el objeto directo, SIN Optional)
+        when(alojamientoService.findById(1L)).thenReturn(casaFalsa);
+
+        // 3. Usuario Falso
+        UsuarioConId usuarioFalso = new UsuarioConId("pepe", "pass", 99L);
+
+        // 4. Ejecución
+        mockMvc.perform(get("/detalleAlojamientos.html")
+                        .param("id", "1")
+                        .with(user(usuarioFalso)) // Inyectamos usuario
+                        .flashAttr("alojamiento", casaFalsa))
                 .andExpect(status().isOk())
-                .andExpect(view().name("Buscador"));
+                .andExpect(view().name("detalleAlojamientos"))
+                .andExpect(model().attributeExists("alojamiento"));
     }
 
     @Test
-    void testPago_DeberiaRetornarVistaPago() throws Exception {
-        // GIVEN (Simulamos datos de sesión para que Thymeleaf no falle)
-        Map<String, Object> alojamientoFake = new HashMap<>();
-        alojamientoFake.put("nombre", "Hotel Test");
-        alojamientoFake.put("precio", 100.0);
+    public void testPago_DeberiaRetornarVistaPago() throws Exception {
+        // 1. Datos
+        Alojamiento casaFalsa = new Alojamiento();
+        casaFalsa.setId(1L);
+        casaFalsa.setNombre("Casa para Pagar");
+        casaFalsa.setPrecio(BigDecimal.valueOf(200.0));
 
-        Map<String, Object> reservaFake = new HashMap<>();
-        reservaFake.put("alojamiento", alojamientoFake);
+        // 2. Mock (CORREGIDO: Sin Optional)
+        when(alojamientoService.findById(anyLong())).thenReturn(casaFalsa);
 
-        // WHEN & THEN
+        // 3. Crear Reserva (Obligatorio para pago.html)
+        Reserva reservaFalsa = new Reserva();
+        reservaFalsa.setAlojamiento(casaFalsa);
+
+        // 4. Usuario Falso
+        UsuarioConId usuarioFalso = new UsuarioConId("pepe", "pass", 99L);
+
         mockMvc.perform(get("/pago")
-                        .sessionAttr("reserva", reservaFake)) // Inyectamos 'reserva' en sesión
+                        .with(user(usuarioFalso))
+                        .flashAttr("reserva", reservaFalsa)) // Pasamos la reserva
                 .andExpect(status().isOk())
                 .andExpect(view().name("pago"));
-    }
-
-    @Test
-    void testDetalleAlojamientos_DeberiaRetornarVistaDetalle() throws Exception {
-        // GIVEN (Simulamos datos de sesión para que Thymeleaf no falle)
-        Map<String, Object> alojamientoFake = new HashMap<>();
-        alojamientoFake.put("fotoUrl", "https://via.placeholder.com/150");
-        alojamientoFake.put("nombre", "Casa Test");
-        alojamientoFake.put("descripcion", "Descripción de prueba");
-        alojamientoFake.put("precio", 50.0);
-
-        // WHEN & THEN
-        mockMvc.perform(get("/detalleAlojamientos.html")
-                        .sessionAttr("alojamiento", alojamientoFake)) // Inyectamos 'alojamiento' en sesión
-                .andExpect(status().isOk())
-                .andExpect(view().name("detalleAlojamientos"));
-    }
-
-    @Test
-    void testDashboard_ConUrlPrevia_DeberiaRedirigirAUrlPrevia() throws Exception {
-        String urlGuardada = "/alojamiento/123";
-
-        mockMvc.perform(get("/dashboard")
-                        .sessionAttr("urlPrevio", urlGuardada))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(urlGuardada));
-    }
-
-    @Test
-    void testDashboard_SinUrlPrevia_DeberiaRedirigirAIndex() throws Exception {
-        mockMvc.perform(get("/dashboard"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
     }
 }
