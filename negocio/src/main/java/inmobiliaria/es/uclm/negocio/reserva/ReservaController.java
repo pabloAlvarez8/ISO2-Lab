@@ -1,25 +1,27 @@
 package inmobiliaria.es.uclm.negocio.reserva;
 
-import inmobiliaria.es.uclm.negocio.alojamiento.Alojamiento;
-import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService;
-import inmobiliaria.es.uclm.negocio.user.User;
-import inmobiliaria.es.uclm.negocio.user.UserService;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.ui.Model; // Importante para pasar datos a la vista
-import java.util.Optional;
-import java.util.List;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.stream.Collectors;
+import java.util.Optional;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.security.core.Authentication;
+
+import inmobiliaria.es.uclm.negocio.alojamiento.Alojamiento;
+import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService;
+import inmobiliaria.es.uclm.negocio.user.User;
+import inmobiliaria.es.uclm.negocio.user.UserService;
 
 
 @Controller
