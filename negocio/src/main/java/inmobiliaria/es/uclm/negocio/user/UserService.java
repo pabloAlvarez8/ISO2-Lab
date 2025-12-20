@@ -76,16 +76,20 @@ public class UserService implements UserDetailsService {
 
         log.debug("Buscando usuario por email para autenticación: {}", email);
 
+        // 1. Buscamos el usuario en tu base de datos
         User usuario = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     log.warn("Intento de login fallido. Email no encontrado: {}", email);
                     return new UsernameNotFoundException("Usuario (email) no encontrado: " + email);
                 });
 
-        return new org.springframework.security.core.userdetails.User(
+        // 2. IMPORTANTE: Devolvemos nuestra clase personalizada con el ID
+        // Pasamos: usuario.getId(), usuario.getEmail(), usuario.getPassword() y los roles
+        return new CustomUserDetails(
+                usuario.getId(),
                 usuario.getEmail(),
                 usuario.getPassword(),
-                Collections.emptyList() // Roles vacíos por ahora
+                Collections.emptyList() // Aquí podrías mapear usuario.getRole() si lo necesitas más adelante
         );
     }
 
