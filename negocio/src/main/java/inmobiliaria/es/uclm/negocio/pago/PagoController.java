@@ -2,6 +2,8 @@ package inmobiliaria.es.uclm.negocio.pago;
 
 import inmobiliaria.es.uclm.negocio.reserva.Reserva;
 import inmobiliaria.es.uclm.negocio.reserva.ReservaService;
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +49,7 @@ public class PagoController {
         Reserva reserva = reservaService.findById(idReserva);
 
         if (reserva == null) {
-            throw new RuntimeException("Reserva no encontrada");
+            throw new EntityNotFoundException("Reserva no encontrada");
         }
 
         boolean pagoExitoso = false;
