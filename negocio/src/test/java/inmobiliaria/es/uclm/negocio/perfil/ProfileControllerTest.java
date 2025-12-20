@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PerfilWebController.class)
-public class ProfileControllerTest {
+class ProfileControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -44,7 +44,7 @@ public class ProfileControllerTest {
     @Test
     @DisplayName("Should display user profile with all lists loaded (Hosts & Tenant data)")
     @WithMockUser(username = "usuario@uclm.es")
-    public void shouldDisplayUserProfile_WhenUserIsAuthenticated() throws Exception {
+    void shouldDisplayUserProfile_WhenUserIsAuthenticated() throws Exception {
         // 1. Given
         User usuario = new User();
         usuario.setId(1L);
@@ -87,7 +87,7 @@ public class ProfileControllerTest {
 
     @Test
     @DisplayName("Should return 401 (Unauthorized) if user is not authenticated")
-    public void shouldReturnUnauthorized_WhenUserIsNotLoggedIn() throws Exception {
+    void shouldReturnUnauthorized_WhenUserIsNotLoggedIn() throws Exception {
         mockMvc.perform(get("/perfil"))
                 .andExpect(status().isUnauthorized());
     }
@@ -95,7 +95,7 @@ public class ProfileControllerTest {
     @Test
     @DisplayName("Should show the 'Become a Host' landing page")
     @WithMockUser(username = "user")
-    public void shouldShowBecomeHostPage() throws Exception {
+    void shouldShowBecomeHostPage() throws Exception {
         // Mock for header
         when(userService.findByEmail(anyString())).thenReturn(Optional.of(new User()));
 
@@ -107,7 +107,7 @@ public class ProfileControllerTest {
     @Test
     @DisplayName("Should process 'Become a Host' form and redirect to profile")
     @WithMockUser(username = "futuroanfitrion@uclm.es")
-    public void shouldProcessBecomeHostForm_AndRedirectToProfile() throws Exception {
+    void shouldProcessBecomeHostForm_AndRedirectToProfile() throws Exception {
         // 1. Given
         User usuario = new User();
         usuario.setId(5L);

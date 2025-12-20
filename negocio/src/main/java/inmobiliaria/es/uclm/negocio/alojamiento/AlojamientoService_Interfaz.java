@@ -3,7 +3,6 @@ package inmobiliaria.es.uclm.negocio.alojamiento;
 import inmobiliaria.es.uclm.negocio.alojamiento.dto.DestinoDTO;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Interfaz de negocio para la gestión de alojamientos.

@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ReservaControllerTest {
+class ReservaControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -47,7 +47,7 @@ public class ReservaControllerTest {
 
     @Test
     @WithMockUser(username = "inquilino@uclm.es")
-    public void shouldCreateReservationAndRedirectToPayment() throws Exception {
+    void shouldCreateReservationAndRedirectToPayment() throws Exception {
         // 1. Given
         User inquilino = new User();
         inquilino.setEmail("inquilino@uclm.es");
@@ -85,7 +85,7 @@ public class ReservaControllerTest {
 
     @Test
     @WithMockUser(username = "inquilino@uclm.es")
-    public void shouldRedirectToDetail_WhenDatesOverlap() throws Exception {
+    void shouldRedirectToDetail_WhenDatesOverlap() throws Exception {
         User inquilino = new User();
         inquilino.setEmail("inquilino@uclm.es");
 
@@ -111,7 +111,7 @@ public class ReservaControllerTest {
 
     @Test
     @WithMockUser(username = "inquilino@uclm.es")
-    public void shouldShowBookingDetail_WhenUserIsTenant() throws Exception {
+    void shouldShowBookingDetail_WhenUserIsTenant() throws Exception {
         User inquilino = new User();
         inquilino.setEmail("inquilino@uclm.es");
         User anfitrion = new User();
@@ -139,7 +139,7 @@ public class ReservaControllerTest {
 
     @Test
     @WithMockUser(username = "hacker@uclm.es")
-    public void shouldRedirectError_WhenUserIsNotAuthorizedForDetail() throws Exception {
+    void shouldRedirectError_WhenUserIsNotAuthorizedForDetail() throws Exception {
         User inquilino = new User();
         inquilino.setEmail("inquilino@uclm.es");
         User anfitrion = new User();
@@ -162,7 +162,7 @@ public class ReservaControllerTest {
 
     @Test
     @WithMockUser
-    public void shouldAcceptReservation() throws Exception {
+    void shouldAcceptReservation() throws Exception {
         Reserva reserva = new Reserva();
         reserva.setId(1L);
         when(reservaService.findById(1L)).thenReturn(reserva);
@@ -176,7 +176,7 @@ public class ReservaControllerTest {
 
     @Test
     @WithMockUser
-    public void shouldReturnOccupiedDatesApi() throws Exception {
+    void shouldReturnOccupiedDatesApi() throws Exception {
         Reserva reserva = new Reserva();
         reserva.setFechaEntrada(LocalDate.of(2026, 1, 1));
         reserva.setFechaSalida(LocalDate.of(2026, 1, 5));

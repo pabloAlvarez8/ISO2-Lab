@@ -30,7 +30,7 @@ import inmobiliaria.es.uclm.negocio.reserva.Reserva;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class PrincipalWebControllerTest {
+class PrincipalWebControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -50,7 +50,7 @@ public class PrincipalWebControllerTest {
     }
 
     @Test
-    public void testDetalleAlojamientos_DeberiaRetornarVistaDetalle() throws Exception {
+    void testDetalleAlojamientos_DeberiaRetornarVistaDetalle() throws Exception {
         // 1. Datos
         Alojamiento casaFalsa = new Alojamiento();
         casaFalsa.setId(1L);
@@ -76,7 +76,7 @@ public class PrincipalWebControllerTest {
     }
 
     @Test
-    public void testPago_DeberiaRetornarVistaPago() throws Exception {
+    void testPago_DeberiaRetornarVistaPago() throws Exception {
         // 1. Datos
         Alojamiento casaFalsa = new Alojamiento();
         casaFalsa.setId(1L);

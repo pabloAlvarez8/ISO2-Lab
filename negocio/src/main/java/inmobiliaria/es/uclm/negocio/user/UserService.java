@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Collection;
 
 @Service
@@ -132,6 +133,22 @@ public class UserService implements UserDetailsService {
 
         public Long getId() {
             return id;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            // 1. Same reference check
+            if (this == o) return true;
+            
+            // 2. Class type check
+            if (o == null || getClass() != o.getClass()) return false;
+            
+            // 3. Parent equality check (checks username and authorities)
+            if (!super.equals(o)) return false;
+            
+            // 4. Custom field check (ID)
+            CustomUserDetails that = (CustomUserDetails) o;
+            return Objects.equals(id, that.id);
         }
     }
 }

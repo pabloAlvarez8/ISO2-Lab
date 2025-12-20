@@ -1,7 +1,6 @@
 package inmobiliaria.es.uclm.negocio.alojamiento;
 
 import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import inmobiliaria.es.uclm.negocio.alojamiento.dto.AlojamientoSearchResultDTO;
 
 import java.math.BigDecimal;
