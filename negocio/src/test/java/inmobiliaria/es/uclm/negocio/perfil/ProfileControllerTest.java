@@ -1,7 +1,7 @@
 package inmobiliaria.es.uclm.negocio.perfil;
 
 import inmobiliaria.es.uclm.negocio.alojamiento.Alojamiento;
-import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService_Interfaz;
+import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService;
 import inmobiliaria.es.uclm.negocio.reserva.Reserva;
 import inmobiliaria.es.uclm.negocio.reserva.ReservaRepository;
 import inmobiliaria.es.uclm.negocio.user.User;
@@ -36,7 +36,7 @@ public class ProfileControllerTest {
     private UserService userService;
 
     @MockitoBean
-    private AlojamientoService_Interfaz alojamientoService;
+    private AlojamientoService alojamientoService;
 
     @MockitoBean
     private ReservaRepository reservaRepository;

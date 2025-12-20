@@ -12,7 +12,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -30,7 +29,7 @@ class PropertyControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private AlojamientoService_Interfaz propertyService;
+    private AlojamientoService propertyService;
 
     @MockitoBean(name = "userService")
     private UserService userService;

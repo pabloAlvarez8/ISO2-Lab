@@ -19,7 +19,7 @@ public class AlojamientoApiController {
 
         // Inyección de la capa de servicio que contiene la lógica de negocio.
         @Autowired
-        private AlojamientoService_Interfaz alojamientoService;
+        private AlojamientoService alojamientoService;
 
         /**
          * Endpoint principal (GET /) para la búsqueda y filtrado de alojamientos.

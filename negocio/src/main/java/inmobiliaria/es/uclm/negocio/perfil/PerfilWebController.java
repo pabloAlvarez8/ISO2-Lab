@@ -1,7 +1,7 @@
 package inmobiliaria.es.uclm.negocio.perfil;
 
 import inmobiliaria.es.uclm.negocio.alojamiento.Alojamiento;
-import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService_Interfaz;
+import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService;
 import inmobiliaria.es.uclm.negocio.reserva.Reserva;
 import inmobiliaria.es.uclm.negocio.reserva.ReservaRepository;
 import inmobiliaria.es.uclm.negocio.user.User;
@@ -20,7 +20,7 @@ import java.util.List;
 public class PerfilWebController {
 
     @Autowired private UserService userService;
-    @Autowired private AlojamientoService_Interfaz alojamientoService;
+    @Autowired private AlojamientoService alojamientoService;
     @Autowired private ReservaRepository reservaRepository; // Inyectamos el repo de reservas
 
     @GetMapping("/perfil")
