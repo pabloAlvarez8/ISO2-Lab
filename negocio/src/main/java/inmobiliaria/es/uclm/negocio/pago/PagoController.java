@@ -28,7 +28,7 @@ public class PagoController {
 
         // Comprobación manual: Si es null, lanzamos el error
         if (reserva == null) {
-            throw new RuntimeException("Reserva no encontrada");
+            throw new EntityNotFoundException("Reserva no encontrada");
         }
 
         model.addAttribute("reserva", reserva);
