@@ -28,7 +28,7 @@ public class ValoracionService {
         boolean puedeValorar = reservaRepo.haEmpezadoEstancia(usuarioId, inmuebleId, LocalDate.now());
         
         if (!puedeValorar) {
-            throw new RuntimeException("Para poder escribir una reseña de este alojamiento antes tienes que visitarlo.");
+            throw new IllegalStateException("Para poder escribir una reseña de este alojamiento antes tienes que visitarlo.");
         }
 
         // 2. REGLA DE NEGOCIO: Modificar si existe (Upsert)
