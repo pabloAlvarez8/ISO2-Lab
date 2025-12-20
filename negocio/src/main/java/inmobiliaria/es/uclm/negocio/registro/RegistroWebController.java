@@ -2,7 +2,6 @@ package inmobiliaria.es.uclm.negocio.registro;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,8 +28,15 @@ public class RegistroWebController {
     /**
      * Servicio para la gestión de la lógica de negocio de usuarios.
      */
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    /**
+     * Constructor.
+     * * @param userService El servicio de usuarios a inyectar.
+     */
+    public RegistroWebController(UserService userService) {
+        this.userService = userService;
+    }
 
     /**
      * Maneja la petición GET para mostrar la página de registro.

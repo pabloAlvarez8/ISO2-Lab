@@ -1,7 +1,6 @@
 package inmobiliaria.es.uclm.negocio.valoracion;
 
 import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -11,7 +10,11 @@ import java.util.Map;
 @RestController
 @RequestMapping("/valoraciones")
 public class ValoracionController {
-    @Autowired private ValoracionService service;
+    private final ValoracionService service;
+
+    public ValoracionController(ValoracionService service) {
+        this.service = service;
+    }
 
     @GetMapping("/inmueble/{id}")
     public List<ValoracionInmueble> listar(@PathVariable Long id) {

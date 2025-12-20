@@ -6,7 +6,6 @@ import inmobiliaria.es.uclm.negocio.reserva.Reserva;
 import inmobiliaria.es.uclm.negocio.reserva.ReservaRepository;
 import inmobiliaria.es.uclm.negocio.user.User;
 import inmobiliaria.es.uclm.negocio.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +18,17 @@ import java.util.List;
 @Controller
 public class PerfilWebController {
 
-    @Autowired private UserService userService;
-    @Autowired private AlojamientoService_Interfaz alojamientoService;
-    @Autowired private ReservaRepository reservaRepository; // Inyectamos el repo de reservas
+    private final UserService userService;
+    private final AlojamientoService_Interfaz alojamientoService;
+    private final ReservaRepository reservaRepository;
+
+    public PerfilWebController(UserService userService, 
+                               AlojamientoService_Interfaz alojamientoService, 
+                               ReservaRepository reservaRepository) {
+        this.userService = userService;
+        this.alojamientoService = alojamientoService;
+        this.reservaRepository = reservaRepository;
+    }
 
     @GetMapping("/perfil")
     public String verPerfil(Model model, Principal principal) {
