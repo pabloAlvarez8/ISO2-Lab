@@ -53,14 +53,13 @@ public class UserService implements UserDetailsService {
             return savedUser;
 
         } catch (Exception e) {
-            log.error("❌ Error al guardar usuario con email {}: {}", user.getEmail(), e.getMessage(), e);
-
+            // Just throw. The cause 'e' is passed, so the stack trace is preserved.
             throw new ResponseStatusException(
                 HttpStatus.INTERNAL_SERVER_ERROR, 
-                "Error ocurrido durante el registro del usuario.", 
+                "Error ocurrido durante el registro del usuario con email " + user.getEmail(), 
                 e
             );
-        }
+        } 
     }
 
     // --- MÉTODOS DE BÚSQUEDA ---
