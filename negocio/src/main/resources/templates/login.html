@@ -41,8 +41,10 @@
         </form>
 
         <div class="login-footer">
-            <p>¿No tienes cuenta? <a th:href="@{/register}" class="auth-link">Regístrate aquí</a></p>
-            <p style="margin-top: 10px;"><a th:href="@{/}" class="btn-secondary">Volver al Inicio</a></p>
+            <p>¿No tienes cuenta? <a th:href="@{/register}">Regístrate aquí</a></p>
+            <button class="btn-secondary btn-sm" onclick="window.location.href='/'" style=" margin-top: 20px">
+                Volver al Inicio
+            </button>
         </div>
 
     </div>

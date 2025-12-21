@@ -212,23 +212,6 @@
     border-color: #dc2626;
 }
 
-.auth-link a {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 12px 20px;
-    border-radius: 10px;
-    background-color: rgb(0, 132, 255);
-    color: white;
-    font-weight: bold;
-    text-decoration: none;
-    transition: all 0.2s ease-in-out;
-}
-
-.auth-link a:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
-}
-
 /* 3. TAMAÑOS */
 
 /* Pequeño (Tarjetas, tablas) */
