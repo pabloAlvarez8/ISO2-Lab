@@ -7,50 +7,64 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PropertyTest {
 
+    // TEST 1: Forzamos NULL para que entre en los IF
     @Test
-    @DisplayName("onCreate: Sets default values correctly 🕒")
-    void onCreate_SetsDefaultValues() {
+    @DisplayName("onCreate: Sets default values when fields are null 🕒")
+    void onCreate_NullFields_SetsDefaults() {
         Alojamiento property = new Alojamiento();
 
+        // ¡IMPORTANTE! Como en tu clase definiste 'private Boolean active = true',
+        // por defecto NO es null. Tenemos que forzarlo a null para probar el IF.
+        property.setActive(null);
+
+        // También forzamos updatedAt a null por si acaso (aunque suele serlo)
+        property.setUpdatedAt(null);
+
+        // WHEN
         property.onCreate();
 
+        // THEN
         assertNotNull(property.getCreatedAt());
         assertNotNull(property.getUpdatedAt());
 
-        // CORRECCIÓN: Usamos getActive() porque el campo es Boolean (objeto)
-        assertTrue(property.getActive(), "Should be active by default");
+        // Ahora sí hemos probado la línea "active = true"
+        assertTrue(property.getActive());
         assertEquals("ESTRICTA", property.getPoliticaCancelacion());
     }
 
+    // TEST 2: Lógica de NO sobrescribir
     @Test
-    @DisplayName("onCreate: Does NOT overwrite existing values 🛡️")
-    void onCreate_DoesNotOverwrite() {
+    @DisplayName("onCreate: Respects existing values (Does not overwrite) 🛡️")
+    void onCreate_ExistingValues_DoesNotOverwrite() {
         Alojamiento property = new Alojamiento();
-        property.setActive(false);
+        LocalDateTime manualDate = LocalDateTime.of(2020, 1, 1, 10, 0);
+        property.setUpdatedAt(manualDate);
         property.setPoliticaCancelacion("FLEXIBLE");
+        property.setActive(false); // Aquí active NO es null, es false. Salta el IF.
 
         property.onCreate();
 
-        // CORRECCIÓN: Usamos getActive()
-        assertFalse(property.getActive(), "Should not change to true if it was false");
+        assertEquals(manualDate, property.getUpdatedAt());
+        assertFalse(property.getActive());
         assertEquals("FLEXIBLE", property.getPoliticaCancelacion());
         assertNotNull(property.getCreatedAt());
     }
 
+    // TEST 3: Lógica de actualización
     @Test
-    @DisplayName("onUpdate: Updates modification timestamp 🔄")
-    void onUpdate_UpdatesTimestamp() {
+    @DisplayName("onUpdate: Updates timestamp logic 🔄")
+    void onUpdate_Logic() {
         Alojamiento property = new Alojamiento();
         property.onCreate();
-
-        LocalDateTime pastDate = LocalDateTime.now().minusSeconds(5);
-        property.setUpdatedAt(pastDate);
+        LocalDateTime oldDate = LocalDateTime.now().minusSeconds(1);
+        property.setUpdatedAt(oldDate);
 
         property.onUpdate();
 
-        assertTrue(property.getUpdatedAt().isAfter(pastDate));
+        assertTrue(property.getUpdatedAt().isAfter(oldDate));
     }
 
+    // TEST 4: Comprobación de Lombok
     @Test
     @DisplayName("Lombok: Verifies generated methods work ✅")
     void lombok_MethodsWork() {
