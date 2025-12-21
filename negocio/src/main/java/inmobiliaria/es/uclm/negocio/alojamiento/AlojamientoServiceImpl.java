@@ -86,17 +86,25 @@ public class AlojamientoServiceImpl implements AlojamientoService {
 
         List<Long> idsDisponibles = obtenerIdsDisponibles(checkin, checkout, maxPrice, capacity);
 
-        // LÓGICA DE CORTE PRECISA:
-        // Solo devolvemos vacío si el usuario BUSCÓ fechas (checkin/out != null)
-        // Y el repositorio confirmó que no hay nada libre (lista vacía).
         if (checkin != null && checkout != null && idsDisponibles.isEmpty()) {
             return Collections.emptyList();
         }
 
-        Specification<Alojamiento> spec = crearSpecification(ciudad, maxPrice, minRating, types, capacity, idsDisponibles);
+        // PASO 1: Pedimos a la base de datos todo MENOS la puntuación
+        // (Nota: minRating lo pasamos a crearSpecification pero NO lo usaremos dentro de la consulta SQL)
+        Specification<Alojamiento> spec = crearSpecification(ciudad, maxPrice, null, types, capacity, idsDisponibles);
         Sort sort = determinarOrdenacion(sortBy);
 
-        return repo.findAll(spec, sort);
+        List<Alojamiento> resultados = repo.findAll(spec, sort);
+
+        // PASO 2: Filtrado en MEMORIA (Java) por Valoración
+        if (minRating != null && minRating > 0) {
+            resultados = resultados.stream()
+                    .filter(a -> a.getValoracionMedia() >= minRating)
+                    .collect(Collectors.toList());
+        }
+
+        return resultados;
     }
 
     private List<Long> obtenerIdsDisponibles(LocalDate entrada, LocalDate salida, BigDecimal precio, int cap) {
