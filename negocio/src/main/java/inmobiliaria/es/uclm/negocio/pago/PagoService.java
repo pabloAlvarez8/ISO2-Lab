@@ -8,13 +8,7 @@ public class PagoService {
 
     // LÓGICA DE TARJETA
     public boolean procesarPagoTarjeta(String numeroTarjeta, String caducidad, String cvv) {
-        // Simulamos validaciones
-        if (numeroTarjeta == null || numeroTarjeta.length() < 13) return false;
-
-        // Simulamos conexión con Banco...
-        // Aquí podrías meter tu lógica de "clientSecret" si quisieras,
-        // pero para web directa basta con devolver un booleano.
-        return true; // Pago aceptado
+        return (numeroTarjeta != null && numeroTarjeta.length() > 13);
     }
 
     // LÓGICA DE PAYPAL
@@ -24,12 +18,11 @@ public class PagoService {
 
         // Simulamos conexión con API de PayPal...
         // Simulamos que tarda un poco...
-        try { Thread.sleep(500); } catch (InterruptedException e) {
-
-            // Restauramos el estado de interrupción para que el hilo sepa que debe pararse.
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            // Compliant: Restore the interrupted status so the thread knows it should stop
             Thread.currentThread().interrupt();
-            // Si el proceso se interrumpió, el pago ha fallado.
-            return false;
         }
 
         return true; // Pago aceptado

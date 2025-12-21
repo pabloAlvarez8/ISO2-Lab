@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 /**
  * Controlador REST que expone los endpoints para la gestión y
  * búsqueda de Alojamientos.
+ * Toda la API de esta clase se sirve bajo la ruta /api/alojamientos.
  */
 @RestController
 @RequestMapping("/api/alojamientos")
@@ -24,25 +25,28 @@ public class AlojamientoApiController {
         public AlojamientoApiController(AlojamientoService alojamientoService) {
             this.alojamientoService = alojamientoService;
         }
-        
+
         /**
          * Endpoint principal (GET /)
          */
         @GetMapping
         public List<AlojamientoSearchResultDTO> buscarAlojamientosConFiltros(
+
+                        // Los @RequestParam(required = false) permiten que todos los filtros
+                        // sean opcionales. Si un parámetro no se envía, su valor será 'null'.
                         @RequestParam(value = "q", required = false) String ciudad,
                         @RequestParam(value = "maxPrice", required = false) BigDecimal maxPrice,
                         @RequestParam(value = "minRating", required = false) Double minRating,
                         @RequestParam(value = "types", required = false) List<String> types,
                         @RequestParam(value = "capacity", required = false, defaultValue = "1") int capacity,
                         @RequestParam(value = "sortBy", required = false, defaultValue = "recommend") String sortBy) {
-                
+
                 // Ahora esto SÍ funcionará porque alojamientoService ya no es null
                 List<Alojamiento> alojamientosEncontrados = alojamientoService.buscarConFiltros(
                                 ciudad, maxPrice, minRating, types, capacity, sortBy);
 
                 return alojamientosEncontrados.stream()
-                                .map(AlojamientoSearchResultDTO::fromEntity) 
+                                .map(AlojamientoSearchResultDTO::fromEntity)
                                 .collect(Collectors.toList());
         }
 }

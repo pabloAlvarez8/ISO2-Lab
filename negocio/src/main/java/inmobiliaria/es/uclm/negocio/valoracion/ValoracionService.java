@@ -2,7 +2,6 @@ package inmobiliaria.es.uclm.negocio.valoracion;
 
 import org.springframework.stereotype.Service;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -17,10 +16,20 @@ import inmobiliaria.es.uclm.negocio.user.User;
 
 @Service
 public class ValoracionService {
-    @Autowired private ValoracionRepository valoracionRepo;
-    @Autowired private AlojamientoRepository alojamientoRepo;
-    @Autowired private UserRepository userRepo;
-    @Autowired private ReservaRepository reservaRepo;
+    private final ValoracionRepository valoracionRepo;
+    private final AlojamientoRepository alojamientoRepo;
+    private final UserRepository userRepo;
+    private final ReservaRepository reservaRepo;
+
+    public ValoracionService(ValoracionRepository valoracionRepo, 
+                             AlojamientoRepository alojamientoRepo, 
+                             UserRepository userRepo, 
+                             ReservaRepository reservaRepo) {
+        this.valoracionRepo = valoracionRepo;
+        this.alojamientoRepo = alojamientoRepo;
+        this.userRepo = userRepo;
+        this.reservaRepo = reservaRepo;
+    }
 
     public Map<String, Object> guardarValoracion(Long inmuebleId, Long usuarioId, Double puntuacion, String comentario) {
         
@@ -28,7 +37,7 @@ public class ValoracionService {
         boolean puedeValorar = reservaRepo.haEmpezadoEstancia(usuarioId, inmuebleId, LocalDate.now());
         
         if (!puedeValorar) {
-            throw new RuntimeException("Para poder escribir una reseña de este alojamiento antes tienes que visitarlo.");
+            throw new IllegalStateException("Para poder escribir una reseña de este alojamiento antes tienes que visitarlo.");
         }
 
         // 2. REGLA DE NEGOCIO: Modificar si existe (Upsert)

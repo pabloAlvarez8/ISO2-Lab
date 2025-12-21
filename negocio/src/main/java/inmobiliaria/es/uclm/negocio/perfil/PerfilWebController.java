@@ -19,16 +19,11 @@ import java.util.List;
 @Controller
 public class PerfilWebController {
 
-    // 1. Declaramos las dependencias como 'final'.
-    // Esto asegura que no se puedan modificar una vez creado el controlador.
     private final UserService userService;
     private final AlojamientoService alojamientoService;
     private final ReservaRepository reservaRepository;
 
-    // 2. Inyección por Constructor.
-    // Spring inyectará automáticamente todas las dependencias aquí al iniciar.
-    @Autowired
-    public PerfilWebController(UserService userService, 
+    public PerfilWebController(UserService userService,
                                AlojamientoService alojamientoService,
                                ReservaRepository reservaRepository) {
         this.userService = userService;

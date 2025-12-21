@@ -15,15 +15,15 @@ import java.util.List;
 @RequestMapping("/alojamientos")
 public class AlojamientoController {
 
+    private static final String ATTR_ALOJAMIENTO = "alojamiento";
+    private static final String REDIRECT_PERFIL = "redirect:/perfil";
+
     private final AlojamientoService alojamientoService;
-    private final UserService userService;
     private final ValoracionService valoracionService;
 
     public AlojamientoController(AlojamientoService alojamientoService,
-                                 UserService userService,
                                  ValoracionService valoracionService) {
         this.alojamientoService = alojamientoService;
-        this.userService = userService;
         this.valoracionService = valoracionService;
     }
 
@@ -55,7 +55,7 @@ public class AlojamientoController {
     // Muestra el formulario
     @GetMapping("/nuevo")
     public String mostrarFormulario(Model model) {
-        model.addAttribute("alojamiento", new Alojamiento());
+        model.addAttribute(ATTR_ALOJAMIENTO, new Alojamiento());
         return "nuevoAlojamiento";
     }
 
@@ -75,14 +75,14 @@ public class AlojamientoController {
         alojamientoService.guardarNuevoAlojamiento(alojamiento, userEmail);
 
         // Al terminar, volvemos al perfil para ver la nueva casa en la lista
-        return "redirect:/perfil";
+        return REDIRECT_PERFIL;
     }
 
     // ELIMINAR
     @GetMapping("/eliminar/{id}")
     public String eliminar(@PathVariable Long id) {
         alojamientoService.eliminar(id);
-        return "redirect:/perfil"; // Mejor volver al perfil si borras desde ahí
+        return REDIRECT_PERFIL; // Mejor volver al perfil si borras desde ahí
     }
 
     /**
@@ -104,7 +104,7 @@ public class AlojamientoController {
         }
 
         // 3. Pasar el alojamiento a la vista
-        model.addAttribute("alojamiento", alojamiento);
+        model.addAttribute(ATTR_ALOJAMIENTO, alojamiento);
 
         // 4. NUEVO: Obtener valoraciones y media
         List<ValoracionInmueble> valoraciones = valoracionService.obtenerPorAlojamiento(id);
@@ -124,10 +124,10 @@ public class AlojamientoController {
 
         // 2. Si existe, lo pasamos al modelo y abrimos el formulario
         if (alojamiento != null) {
-            model.addAttribute("alojamiento", alojamiento);
+            model.addAttribute(ATTR_ALOJAMIENTO, alojamiento);
             return "nuevoAlojamiento"; // Reutilizamos la vista de crear
         }
 
-        return "redirect:/perfil";
+        return REDIRECT_PERFIL;
     }
 }

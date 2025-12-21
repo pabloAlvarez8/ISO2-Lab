@@ -1,7 +1,6 @@
 package inmobiliaria.es.uclm.negocio.valoracion;
 
 import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -11,15 +10,19 @@ import java.util.Map;
 @RestController
 @RequestMapping("/valoraciones")
 public class ValoracionController {
-    @Autowired private ValoracionService service;
+    private final ValoracionService service;
+
+    public ValoracionController(ValoracionService service) {
+        this.service = service;
+    }
 
     @GetMapping("/inmueble/{id}")
     public List<ValoracionInmueble> listar(@PathVariable Long id) {
         return service.obtenerPorAlojamiento(id);
     }
 
-    @PostMapping("/guardar") // Cambiamos nombre a 'guardar' para ser más semánticos
-    public ResponseEntity<?> guardar(@RequestBody Map<String, Object> payload) {
+    @PostMapping("/guardar")
+    public ResponseEntity<Map<String, Object>> guardar(@RequestBody Map<String, Object> payload) {
         try {
             Long inmuebleId = ((Number) payload.get("inmuebleId")).longValue();
             Long usuarioId = ((Number) payload.get("usuarioId")).longValue();
@@ -27,12 +30,13 @@ public class ValoracionController {
             String comentario = (String) payload.get("comentario");
 
             Map<String, Object> resultado = service.guardarValoracion(inmuebleId, usuarioId, puntuacion, comentario);
+
             return ResponseEntity.ok(resultado);
-            
+
         } catch (RuntimeException e) {
-            // Capturamos la excepción de "No ha visitado" y devolvemos Error 403 (Forbidden)
+            // CAMBIO: Usamos "mensaje" en lugar de "error"
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                                 .body(Map.of("mensaje", e.getMessage()));
+                    .body(Map.of("mensaje", e.getMessage()));
         }
     }
 }

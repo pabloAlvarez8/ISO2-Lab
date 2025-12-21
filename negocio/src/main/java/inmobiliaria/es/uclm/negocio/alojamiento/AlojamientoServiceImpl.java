@@ -18,6 +18,11 @@ import java.util.stream.Collectors;
 @Service
 public class AlojamientoServiceImpl implements AlojamientoService {
 
+    public static final String FIELD_PRICE = "precio";
+    public static final String FIELD_CITY = "ciudad";
+    public static final String FIELD_CAPACITY = "capacidad";
+
+
     private final AlojamientoRepository repo;
     private final UserRepository userRepo;
 
@@ -67,7 +72,7 @@ public class AlojamientoServiceImpl implements AlojamientoService {
                 // Mapeamos a la clase original DestinoDTO
                 .map(alojamiento -> new DestinoDTO(alojamiento.getCiudad(), alojamiento.getFotoUrl()))
                 .limit(6)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -84,12 +89,12 @@ public class AlojamientoServiceImpl implements AlojamientoService {
 
             if (ciudad != null && !ciudad.isEmpty()) {
                 predicates.add(criteriaBuilder.like(
-                        criteriaBuilder.lower(root.get("ciudad")),
+                        criteriaBuilder.lower(root.get(FIELD_CITY)),
                         "%" + ciudad.toLowerCase() + "%"));
             }
 
             if (maxPrice != null) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("precio"), maxPrice));
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(FIELD_PRICE), maxPrice));
             }
 
             if (minRating != null && minRating > 0) {
@@ -97,7 +102,7 @@ public class AlojamientoServiceImpl implements AlojamientoService {
             }
 
             if (capacity > 1) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("capacidad"), capacity));
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(FIELD_CAPACITY), capacity));
             }
 
             if (types != null && !types.isEmpty()) {
@@ -109,9 +114,9 @@ public class AlojamientoServiceImpl implements AlojamientoService {
 
         Sort sort = Sort.unsorted();
         if ("price_asc".equals(sortBy)) {
-            sort = Sort.by(Sort.Direction.ASC, "precio");
+            sort = Sort.by(Sort.Direction.ASC, FIELD_PRICE);
         } else if ("price_desc".equals(sortBy)) {
-            sort = Sort.by(Sort.Direction.DESC, "precio");
+            sort = Sort.by(Sort.Direction.DESC, FIELD_PRICE);
         }
 
         return repo.findAll(spec, sort);
