@@ -62,6 +62,7 @@ public class UserService implements UserDetailsService {
     }
 
     // --- MÉTODOS DE BÚSQUEDA ---
+    // --- Tus otros métodos (sin cambios) ---
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
@@ -113,7 +114,7 @@ public class UserService implements UserDetailsService {
         private final Long id;
 
         public CustomUserDetails(Long id, String username, String password,
-                                 Collection<? extends GrantedAuthority> authorities) {
+                Collection<? extends GrantedAuthority> authorities) {
             super(username, password, authorities);
             this.id = id;
         }
@@ -132,6 +133,7 @@ public class UserService implements UserDetailsService {
 
         @Override
         public int hashCode() {
+            // Combine parent hash (username) with ID hash
             return Objects.hash(super.hashCode(), id);
         }
     }

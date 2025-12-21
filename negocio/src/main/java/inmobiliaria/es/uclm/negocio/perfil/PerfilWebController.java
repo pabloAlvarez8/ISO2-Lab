@@ -6,7 +6,7 @@ import inmobiliaria.es.uclm.negocio.reserva.Reserva;
 import inmobiliaria.es.uclm.negocio.reserva.ReservaRepository;
 import inmobiliaria.es.uclm.negocio.user.User;
 import inmobiliaria.es.uclm.negocio.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
