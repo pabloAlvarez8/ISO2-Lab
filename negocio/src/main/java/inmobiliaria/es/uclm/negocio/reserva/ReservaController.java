@@ -7,7 +7,7 @@ import inmobiliaria.es.uclm.negocio.user.UserService;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller; // USAR ESTE
-import org.springframework.web.bind.annotation.*; 
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.ui.Model;
 
@@ -18,9 +18,8 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.stream.Collectors;
 
-// NOTA: Usamos @Controller porque necesitamos devolver Vistas HTML y Redirecciones.
-// Si usas @RestController, los "redirect:/" se enviarán como texto plano JSON y no redirigirán.
-@Controller 
+
+@Controller
 @RequestMapping("/reservas")
 public class ReservaController {
 
@@ -42,7 +41,7 @@ public class ReservaController {
     // --- API para el Calendario ---
     // AÑADIDO: @ResponseBody. Esto le dice a Spring: "Este método específico SÍ es REST (JSON), no busques una vista HTML".
     @GetMapping("/api/ocupadas/{idAlojamiento}")
-    @ResponseBody 
+    @ResponseBody
     public List<String> getFechasOcupadas(@PathVariable Long idAlojamiento) {
         return reservaRepository.findReservasFuturas(idAlojamiento).stream()
                 .map(r -> r.getFechaEntrada().toString() + ":" + r.getFechaSalida().toString())
@@ -65,11 +64,11 @@ public class ReservaController {
             }
 
             model.addAttribute("reserva", reserva);
-            
+
             long dias = java.time.temporal.ChronoUnit.DAYS.between(reserva.getFechaEntrada(), reserva.getFechaSalida());
             model.addAttribute("diasEstancia", dias);
 
-            return "booking-details"; 
+            return "booking-details";
         } else {
             return "redirect:/perfil?error=ReservaNoEncontrada";
         }
@@ -125,7 +124,7 @@ public class ReservaController {
         return "redirect:/pagos/pago/" + reservaGuardada.getId();
     }
 
-    @GetMapping("/aceptar/{id}") 
+    @GetMapping("/aceptar/{id}")
     public String aceptarReserva(@PathVariable Long id) {
         Reserva reserva = reservaService.findById(id);
         if (reserva != null) {
@@ -135,7 +134,7 @@ public class ReservaController {
         return "redirect:/perfil";
     }
 
-    @GetMapping("/rechazar/{id}") 
+    @GetMapping("/rechazar/{id}")
     public String rechazarReserva(@PathVariable Long id) {
         Reserva reserva = reservaService.findById(id);
         if (reserva != null) {

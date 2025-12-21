@@ -8,13 +8,7 @@ public class PagoService {
 
     // LÓGICA DE TARJETA
     public boolean procesarPagoTarjeta(String numeroTarjeta, String caducidad, String cvv) {
-        // Simulamos validaciones
-        if (numeroTarjeta == null || numeroTarjeta.length() < 13) return false;
-
-        // Simulamos conexión con Banco...
-        // Aquí podrías meter tu lógica de "clientSecret" si quisieras,
-        // pero para web directa basta con devolver un booleano.
-        return true; // Pago aceptado
+        return (numeroTarjeta != null && numeroTarjeta.length() > 13);
     }
 
     // LÓGICA DE PAYPAL
