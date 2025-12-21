@@ -4,10 +4,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.format.annotation.DateTimeFormat; // IMPORTANTE: Necesario para recibir fechas
 
 import inmobiliaria.es.uclm.negocio.valoracion.ValoracionService;
 import inmobiliaria.es.uclm.negocio.valoracion.ValoracionInmueble;
 
+import java.time.LocalDate; // IMPORTANTE
 import java.util.List;
 
 @Controller
@@ -28,12 +30,22 @@ public class AlojamientoController {
 
     /**
      * Muestra la página de resultados de búsqueda (Buscador.html).
+     * ACTUALIZADO: Ahora recibe y pasa las fechas al modelo.
      */
     @GetMapping
     public String mostrarPaginaDeBusqueda(
             @RequestParam(value = "q", required = false) String ciudad,
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "people", required = false, defaultValue = "1") int capacity,
+
+            // --- NUEVOS PARÁMETROS DE FECHA ---
+            @RequestParam(value = "checkin", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkin,
+
+            @RequestParam(value = "checkout", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkout,
+            // ----------------------------------
+
             Model model) {
 
         // 1. Obtenemos el precio máximo para el slider del buscador
@@ -48,6 +60,12 @@ public class AlojamientoController {
         model.addAttribute("filtroCiudad", ciudad);
         model.addAttribute("filtroTipo", type);
         model.addAttribute("filtroCapacidad", capacity);
+
+        // --- PASAMOS LAS FECHAS AL MODELO ---
+        model.addAttribute("filtroCheckin", checkin);
+        model.addAttribute("filtroCheckout", checkout);
+        // ------------------------------------
+
         return "Buscador";
     }
 
@@ -69,11 +87,9 @@ public class AlojamientoController {
 
         String userEmail = authentication.getName();
 
-        // Delegamos TODA la lógica al servicio (buscar usuario, asignar casa, cambiar
-        // rol)
+        // Delegamos TODA la lógica al servicio
         alojamientoService.guardarNuevoAlojamiento(alojamiento, userEmail);
 
-        // Al terminar, volvemos al perfil para ver la nueva casa en la lista
         return REDIRECT_PERFIL;
     }
 
@@ -81,12 +97,11 @@ public class AlojamientoController {
     @GetMapping("/eliminar/{id}")
     public String eliminar(@PathVariable Long id) {
         alojamientoService.eliminar(id);
-        return REDIRECT_PERFIL; // Mejor volver al perfil si borras desde ahí
+        return REDIRECT_PERFIL;
     }
 
     /**
      * Muestra la página de detalle.
-     * INCLUYE la lógica de valoraciones.
      */
     @GetMapping("/detalleAlojamientos")
     public String detalleAlojamientos(@RequestParam Long id, Model model) {
@@ -105,7 +120,7 @@ public class AlojamientoController {
         // 3. Pasar el alojamiento a la vista
         model.addAttribute(ATTR_ALOJAMIENTO, alojamiento);
 
-        // 4. NUEVO: Obtener valoraciones y media
+        // 4. Obtener valoraciones y media
         List<ValoracionInmueble> valoraciones = valoracionService.obtenerPorAlojamiento(id);
         Double media = valoracionService.obtenerMedia(id);
 
@@ -118,13 +133,11 @@ public class AlojamientoController {
     // EDITAR ALOJAMIENTO
     @GetMapping("/editar/{id}")
     public String editarAlojamiento(@PathVariable Long id, Model model) {
-        // 1. Buscamos el alojamiento por su ID
         Alojamiento alojamiento = alojamientoService.findById(id);
 
-        // 2. Si existe, lo pasamos al modelo y abrimos el formulario
         if (alojamiento != null) {
             model.addAttribute(ATTR_ALOJAMIENTO, alojamiento);
-            return "nuevoAlojamiento"; // Reutilizamos la vista de crear
+            return "nuevoAlojamiento";
         }
 
         return REDIRECT_PERFIL;

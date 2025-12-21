@@ -1,69 +1,90 @@
 document.addEventListener("DOMContentLoaded", () => {
     console.log("🔵 header.js: Cargado y listo.");
 
-    // 1. Referencias
+    // --- 1. CONFIGURACIÓN DEL CALENDARIO (Flatpickr) ---
+    // Buscamos los inputs. Usamos "checkin-index" que es el que tienes en el HTML.
+    const checkinInput = document.getElementById("checkin-index");
+    const checkoutInput = document.getElementById("checkout-index");
+
+    // Solo activamos si existen en la página
+    if (checkinInput && checkoutInput) {
+        // Aseguramos que sean tipo texto para que Flatpickr funcione bien
+        checkinInput.type = "text";
+        checkoutInput.type = "text";
+
+        flatpickr(checkinInput, {
+            mode: "range",
+            dateFormat: "Y-m-d", // Formato compatible con Java LocalDate
+            minDate: "today",
+            locale: "es",
+            // Vinculamos el segundo input
+            plugins: [new rangePlugin({ input: "#checkout-index" })],
+            onChange: function(selectedDates) {
+                console.log("📅 Fechas seleccionadas:", selectedDates);
+            }
+        });
+        console.log("✅ Calendario Flatpickr activado.");
+    }
+
+    // --- 2. CONTADOR DE PERSONAS ---
     const minusBtn = document.getElementById("minusPerson");
     const plusBtn = document.getElementById("plusPerson");
     const peopleCountEl = document.getElementById("peopleCount");
     const searchBtn = document.getElementById("searchBtn");
 
-    // 2. Comprobación de existencia
     if (!minusBtn || !plusBtn || !peopleCountEl) {
-        console.warn("⚠️ header.js: No se encontraron los elementos del contador. (Es normal si estás en el header simple)");
-        // No hacemos return para que siga ejecutando el resto (dropdown, etc.)
+        console.warn("⚠️ header.js: No se encontraron los elementos del contador.");
     } else {
-        console.log("✅ header.js: Contador encontrado.");
-
         let count = 2;
 
-        // Función para pintar
         const updateVisual = () => {
             peopleCountEl.textContent = count;
-            console.log("🔢 Contador actualizado a: " + count);
         };
 
-        // Leer URL inicial
+        // Leer URL inicial por si venimos de una búsqueda anterior
         const params = new URLSearchParams(window.location.search);
         if (params.has("people")) {
             count = parseInt(params.get("people")) || 2;
             updateVisual();
         }
 
-        // LISTENERS (Con logs para ver si entran)
         minusBtn.addEventListener("click", (e) => {
-            e.preventDefault(); // Evita recargas fantasmas
-            e.stopPropagation();
-            console.log("➖ Click en Menos");
-
-            if (count > 1) {
-                count--;
-                updateVisual();
-            }
+            e.preventDefault(); e.stopPropagation();
+            if (count > 1) { count--; updateVisual(); }
         });
 
         plusBtn.addEventListener("click", (e) => {
-            e.preventDefault(); // Evita recargas fantasmas
-            e.stopPropagation();
-            console.log("➕ Click en Más");
-
-            count++;
-            updateVisual();
+            e.preventDefault(); e.stopPropagation();
+            count++; updateVisual();
         });
     }
 
-    // 3. Botón Buscar (Redirección segura)
-    const isBuscadorPage = document.getElementById("resultsList") !== null;
-
-    if (searchBtn && !isBuscadorPage) {
+    // --- 3. BOTÓN BUSCAR (Redirección) ---
+    // Nota: Quitamos el check de "!isBuscadorPage" para asegurar que funcione siempre en el index
+    if (searchBtn) {
         searchBtn.addEventListener("click", (e) => {
             e.preventDefault();
-            console.log("🔎 Redirigiendo al buscador...");
+            console.log("🔎 Procesando búsqueda...");
 
             const q = document.getElementById("q")?.value || "";
-            const checkin = document.getElementById("checkin")?.value || "";
-            const checkout = document.getElementById("checkout")?.value || "";
-            // Leemos el valor visual actual (que acabamos de modificar con los botones)
+
+            // AQUI ESTA LA CLAVE: Leemos los IDs correctos (-index)
+            // Usamos ?.value || "" para evitar errores si el elemento no existe
+            let checkin = document.getElementById("checkin-index")?.value || "";
+            let checkout = document.getElementById("checkout-index")?.value || "";
+
+            // (Opcional) Si en el futuro usas IDs sin "-index" en otra página, esto lo soporta:
+            if (!checkin) checkin = document.getElementById("checkin")?.value || "";
+            if (!checkout) checkout = document.getElementById("checkout")?.value || "";
+
             const people = peopleCountEl ? peopleCountEl.textContent : "2";
+
+            // Validar (Opcional: puedes quitar esto si quieres permitir búsquedas vacías)
+            /* if (!checkin || !checkout) {
+                alert("Por favor selecciona las fechas de viaje.");
+                return;
+            }
+            */
 
             const params = new URLSearchParams();
             if(q) params.set("q", q);
@@ -71,18 +92,24 @@ document.addEventListener("DOMContentLoaded", () => {
             if(checkout) params.set("checkout", checkout);
             params.set("people", people);
 
+            console.log("🚀 Redirigiendo a:", `/alojamientos?${params.toString()}`);
             window.location.href = `/alojamientos?${params.toString()}`;
         });
     }
 
-    // 4. Dropdown (si existe)
-    const btnDropdown = document.querySelector(".btn-dropdown");
-    const dropdownContent = document.querySelector(".dropdown-content");
-    if(btnDropdown && dropdownContent) {
-        btnDropdown.addEventListener("click", (e) => {
-            e.stopPropagation();
-            dropdownContent.style.display = dropdownContent.style.display === "block" ? "none" : "block";
-        });
-        document.addEventListener("click", () => dropdownContent.style.display = "none");
+    // --- 4. DROPDOWN DE USUARIO ---
+    // Ajustado para buscar dentro de .dropdown-container por seguridad
+    const container = document.querySelector(".dropdown-container");
+    if(container) {
+        const btn = container.querySelector("button");
+        const content = container.querySelector(".dropdown-content");
+
+        if(btn && content) {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                content.style.display = content.style.display === "block" ? "none" : "block";
+            });
+            document.addEventListener("click", () => content.style.display = "none");
+        }
     }
 });

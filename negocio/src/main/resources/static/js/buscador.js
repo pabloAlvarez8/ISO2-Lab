@@ -1,3 +1,4 @@
+/* eslint-env browser */
 document.addEventListener("DOMContentLoaded", () => {
 
     // --- REFERENCIAS ---
@@ -11,10 +12,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const minRating = document.getElementById("minRating");
     const minRatingVal = document.getElementById("minRatingVal");
 
-    // Elementos del Header
+    // --- CORRECCIÓN DE IDs DEL HEADER ---
     const searchInput = document.getElementById("q");
-    const checkinEl = document.getElementById("checkin");
-    const checkoutEl = document.getElementById("checkout");
+    // Usamos los IDs que definiste en el HTML del fragment
+    const checkinEl = document.getElementById("checkin-index");
+    const checkoutEl = document.getElementById("checkout-index");
     const searchBtn = document.getElementById("searchBtn");
     const peopleCountEl = document.getElementById("peopleCount");
 
@@ -29,15 +31,12 @@ document.addEventListener("DOMContentLoaded", () => {
         return `a ${km.toFixed(1)} km del centro`;
     }
 
-    // Función global para redirigir al detalle
     window.book = function(id) {
         window.location.href = `/alojamientos/detalleAlojamientos?id=${id}`;
     };
 
     function renderList(items) {
         resultsList.innerHTML = "";
-
-        // Manejo de lista vacía
         if (!items || !items.length) {
             resultsList.innerHTML = '<div class="no-results-card">No se encontraron alojamientos.</div>';
             if(resultsCount) resultsCount.textContent = "Mostrando 0 alojamientos";
@@ -47,15 +46,11 @@ document.addEventListener("DOMContentLoaded", () => {
         resultsCount.textContent = `Mostrando ${items.length} alojamientos`;
 
         items.forEach(it => {
-            // Protección contra datos nulos
             const imagen = (it.images && it.images.length > 0) ? it.images[0] : '/images/no-image.png';
             const puntuacion = it.rating ? `⭐ ${it.rating}` : 'Nuevo';
 
             const card = document.createElement("article");
             card.className = "card";
-
-            // Renderizado de la tarjeta
-            // NOTA: Aquí usamos las clases de botones nuevas (btn btn-primary btn-sm)
             card.innerHTML = `
                 <img src="${imagen}" alt="${it.title}" loading="lazy" />
                 <div class="info">
@@ -78,32 +73,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- FILTRADO AJAX ---
     async function applyFilters() {
-        // Recoger tipos marcados
         const checkedTypes = Array.from(document.querySelectorAll(".filter-type:checked")).map((n) => n.value);
-
-        // Valores de los rangos
         const max = maxPrice ? +maxPrice.value : 1000;
         const minR = minRating ? +minRating.value : 0;
         const s = sortBy ? sortBy.value : "recommend";
 
-        // Capacidad: Leemos del header o por defecto 1
-        let cap = 1; // <--- CAMBIO: Por defecto 1 para no ocultar casas pequeñas
+        let cap = 1;
         if (peopleCountEl && peopleCountEl.textContent) {
             const num = parseInt(peopleCountEl.textContent);
             if(!isNaN(num)) cap = num;
         }
 
-        // Construir parámetros URL para la API
         const params = new URLSearchParams();
         if (lastQuery) params.set("q", lastQuery);
         params.set("maxPrice", max);
         params.set("minRating", minR);
         params.set("capacity", cap);
         params.set("sortBy", s);
+
+        // --- NUEVO: ENVIAR FECHAS A LA API ---
+        if (checkinEl && checkinEl.value) {
+            params.set("checkin", checkinEl.value);
+        }
+        if (checkoutEl && checkoutEl.value) {
+            params.set("checkout", checkoutEl.value);
+        }
+        // -------------------------------------
+
         checkedTypes.forEach(t => params.append("types", t));
 
         try {
-            // Llamada al backend
             const response = await fetch(`/api/alojamientos?${params.toString()}`);
             if (!response.ok) throw new Error("Error API");
             const items = await response.json();
@@ -116,7 +115,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- EVENTOS ---
 
-    // 1. Botón Buscar del Header
     if (searchBtn) {
         searchBtn.addEventListener("click", (e) => {
             e.preventDefault();
@@ -124,26 +122,22 @@ document.addEventListener("DOMContentLoaded", () => {
             lastQuery = (searchInput?.value || "").trim().toLowerCase();
             const countStr = peopleCountEl ? peopleCountEl.textContent : "1";
 
-            // Actualizamos la URL del navegador (history API) sin recargar
             const p = new URLSearchParams(location.search);
             if (lastQuery) p.set("q", lastQuery); else p.delete("q");
 
-            // Guardamos filtros en URL por si el usuario comparte el link
             p.set("people", countStr);
             if (checkinEl?.value) p.set("checkin", checkinEl.value);
             if (checkoutEl?.value) p.set("checkout", checkoutEl.value);
 
             history.replaceState(null, "", `${location.pathname}?${p.toString()}`);
-
             applyFilters();
         });
     }
 
-    // 2. Filtros laterales (Inputs en tiempo real)
     if(maxPrice) {
         maxPrice.addEventListener("input", () => {
             maxPriceVal.textContent = maxPrice.value;
-            applyFilters(); // Se ejecuta mientras arrastras
+            applyFilters();
         });
     }
 
@@ -156,7 +150,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if(sortBy) sortBy.addEventListener("change", applyFilters);
 
-    // Checkboxes de tipo
     document.querySelectorAll(".filter-type").forEach(cb => {
         cb.addEventListener("change", applyFilters);
     });
@@ -165,29 +158,32 @@ document.addEventListener("DOMContentLoaded", () => {
     (function hydrate() {
         const p = new URLSearchParams(location.search);
 
-        // A. Recuperar búsqueda por texto de la URL
         if (p.has("q") && searchInput) {
             searchInput.value = p.get("q");
             lastQuery = p.get("q").toLowerCase();
         }
 
-        // B. Recuperar Precio Máximo solo si viene en la URL
-        // Si no viene, dejamos el que puso Thymeleaf (el máximo real de la BD)
+        // --- NUEVO: RECUPERAR FECHAS DE LA URL PARA EL INPUT ---
+        if (p.has("checkin") && checkinEl) {
+            checkinEl.value = p.get("checkin");
+        }
+        if (p.has("checkout") && checkoutEl) {
+            checkoutEl.value = p.get("checkout");
+        }
+        // ------------------------------------------------------
+
         if (maxPrice && p.has("maxPrice")) {
             maxPrice.value = p.get("maxPrice");
         }
-        // Actualizamos el numerito visible
         if (maxPrice && maxPriceVal) {
             maxPriceVal.textContent = maxPrice.value;
         }
 
-        // C. Recuperar Rating
         if (minRating) {
             if (p.has("minRating")) minRating.value = p.get("minRating");
             if (minRatingVal) minRatingVal.textContent = minRating.value;
         }
 
-        // Ejecutar primera búsqueda automática
         applyFilters();
     })();
 });

@@ -2,6 +2,7 @@ package inmobiliaria.es.uclm.negocio.alojamiento;
 
 import inmobiliaria.es.uclm.negocio.alojamiento.dto.DestinoDTO;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -61,6 +62,8 @@ public interface AlojamientoService {
             Double minRating,
             List<String> types,
             int capacity,
+            LocalDate checkin,
+            LocalDate checkout,
             String sortBy);
 
             /**

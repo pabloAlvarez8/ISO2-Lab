@@ -3,39 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    
+    <title>Mi Panel - Inmobiliarias Paqui</title>
+
     <link rel="stylesheet" th:href="@{/css/styleDashboard.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div class="container">
-        
-        <h2>¡Bienvenido!</h2>
-        
-        <p>Has iniciado sesión correctamente.</p>
+<div class="dashboard-container">
+    <div class="dashboard-card">
+
+        <div class="dashboard-header">
+            <div class="avatar-circle">
+                <i class="fas fa-user"></i>
+            </div>
+            <h2 th:text="${usuario != null ? 'Hola, ' + usuario.nombre : '¡Bienvenido!'}">¡Bienvenido!</h2>
+            <p>Has iniciado sesión correctamente.</p>
+        </div>
 
         <div class="dashboard-actions">
 
-            <a th:href="@{/perfil}" class="btn btn-primary btn-block">
-            Ver mi Perfil
+            <a th:href="@{/perfil}" class="btn-dash btn-primary">
+                <i class="fas fa-id-card"></i> Ver mi Perfil
             </a>
 
-            <a th:if="${botonVolver != null}"
-               th:href="${botonVolver}"
-               class="btn btn-secondary" >
-                Volver a la página anterior
+            <a th:if="${botonVolver != null}" th:href="${botonVolver}" class="btn-dash btn-outline">
+                <i class="fas fa-arrow-left"></i> Volver a la página anterior
             </a>
 
-            <a th:href="@{/}" class="btn btn-secondary btn-block">
-                Volver a Inicio
+            <a th:href="@{/}" class="btn-dash btn-outline">
+                <i class="fas fa-home"></i> Ir al Inicio
             </a>
 
-            <form th:action="@{/logout}" method="POST" style="width: 100%;">
-                <button type="submit" class="btn btn-danger btn-block">
-                    Cerrar Sesión
+            <div class="divider"></div>
+
+            <form th:action="@{/logout}" method="POST" class="logout-form">
+                <button type="submit" class="btn-dash btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
                 </button>
             </form>
 
-        </div> </div> </body>
+        </div>
+    </div>
+</div>
+
+</body>
 </html>

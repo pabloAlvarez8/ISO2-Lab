@@ -26,9 +26,11 @@
     <div class="search-bar">
       <input type="text" placeholder="¿A dónde vas?" aria-label="Destino" />
 
-      <input type="date" aria-label="Fecha de entrada" />
+      <input id="checkin-index" type="text" placeholder="Llegada" aria-label="Fecha de entrada" readonly
+             th:value="${filtroCheckin}" />
 
-      <input type="date" aria-label="Fecha de salida" />
+      <input id="checkout-index" type="text" placeholder="Salida" aria-label="Fecha de salida" readonly
+             th:value="${filtroCheckout}" />
 
       <div class="people-counter" aria-label="Personas">
         <button type="button" class="btn btn-ghost" style="padding: 0 10px; min-width: 30px;" aria-label="Quitar persona">-</button>
@@ -93,6 +95,11 @@
 </main>
 
 <footer>© 2025 Inmobiliarias Paqui</footer>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/rangePlugin.js"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
 
 <script th:src="@{/js/index.js}" defer></script>
 

@@ -13,15 +13,21 @@
     </a>
 
     <div class="search-bar" role="search" th:if="${showSearch}">
-        <input id="q" type="text" placeholder="Ciudad" aria-label="Ciudad" />
-        <input id="checkin" type="date" aria-label="Fecha de entrada" />
-        <input id="checkout" type="date" aria-label="Fecha de salida" />
+        <input id="q" type="text" placeholder="Ciudad" aria-label="Ciudad"
+               th:value="${filtroCiudad}" />
+
+        <input id="checkin-index" name="checkin" type="text" placeholder="Llegada" aria-label="Fecha de entrada" readonly
+               th:value="${filtroCheckin}" />
+
+        <input id="checkout-index" name="checkout" type="text" placeholder="Salida" aria-label="Fecha de salida" readonly
+               th:value="${filtroCheckout}" />
 
         <div class="people-counter" aria-label="Personas">
             <button type="button" id="minusPerson" class="btn btn-ghost" style="padding: 0 10px; min-width: 30px;" aria-label="Quitar persona">
                 -
             </button>
-            <span id="peopleCount" aria-live="polite">2</span>
+            <span id="peopleCount" aria-live="polite" th:text="${filtroCapacidad ?: 2}">2</span>
+
             <button type="button" id="plusPerson" class="btn btn-ghost" style="padding: 0 10px; min-width: 30px;" aria-label="Añadir persona">
                 +
             </button>
@@ -65,6 +71,11 @@
             </div>
         </div>
     </div>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/rangePlugin.js"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
 
     <script th:src="@{/js/header.js}" defer></script>
 </header>

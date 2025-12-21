@@ -17,7 +17,7 @@ body {
   text-align: center;
   /* Espacio para compensar el header fijo (100px) + aire visual (60px) */
   padding-top: 160px;
-  padding-bottom: 80px;
+  padding-bottom: 40px;
   background: linear-gradient(to bottom, #f5f8ff, #fff);
 }
 
@@ -83,7 +83,7 @@ body {
 .types {
   width: 90%;
   max-width: 1100px;
-  margin: 90px auto 60px;
+  margin: 60px auto 60px;
   text-align: center;
 }
 
@@ -134,8 +134,10 @@ body {
 }
 
 .destinos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  /* CAMBIO PRINCIPAL: De Grid a Flex */
+  display: flex;
+  flex-wrap: wrap;         /* Permite que los elementos bajen si no caben */
+  justify-content: center; /* ESTO es lo que centra al que se queda solo abajo */
   gap: 20px;
 }
 
@@ -146,6 +148,17 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  /* CAMBIO EN EL HIJO: Para controlar el ancho en modo Flex */
+  /* Crece (1), encoge (1), base ideal 240px */
+  flex: 1 1 240px;
+  /* Opcional: poner un máximo para que no se estiren demasiado */
+  max-width: 300px;
+}
+
+/* Mantenemos la regla para ocultar a partir del 5º */
+.destino:nth-child(n+5) {
+  display: none;
 }
 
 .destino:hover {
