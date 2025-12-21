@@ -15,9 +15,9 @@ import java.util.List;
 @RequestMapping("/api/alojamientos")
 public class AlojamientoApiController {
 
-        private final AlojamientoService_Interfaz alojamientoService;
+        private final AlojamientoService alojamientoService;
 
-        public AlojamientoApiController(AlojamientoService_Interfaz alojamientoService) {
+        public AlojamientoApiController(AlojamientoService alojamientoService) {
             this.alojamientoService = alojamientoService;
         }
 

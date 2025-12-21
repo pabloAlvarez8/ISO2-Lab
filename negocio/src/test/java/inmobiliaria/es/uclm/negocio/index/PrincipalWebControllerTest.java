@@ -22,7 +22,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import inmobiliaria.es.uclm.negocio.alojamiento.Alojamiento;
-import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService_Interfaz;
+import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService;
 
 // --- IMPORTANTE: Si 'Reserva' está en otro paquete, IntelliJ te pedirá importarla (Alt+Enter) ---
 import inmobiliaria.es.uclm.negocio.reserva.Reserva;
@@ -36,7 +36,7 @@ class PrincipalWebControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private AlojamientoService_Interfaz alojamientoService;
+    private AlojamientoService alojamientoService;
 
     // Clase auxiliar para simular un usuario con ID (para que Thymeleaf no falle)
     // Puedes ignorar los avisos de "unused" o "Lombok", está correcto.

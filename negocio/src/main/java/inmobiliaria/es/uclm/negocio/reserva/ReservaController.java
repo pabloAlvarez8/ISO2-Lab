@@ -1,7 +1,7 @@
 package inmobiliaria.es.uclm.negocio.reserva;
 
 import inmobiliaria.es.uclm.negocio.alojamiento.Alojamiento;
-import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService_Interfaz;
+import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService;
 import inmobiliaria.es.uclm.negocio.user.User;
 import inmobiliaria.es.uclm.negocio.user.UserService;
 
@@ -25,12 +25,12 @@ import java.util.stream.Collectors;
 public class ReservaController {
 
     private final ReservaService reservaService;
-    private final AlojamientoService_Interfaz alojamientoService;
+    private final AlojamientoService alojamientoService;
     private final UserService userService;
     private final ReservaRepository reservaRepository;
 
     public ReservaController(ReservaService reservaService,
-                             AlojamientoService_Interfaz alojamientoService,
+                             AlojamientoService alojamientoService,
                              UserService userService,
                              ReservaRepository reservaRepository) {
         this.reservaService = reservaService;

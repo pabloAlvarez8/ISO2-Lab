@@ -27,7 +27,7 @@ class PropertyControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private AlojamientoService_Interfaz propertyService;
+    private AlojamientoService propertyService;
 
     @MockitoBean(name = "userService")
     private UserService userService;

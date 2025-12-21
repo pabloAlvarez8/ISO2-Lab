@@ -1,7 +1,7 @@
 package inmobiliaria.es.uclm.negocio.reserva;
 
 import inmobiliaria.es.uclm.negocio.alojamiento.Alojamiento;
-import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService_Interfaz;
+import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService;
 import inmobiliaria.es.uclm.negocio.user.User;
 import inmobiliaria.es.uclm.negocio.user.UserService;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ class ReservaControllerTest {
     private ReservaService reservaService;
 
     @MockitoBean
-    private AlojamientoService_Interfaz alojamientoService;
+    private AlojamientoService alojamientoService;
 
     @MockitoBean
     private UserService userService;

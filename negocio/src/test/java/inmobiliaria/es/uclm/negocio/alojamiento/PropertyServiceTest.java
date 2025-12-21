@@ -33,7 +33,7 @@ class PropertyServiceTest {
     private UserRepository userRepo;
 
     @InjectMocks
-    private AlojamientoService propertyService;
+    private AlojamientoServiceImpl propertyService;
 
     @Mock
     private UserService userService;

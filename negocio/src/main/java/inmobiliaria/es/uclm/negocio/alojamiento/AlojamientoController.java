@@ -17,11 +17,11 @@ public class AlojamientoController {
     private static final String ATTR_ALOJAMIENTO = "alojamiento";
     private static final String REDIRECT_PERFIL = "redirect:/perfil";
 
-    private final AlojamientoService_Interfaz alojamientoService;
+    private final AlojamientoService alojamientoService;
     private final ValoracionService valoracionService;
 
-    public AlojamientoController(AlojamientoService_Interfaz alojamientoService,
-            ValoracionService valoracionService) {
+    public AlojamientoController(AlojamientoService alojamientoService,
+                                 ValoracionService valoracionService) {
         this.alojamientoService = alojamientoService;
         this.valoracionService = valoracionService;
     }

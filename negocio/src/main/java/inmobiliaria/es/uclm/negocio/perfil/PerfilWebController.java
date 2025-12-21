@@ -1,7 +1,7 @@
 package inmobiliaria.es.uclm.negocio.perfil;
 
 import inmobiliaria.es.uclm.negocio.alojamiento.Alojamiento;
-import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService_Interfaz;
+import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService;
 import inmobiliaria.es.uclm.negocio.reserva.Reserva;
 import inmobiliaria.es.uclm.negocio.reserva.ReservaRepository;
 import inmobiliaria.es.uclm.negocio.user.User;
@@ -19,11 +19,11 @@ import java.util.List;
 public class PerfilWebController {
 
     private final UserService userService;
-    private final AlojamientoService_Interfaz alojamientoService;
+    private final AlojamientoService alojamientoService;
     private final ReservaRepository reservaRepository;
 
     public PerfilWebController(UserService userService, 
-                               AlojamientoService_Interfaz alojamientoService, 
+                               AlojamientoService alojamientoService,
                                ReservaRepository reservaRepository) {
         this.userService = userService;
         this.alojamientoService = alojamientoService;
