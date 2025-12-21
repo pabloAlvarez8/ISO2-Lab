@@ -6,7 +6,6 @@ import inmobiliaria.es.uclm.negocio.alojamiento.dto.AlojamientoSearchResultDTO;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Controlador REST que expone los endpoints para la gestión y
