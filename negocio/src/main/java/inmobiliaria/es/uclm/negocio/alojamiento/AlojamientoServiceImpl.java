@@ -128,7 +128,25 @@ public class AlojamientoServiceImpl implements AlojamientoService {
                 predicates.add(cb.like(cb.lower(root.get(FIELD_CITY)), "%" + ciudad.toLowerCase() + "%"));
             }
 
-            // ... resto de filtros (precio, rating, etc)
+            // 3. Filtro de Precio (ESTO FALTABA)
+            if (maxPrice != null && maxPrice.compareTo(BigDecimal.ZERO) > 0) {
+                predicates.add(cb.lessThanOrEqualTo(root.get(FIELD_PRICE), maxPrice));
+            }
+
+            // 4. Filtro de Puntuación (ESTO FALTABA)
+            if (minRating != null && minRating > 0) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("puntuacion"), minRating));
+            }
+
+            // 5. Filtro de Capacidad (ESTO FALTABA)
+            if (capacity > 0) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get(FIELD_CAPACITY), capacity));
+            }
+
+            // 6. Filtro de Tipos (ESTO FALTABA)
+            if (types != null && !types.isEmpty()) {
+                predicates.add(root.get("tipo").in(types));
+            }
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };

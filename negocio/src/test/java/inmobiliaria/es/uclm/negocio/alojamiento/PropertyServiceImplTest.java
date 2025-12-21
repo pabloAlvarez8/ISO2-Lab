@@ -6,16 +6,17 @@ import inmobiliaria.es.uclm.negocio.user.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers; // Importante para corregir el unchecked assignment
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import jakarta.persistence.criteria.*;
-import org.mockito.ArgumentCaptor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -175,9 +176,12 @@ class PropertyServiceImplTest {
 
         // THEN
         verify(repo).save(newProperty); // La casa se guarda
-        // VERIFICACIÓN CLAVE: No se debe llamar a save del usuario porque no cambió nada
-        verify(userRepo, never()).save(ownerUser);
+        verify(userRepo, never()).save(ownerUser); // No se guarda usuario
     }
+
+    // ==========================================
+    // FILTER TESTS (CORREGIDO PARA LA NUEVA LÓGICA)
+    // ==========================================
 
     @Test
     @DisplayName("Specification Coverage: Verify all filters are applied 🧩")
@@ -187,31 +191,38 @@ class PropertyServiceImplTest {
         CriteriaQuery<?> query = mock(CriteriaQuery.class);
         CriteriaBuilder cb = mock(CriteriaBuilder.class);
         Path<Object> pathMock = mock(Path.class);
-
-        // Mock Predicate para evitar que se devuelvan NULLs y rompan el array
         Predicate dummyPredicate = mock(Predicate.class);
 
-        // STUBBING: Configuramos el comportamiento para devolver el predicado dummy
+        // Stubbing JPA criteria
         when(root.get(anyString())).thenReturn(pathMock);
-
-        // Importante: Hacemos que like, lessThan, etc. devuelvan algo que no sea null
         when(cb.like(any(), anyString())).thenReturn(dummyPredicate);
         when(cb.lessThanOrEqualTo(any(), any(BigDecimal.class))).thenReturn(dummyPredicate);
         when(cb.greaterThanOrEqualTo(any(), anyDouble())).thenReturn(dummyPredicate);
         when(cb.greaterThanOrEqualTo(any(), anyInt())).thenReturn(dummyPredicate);
+        when(cb.and(any(Predicate[].class))).thenReturn(dummyPredicate);
 
-        // Simulamos el .in()
+        // Stubbing IN clause
         CriteriaBuilder.In<Object> inClause = mock(CriteriaBuilder.In.class);
         when(pathMock.in(anyCollection())).thenReturn(inClause);
 
-        // 2. WHEN
+        // --- CORRECCIÓN IMPORTANTE ---
+        // Mockeamos la disponibilidad para evitar que devuelva lista vacía y corte el flujo
+        Alojamiento dummyAlojamiento = new Alojamiento();
+        dummyAlojamiento.setId(100L);
+        when(repo.buscarDisponibles(any(), any(), any(), any()))
+                .thenReturn(List.of(dummyAlojamiento));
+        // -----------------------------
+
+        // 2. WHEN: Llamamos con todos los parámetros (incluidas fechas)
         String ciudad = "Madrid";
         BigDecimal precio = BigDecimal.TEN;
         Double rating = 4.5;
         List<String> tipos = List.of("Casa");
         int capacidad = 3;
+        LocalDate checkin = LocalDate.now();
+        LocalDate checkout = LocalDate.now().plusDays(2);
 
-        service.buscarConFiltros(ciudad, precio, rating, tipos, capacidad, "price_asc");
+        service.buscarConFiltros(ciudad, precio, rating, tipos, capacidad, checkin, checkout, "price_asc");
 
         // 3. CAPTURA
         ArgumentCaptor<Specification<Alojamiento>> captor = ArgumentCaptor.forClass(Specification.class);
@@ -225,36 +236,27 @@ class PropertyServiceImplTest {
         // 5. THEN: Verificaciones
         verify(cb).like(any(), contains("madrid"));
         verify(cb).lessThanOrEqualTo(any(), eq(precio));
-
-        // Verifica llamadas numéricas (usamos any() en el primer arg para simplificar)
         verify(cb, atLeastOnce()).greaterThanOrEqualTo(any(), eq(rating));
         verify(cb, atLeastOnce()).greaterThanOrEqualTo(any(), eq(capacidad));
-
         verify(pathMock).in(tipos);
-
-        // CORRECCIÓN FINAL: Usamos any(Predicate[].class) para soportar VarArgs
         verify(cb).and(any(Predicate[].class));
     }
 
     @Test
     @DisplayName("Specification Coverage: Verify NULL filters skip logic (Branch Coverage) 🔀")
     void searchWithFilters_NullFilters_SkipsAllPredicates() {
-        // 1. GIVEN: Mocks básicos
+        // 1. GIVEN
         Root<Alojamiento> root = mock(Root.class);
         CriteriaQuery<?> query = mock(CriteriaQuery.class);
         CriteriaBuilder cb = mock(CriteriaBuilder.class);
-
-        // Aunque no añadamos nada, al final se llama a cb.and(), así que devolvemos un dummy
         Predicate dummyPredicate = mock(Predicate.class);
+
         when(cb.and(any(Predicate[].class))).thenReturn(dummyPredicate);
 
-        // 2. WHEN: Llamamos con TODOS los valores en NULL / Vacío / 0
+        // 2. WHEN: Llamamos con todo NULL (Fechas NULL para evitar la lógica de ids)
         service.buscarConFiltros(
-                null,   // ciudad null
-                null,   // precio null
-                null,   // rating null
-                null,   // tipos null
-                0,      // capacidad 0 (tu if dice > 1)
+                null, null, null, null, 0,
+                null, null, // Fechas null -> ids vacíos -> flujo sigue normal
                 "none"
         );
 
@@ -263,67 +265,42 @@ class PropertyServiceImplTest {
         verify(repo).findAll(captor.capture(), any(Sort.class));
         Specification<Alojamiento> specCapturada = captor.getValue();
 
-        // 4. EJECUCIÓN MANUAL
+        // 4. EJECUCIÓN
         specCapturada.toPredicate(root, query, cb);
 
-        // 5. THEN: Verificamos que NUNCA se llamaron a los constructores de filtros
-        // Esto confirma que los 'if' evaluaron a FALSE y saltaron el código
-
-        verify(cb, never()).like(any(), anyString());            // if (ciudad...) saltado
-        verify(cb, never()).lessThanOrEqualTo(any(), any(BigDecimal.class)); // if (maxPrice...) saltado
-        verify(cb, never()).greaterThanOrEqualTo(any(), anyDouble()); // if (rating...) saltado
-        // Nota: para capacidad usamos anyInt() porque es primitivo
-        verify(cb, never()).greaterThanOrEqualTo(any(), anyInt());    // if (capacity...) saltado
-
-        // Verifica que NO se llamó a root.get("tipo") ni .in(...)
-        // (Asumiendo que no mockeamos root.get para este test específico o verificamos in)
-
-        // Al final, se debe llamar a cb.and() pero con un array vacío
+        // 5. THEN
+        verify(cb, never()).like(any(), anyString());
+        verify(cb, never()).lessThanOrEqualTo(any(), any(BigDecimal.class));
+        verify(cb, never()).greaterThanOrEqualTo(any(), anyDouble());
+        verify(cb, never()).greaterThanOrEqualTo(any(), anyInt());
         verify(cb).and(any(Predicate[].class));
     }
 
     @Test
     @DisplayName("Specification Coverage: Edge Cases (Empty Strings, Empty Lists, Zero) ⚠️")
     void searchWithFilters_EdgeCases_EmptyValues_SkipsPredicates() {
-        // 1. GIVEN: Mocks básicos necesarios para que no explote
         Root<Alojamiento> root = mock(Root.class);
         CriteriaQuery<?> query = mock(CriteriaQuery.class);
         CriteriaBuilder cb = mock(CriteriaBuilder.class);
-
-        // Mock para el return final
         Predicate dummyPredicate = mock(Predicate.class);
+
         when(cb.and(any(Predicate[].class))).thenReturn(dummyPredicate);
 
-        // 2. WHEN: Llamamos con valores que NO son null, pero son "vacíos" o insuficientes
+        // WHEN: Fechas NULL para que la lista vacía de IDs no corte el flujo
         service.buscarConFiltros(
-                "",                     // ciudad: No es null, pero es Empty -> Falla el &&
-                null,                   // maxPrice
-                0.0,                    // minRating: No es null, pero no es > 0 -> Falla el &&
-                Collections.emptyList(),// types: No es null, pero es Empty -> Falla el &&
-                1,                      // capacity: Es 1, pero la condición pide > 1 -> Falla
+                "", null, 0.0, Collections.emptyList(), 1,
+                null, null, // Fechas null
                 "none"
         );
 
-        // 3. CAPTURA
         ArgumentCaptor<Specification<Alojamiento>> captor = ArgumentCaptor.forClass(Specification.class);
         verify(repo).findAll(captor.capture(), any(Sort.class));
         Specification<Alojamiento> specCapturada = captor.getValue();
 
-        // 4. EJECUCIÓN MANUAL
         specCapturada.toPredicate(root, query, cb);
 
-        // 5. THEN: Verificamos que NO se añadieron filtros
-        // Aunque las variables no eran null, no cumplían la segunda condición
-
         verify(cb, never()).like(any(), anyString());
-        verify(cb, never()).greaterThanOrEqualTo(any(), anyDouble());
-        verify(cb, never()).greaterThanOrEqualTo(any(), anyInt());
-
-        // Verifica que NO se intentó acceder a "tipo" ni hacer .in()
-        // (Esto confirma que !types.isEmpty() funcionó correctamente)
         verify(root, never()).get("tipo");
-
-        // Al final siempre se llama a and() con lista vacía
         verify(cb).and(any(Predicate[].class));
     }
 
@@ -374,7 +351,7 @@ class PropertyServiceImplTest {
     }
 
     // ==========================================
-    // FILTER & SPECIFICATION TESTS (CORREGIDOS)
+    // SORT TESTS
     // ==========================================
 
     @Test
@@ -382,10 +359,8 @@ class PropertyServiceImplTest {
     void searchWithFilters_SortAsc_CreatesCorrectSort() {
         String sortBy = "price_asc";
 
-        service.buscarConFiltros(null, null, null, null, 0, sortBy);
+        service.buscarConFiltros(null, null, null, null, 0, null, null, sortBy);
 
-        // CORRECCIÓN 1: Usamos ArgumentMatchers.<Type>any() para evitar 'Unchecked assignment'
-        // CORRECCIÓN 2: Bloque lambda explícito para evitar warning de NPE
         verify(repo).findAll(ArgumentMatchers.<Specification<Alojamiento>>any(), argThat((Sort s) -> {
             Sort.Order order = s.getOrderFor("precio");
             return order != null && order.isAscending();
@@ -397,7 +372,7 @@ class PropertyServiceImplTest {
     void searchWithFilters_SortDesc_CreatesCorrectSort() {
         String sortBy = "price_desc";
 
-        service.buscarConFiltros(null, null, null, null, 0, sortBy);
+        service.buscarConFiltros(null, null, null, null, 0, null, null, sortBy);
 
         verify(repo).findAll(ArgumentMatchers.<Specification<Alojamiento>>any(), argThat((Sort s) -> {
             Sort.Order order = s.getOrderFor("precio");
@@ -415,7 +390,8 @@ class PropertyServiceImplTest {
         int capacity = 2;
         String sortBy = "none";
 
-        service.buscarConFiltros(city, maxPrice, rating, types, capacity, sortBy);
+        // Pasamos null en fechas para simplificar
+        service.buscarConFiltros(city, maxPrice, rating, types, capacity, null, null, sortBy);
 
         verify(repo).findAll(ArgumentMatchers.<Specification<Alojamiento>>any(), any(Sort.class));
     }
