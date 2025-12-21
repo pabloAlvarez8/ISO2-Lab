@@ -22,7 +22,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import inmobiliaria.es.uclm.negocio.alojamiento.Alojamiento;
-import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService_Interfaz;
+import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService;
 
 // --- IMPORTANTE: Si 'Reserva' está en otro paquete, IntelliJ te pedirá importarla (Alt+Enter) ---
 import inmobiliaria.es.uclm.negocio.reserva.Reserva;
@@ -30,13 +30,13 @@ import inmobiliaria.es.uclm.negocio.reserva.Reserva;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class PrincipalWebControllerTest {
+class PrincipalWebControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockitoBean
-    private AlojamientoService_Interfaz alojamientoService;
+    private AlojamientoService alojamientoService;
 
     // Clase auxiliar para simular un usuario con ID (para que Thymeleaf no falle)
     // Puedes ignorar los avisos de "unused" o "Lombok", está correcto.
@@ -50,7 +50,7 @@ public class PrincipalWebControllerTest {
     }
 
     @Test
-    public void testDetalleAlojamientos_DeberiaRetornarVistaDetalle() throws Exception {
+    void testDetalleAlojamientos_DeberiaRetornarVistaDetalle() throws Exception {
         // 1. Datos
         Alojamiento casaFalsa = new Alojamiento();
         casaFalsa.setId(1L);
@@ -76,7 +76,7 @@ public class PrincipalWebControllerTest {
     }
 
     @Test
-    public void testPago_DeberiaRetornarVistaPago() throws Exception {
+    void testPago_DeberiaRetornarVistaPago() throws Exception {
         // 1. Datos
         Alojamiento casaFalsa = new Alojamiento();
         casaFalsa.setId(1L);

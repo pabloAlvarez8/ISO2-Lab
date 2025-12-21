@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class PropertyServiceTest {
+class PropertyServiceImplTest {
 
     @Mock
     private AlojamientoRepository propertyRepo;
@@ -33,7 +33,7 @@ class PropertyServiceTest {
     private UserRepository userRepo;
 
     @InjectMocks
-    private AlojamientoService propertyService;
+    private AlojamientoServiceImpl propertyService;
 
     @Mock
     private UserService userService;

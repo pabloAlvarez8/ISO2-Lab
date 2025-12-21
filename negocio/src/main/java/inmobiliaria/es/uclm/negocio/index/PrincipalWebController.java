@@ -1,6 +1,6 @@
 package inmobiliaria.es.uclm.negocio.index;
 
-import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService_Interfaz;
+import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService;
 import inmobiliaria.es.uclm.negocio.alojamiento.dto.DestinoDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,9 +11,9 @@ import java.util.List;
 @Controller
 public class PrincipalWebController {
 
-    private final AlojamientoService_Interfaz alojamientoService;
+    private final AlojamientoService alojamientoService;
 
-    public PrincipalWebController(AlojamientoService_Interfaz alojamientoService) {
+    public PrincipalWebController(AlojamientoService alojamientoService) {
         this.alojamientoService = alojamientoService;
     }
 
