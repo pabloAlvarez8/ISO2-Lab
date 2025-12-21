@@ -1,98 +1,63 @@
 package inmobiliaria.es.uclm.negocio.alojamiento;
 
-import inmobiliaria.es.uclm.negocio.user.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class PropertyTest {
 
     @Test
-    @DisplayName("onCreate should set default values (Active, Policy, Dates) when saving for the first time 🕒")
-    void onCreate_NewEntity_SetsDefaultValues() {
-        // 1. GIVEN (Dado una propiedad vacía)
+    @DisplayName("onCreate: Sets default values correctly 🕒")
+    void onCreate_SetsDefaultValues() {
         Alojamiento property = new Alojamiento();
 
-        // 2. WHEN (Simulamos el guardado inicial llamando al método manualmente)
         property.onCreate();
 
-        // 3. THEN (Verificamos que los campos se han rellenado)
-        assertNotNull(property.getCreatedAt(), "La fecha de creación no debería ser nula");
-        assertNotNull(property.getUpdatedAt(), "La fecha de actualización no debería ser nula");
+        assertNotNull(property.getCreatedAt());
+        assertNotNull(property.getUpdatedAt());
 
-        // Verificamos los valores por defecto
-        assertTrue(property.isActive(), "La propiedad debería estar activa por defecto");
-        assertEquals("ESTRICTA", property.getPoliticaCancelacion(), "La política de cancelación por defecto debería ser ESTRICTA");
+        // CORRECCIÓN: Usamos getActive() porque el campo es Boolean (objeto)
+        assertTrue(property.getActive(), "Should be active by default");
+        assertEquals("ESTRICTA", property.getPoliticaCancelacion());
     }
 
     @Test
-    @DisplayName("onUpdate should refresh the UpdatedAt timestamp 🔄")
-    void onUpdate_ExistingEntity_UpdatesTimestamp() {
-        // 1. GIVEN
+    @DisplayName("onCreate: Does NOT overwrite existing values 🛡️")
+    void onCreate_DoesNotOverwrite() {
         Alojamiento property = new Alojamiento();
-        property.onCreate(); // Inicializa las fechas a "AHORA"
+        property.setActive(false);
+        property.setPoliticaCancelacion("FLEXIBLE");
 
-        // TRUCO: En lugar de esperar con sleep, "viajamos al pasado".
-        // Simulamos que la última actualización fue hace 1 segundo.
-        LocalDateTime fechaAntigua = LocalDateTime.now().minusSeconds(1);
+        property.onCreate();
 
-        // Forzamos esa fecha antigua en el objeto
-        property.setUpdatedAt(fechaAntigua);
+        // CORRECCIÓN: Usamos getActive()
+        assertFalse(property.getActive(), "Should not change to true if it was false");
+        assertEquals("FLEXIBLE", property.getPoliticaCancelacion());
+        assertNotNull(property.getCreatedAt());
+    }
 
-        // 2. WHEN (Simulamos una nueva actualización)
-        // onUpdate() sobrescribirá la fecha con LocalDateTime.now() (que es más reciente que hace 1 seg)
+    @Test
+    @DisplayName("onUpdate: Updates modification timestamp 🔄")
+    void onUpdate_UpdatesTimestamp() {
+        Alojamiento property = new Alojamiento();
+        property.onCreate();
+
+        LocalDateTime pastDate = LocalDateTime.now().minusSeconds(5);
+        property.setUpdatedAt(pastDate);
+
         property.onUpdate();
 
-        // 3. THEN
-        assertTrue(property.getUpdatedAt().isAfter(fechaAntigua),
-                "La fecha de actualización debería ser posterior a la antigua");
+        assertTrue(property.getUpdatedAt().isAfter(pastDate));
     }
 
     @Test
-    @DisplayName("Should correctly store and retrieve monetary values (BigDecimal) 💶")
-    void setPrice_ValidAmount_StoresCorrectValue() {
-        // 1. GIVEN
+    @DisplayName("Lombok: Verifies generated methods work ✅")
+    void lombok_MethodsWork() {
         Alojamiento property = new Alojamiento();
-        BigDecimal expectedPrice = new BigDecimal("150.50");
+        property.setNombre("Test House");
 
-        // 2. WHEN
-        property.setPrecio(expectedPrice);
-
-        // 3. THEN
-        assertEquals(expectedPrice, property.getPrecio(), "El precio guardado debería coincidir exactamente con el esperado");
-    }
-
-    @Test
-    @DisplayName("Should maintain relationship with Host (User) 👤")
-    void setHost_ValidUser_ReturnsUser() {
-        // 1. GIVEN
-        Alojamiento property = new Alojamiento();
-        User hostMock = new User();
-        hostMock.setId(1L);
-
-        // 2. WHEN
-        property.setAnfitrion(hostMock);
-
-        // 3. THEN
-        assertNotNull(property.getAnfitrion(), "El anfitrión no debería ser nulo");
-        assertEquals(1L, property.getAnfitrion().getId(), "El ID del anfitrión debería coincidir");
-    }
-
-    @Test
-    @DisplayName("Should handle manual boolean active status correctly ✅")
-    void setActive_ManualOverride_ChangesStatus() {
-        // 1. GIVEN
-        Alojamiento property = new Alojamiento();
-        property.onCreate(); // Por defecto es true
-
-        // 2. WHEN
-        property.setActive(false);
-
-        // 3. THEN
-        assertFalse(property.isActive(), "El estado debería ser falso después de cambiarlo manualmente");
+        assertEquals("Test House", property.getNombre());
+        assertTrue(property.toString().startsWith("Alojamiento("));
     }
 }
