@@ -3,75 +3,85 @@ package inmobiliaria.es.uclm.negocio.alojamiento;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PropertyTest {
 
-    // TEST 1: Forzamos NULL para que entre en los IF
     @Test
     @DisplayName("onCreate: Sets default values when fields are null 🕒")
     void onCreate_NullFields_SetsDefaults() {
         Alojamiento property = new Alojamiento();
 
-        // ¡IMPORTANTE! Como en tu clase definiste 'private Boolean active = true',
-        // por defecto NO es null. Tenemos que forzarlo a null para probar el IF.
+        // Forzamos nulos para entrar en todas las ramas de los IF del método onCreate
         property.setActive(null);
-
-        // También forzamos updatedAt a null por si acaso (aunque suele serlo)
         property.setUpdatedAt(null);
+        property.setPoliticaCancelacion(null);
 
-        // WHEN
+        // Simulación de persistencia (JPA llama a @PrePersist)
         property.onCreate();
 
-        // THEN
-        assertNotNull(property.getCreatedAt());
-        assertNotNull(property.getUpdatedAt());
-
-        // Ahora sí hemos probado la línea "active = true"
-        assertTrue(property.getActive());
-        assertEquals("ESTRICTA", property.getPoliticaCancelacion());
+        // Verificaciones
+        assertNotNull(property.getCreatedAt(), "CreatedAt debería haberse generado");
+        assertNotNull(property.getUpdatedAt(), "UpdatedAt debería haberse generado");
+        assertTrue(property.getActive(), "Por defecto debería ser true");
+        assertEquals("ESTRICTA", property.getPoliticaCancelacion(), "Política por defecto errónea");
     }
 
-    // TEST 2: Lógica de NO sobrescribir
     @Test
     @DisplayName("onCreate: Respects existing values (Does not overwrite) 🛡️")
     void onCreate_ExistingValues_DoesNotOverwrite() {
         Alojamiento property = new Alojamiento();
         LocalDateTime manualDate = LocalDateTime.of(2020, 1, 1, 10, 0);
+
         property.setUpdatedAt(manualDate);
         property.setPoliticaCancelacion("FLEXIBLE");
-        property.setActive(false); // Aquí active NO es null, es false. Salta el IF.
+        property.setActive(false);
 
         property.onCreate();
 
+        // Verificamos que no se han sobrescrito los valores manuales
         assertEquals(manualDate, property.getUpdatedAt());
         assertFalse(property.getActive());
         assertEquals("FLEXIBLE", property.getPoliticaCancelacion());
         assertNotNull(property.getCreatedAt());
     }
 
-    // TEST 3: Lógica de actualización
     @Test
     @DisplayName("onUpdate: Updates timestamp logic 🔄")
     void onUpdate_Logic() {
         Alojamiento property = new Alojamiento();
-        property.onCreate();
-        LocalDateTime oldDate = LocalDateTime.now().minusSeconds(1);
+        property.onCreate(); // Inicializa fechas
+
+        LocalDateTime oldDate = LocalDateTime.now().minusDays(1);
         property.setUpdatedAt(oldDate);
 
+        // Simulación de actualización (JPA llama a @PreUpdate)
         property.onUpdate();
 
-        assertTrue(property.getUpdatedAt().isAfter(oldDate));
+        assertTrue(property.getUpdatedAt().isAfter(oldDate), "La fecha de actualización debería ser más reciente");
     }
 
-    // TEST 4: Comprobación de Lombok
     @Test
-    @DisplayName("Lombok: Verifies generated methods work ✅")
+    @DisplayName("Lombok & Data: Verifies getters, setters and basic logic ✅")
     void lombok_MethodsWork() {
         Alojamiento property = new Alojamiento();
-        property.setNombre("Test House");
+        BigDecimal precio = new BigDecimal("150.00");
 
-        assertEquals("Test House", property.getNombre());
-        assertTrue(property.toString().startsWith("Alojamiento("));
+        property.setId(1L);
+        property.setNombre("Villa Real");
+        property.setPrecio(precio);
+        property.setCapacidad(4);
+        property.setCiudad("Ciudad Real");
+
+        assertEquals(1L, property.getId());
+        assertEquals("Villa Real", property.getNombre());
+        assertEquals(precio, property.getPrecio());
+        assertEquals(4, property.getCapacidad());
+        assertEquals("Ciudad Real", property.getCiudad());
+
+        // Verifica que el método toString generado por Lombok no falle
+        assertNotNull(property.toString());
+        assertTrue(property.toString().contains("Villa Real"));
     }
 }

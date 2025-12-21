@@ -58,6 +58,8 @@ class PropertyRestControllerTest {
                 any(),
                 any(),
                 eq(2),
+                any(),
+                any(),
                 anyString())
         ).thenReturn(mockResults);
 
@@ -84,7 +86,7 @@ class PropertyRestControllerTest {
     @WithMockUser
     void search_NoParams_UsesDefaults() throws Exception {
         // 1. GIVEN
-        when(alojamientoService.buscarConFiltros(any(), any(), any(), any(), anyInt(), anyString()))
+        when(alojamientoService.buscarConFiltros(any(), any(), any(), any(), anyInt(), any(), any(), anyString()))
                 .thenReturn(Collections.emptyList());
 
         // 2. WHEN
@@ -94,7 +96,7 @@ class PropertyRestControllerTest {
 
         // 3. THEN
         verify(alojamientoService).buscarConFiltros(
-                null, null, null, null, 1, "recommend"
+                null, null, null, null, 1, null, null, "recommend"
         );
     }
 }
