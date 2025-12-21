@@ -150,5 +150,11 @@ public class UserService implements UserDetailsService {
             CustomUserDetails that = (CustomUserDetails) o;
             return Objects.equals(id, that.id);
         }
+
+        @Override
+        public int hashCode() {
+            // Combine parent hash (username) with ID hash
+            return Objects.hash(super.hashCode(), id);
+        }
     }
 }
