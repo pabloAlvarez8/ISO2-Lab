@@ -7,6 +7,8 @@ import inmobiliaria.es.uclm.negocio.reserva.Reserva;
 import inmobiliaria.es.uclm.negocio.user.User;
 import lombok.Data;
 
+import inmobiliaria.es.uclm.negocio.valoracion.ValoracionInmueble;
+
 import java.util.ArrayList; 
 import java.util.List;
 
@@ -59,8 +61,23 @@ public class Alojamiento {
     @Column(name = "politica_cancelacion")
     private String politicaCancelacion;
 
+    @OneToMany(mappedBy = "inmueble", fetch = FetchType.EAGER)
+    private List<ValoracionInmueble> valoraciones = new ArrayList<>();
+
     @Transient
     private Double valoracionMedia;
+
+    // MODIFICAR ESTE GETTER para que calcule la media real
+    public Double getValoracionMedia() {
+        if (this.valoraciones == null || this.valoraciones.isEmpty()) {
+            return 0.0; // Si no hay opiniones, un 0 o "Nuevo"
+        }
+        // Cálculo de la media usando Streams de Java
+        return this.valoraciones.stream()
+                .mapToDouble(ValoracionInmueble::getPuntuacion)
+                .average()
+                .orElse(0.0);
+    }
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
