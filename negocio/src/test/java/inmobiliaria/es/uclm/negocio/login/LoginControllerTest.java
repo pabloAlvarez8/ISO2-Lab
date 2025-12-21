@@ -15,13 +15,13 @@ import org.springframework.test.web.servlet.MvcResult;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class LoginControllerTest {
+class LoginControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void shouldSaveReferrerInSession_WhenComingFromValidPage() throws Exception {
+    void shouldSaveReferrerInSession_WhenComingFromValidPage() throws Exception {
         // Simulamos que el usuario viene de la lista de propiedades
         String validReferrer = "http://localhost:8080/propiedades";
 
@@ -39,7 +39,7 @@ public class LoginControllerTest {
     }
 
     @Test
-    public void shouldNotSaveReferrer_WhenComingFromLoginOrRegister() throws Exception {
+    void shouldNotSaveReferrer_WhenComingFromLoginOrRegister() throws Exception {
         // Simulamos que el usuario ya estaba en login (por ejemplo, falló la clave y recargó)
         String loginReferrer = "http://localhost:8080/login";
 
@@ -54,7 +54,7 @@ public class LoginControllerTest {
     }
 
     @Test
-    public void shouldNotFail_WhenReferrerIsNull() throws Exception {
+    void shouldNotFail_WhenReferrerIsNull() throws Exception {
         // Caso donde el usuario escribe la URL directamente en el navegador
         MvcResult result = mockMvc.perform(get("/login"))
                 .andExpect(status().isOk())

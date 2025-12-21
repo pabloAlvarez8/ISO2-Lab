@@ -7,7 +7,6 @@ import org.springframework.security.core.Authentication;
 
 import inmobiliaria.es.uclm.negocio.valoracion.ValoracionService;
 import inmobiliaria.es.uclm.negocio.valoracion.ValoracionInmueble;
-import inmobiliaria.es.uclm.negocio.user.UserService;
 
 import java.util.List;
 
@@ -19,14 +18,11 @@ public class AlojamientoController {
     private static final String REDIRECT_PERFIL = "redirect:/perfil";
 
     private final AlojamientoService alojamientoService;
-    private final UserService userService;
     private final ValoracionService valoracionService;
 
     public AlojamientoController(AlojamientoService alojamientoService,
-                                 UserService userService,
                                  ValoracionService valoracionService) {
         this.alojamientoService = alojamientoService;
-        this.userService = userService;
         this.valoracionService = valoracionService;
     }
 

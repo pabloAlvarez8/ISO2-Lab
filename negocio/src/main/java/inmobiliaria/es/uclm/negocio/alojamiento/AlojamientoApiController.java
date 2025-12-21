@@ -1,12 +1,10 @@
 package inmobiliaria.es.uclm.negocio.alojamiento;
 
 import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import inmobiliaria.es.uclm.negocio.alojamiento.dto.AlojamientoSearchResultDTO;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Controlador REST que expone los endpoints para la gestión y
@@ -17,9 +15,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/alojamientos")
 public class AlojamientoApiController {
 
-        // Inyección de la capa de servicio que contiene la lógica de negocio.
-        @Autowired
-        private AlojamientoService alojamientoService;
+        private final AlojamientoService alojamientoService;
+
+        public AlojamientoApiController(AlojamientoService alojamientoService) {
+            this.alojamientoService = alojamientoService;
+        }
 
         /**
          * Endpoint principal (GET /) para la búsqueda y filtrado de alojamientos.
@@ -55,7 +55,7 @@ public class AlojamientoApiController {
                 // Esto desacopla la API de la persistencia y previene problemas de
                 // serialización (LazyInitializationExceptions o bucles infinitos).
                 return alojamientosEncontrados.stream()
-                                .map(AlojamientoSearchResultDTO::fromEntity) // Conversión estática
-                                .collect(Collectors.toList());
+                .map(AlojamientoSearchResultDTO::fromEntity) // Conversión estática
+                .toList();
         }
 }

@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 // (1) Cargamos el controlador exacto
 @WebMvcTest(UserController.class)
-public class UserRestControllerTest {
+class UserRestControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -29,7 +29,7 @@ public class UserRestControllerTest {
     @Test
     @DisplayName("Should register a user via API and return the created object")
     @WithMockUser // Saltamos la seguridad básica
-    public void testRegisterUserApi() throws Exception {
+    void testRegisterUserApi() throws Exception {
         // 1. Given
         User usuarioGuardado = new User();
         usuarioGuardado.setId(10L);

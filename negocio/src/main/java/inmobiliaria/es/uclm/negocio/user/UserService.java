@@ -3,16 +3,17 @@ package inmobiliaria.es.uclm.negocio.user;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority; // Importación necesaria
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Collection;
 
 @Service
@@ -20,11 +21,13 @@ public class UserService implements UserDetailsService {
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     // REGISTRO
 
@@ -51,7 +54,12 @@ public class UserService implements UserDetailsService {
 
         } catch (Exception e) {
             log.error("❌ Error al guardar usuario con email {}: {}", user.getEmail(), e.getMessage(), e);
-            throw new RuntimeException("Error ocurrido durante el registro del usuario.", e);
+
+            throw new ResponseStatusException(
+                HttpStatus.INTERNAL_SERVER_ERROR, 
+                "Error ocurrido durante el registro del usuario.", 
+                e
+            );
         }
     }
 
@@ -125,6 +133,22 @@ public class UserService implements UserDetailsService {
 
         public Long getId() {
             return id;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            // 1. Same reference check
+            if (this == o) return true;
+            
+            // 2. Class type check
+            if (o == null || getClass() != o.getClass()) return false;
+            
+            // 3. Parent equality check (checks username and authorities)
+            if (!super.equals(o)) return false;
+            
+            // 4. Custom field check (ID)
+            CustomUserDetails that = (CustomUserDetails) o;
+            return Objects.equals(id, that.id);
         }
     }
 }

@@ -19,9 +19,17 @@ import java.util.List;
 @Controller
 public class PerfilWebController {
 
-    @Autowired private UserService userService;
-    @Autowired private AlojamientoService alojamientoService;
-    @Autowired private ReservaRepository reservaRepository; // Inyectamos el repo de reservas
+    private final UserService userService;
+    private final AlojamientoService alojamientoService;
+    private final ReservaRepository reservaRepository;
+
+    public PerfilWebController(UserService userService,
+                               AlojamientoService alojamientoService,
+                               ReservaRepository reservaRepository) {
+        this.userService = userService;
+        this.alojamientoService = alojamientoService;
+        this.reservaRepository = reservaRepository;
+    }
 
     @GetMapping("/perfil")
     public String verPerfil(Model model, Principal principal) {
