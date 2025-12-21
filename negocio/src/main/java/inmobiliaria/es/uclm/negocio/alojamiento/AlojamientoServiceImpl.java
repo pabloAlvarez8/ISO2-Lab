@@ -90,8 +90,6 @@ public class AlojamientoServiceImpl implements AlojamientoService {
             return Collections.emptyList();
         }
 
-        // PASO 1: Pedimos a la base de datos todo MENOS la puntuación
-        // (Nota: minRating lo pasamos a crearSpecification pero NO lo usaremos dentro de la consulta SQL)
         Specification<Alojamiento> spec = crearSpecification(ciudad, maxPrice, null, types, capacity, idsDisponibles);
         Sort sort = determinarOrdenacion(sortBy);
 
@@ -101,7 +99,7 @@ public class AlojamientoServiceImpl implements AlojamientoService {
         if (minRating != null && minRating > 0) {
             resultados = resultados.stream()
                     .filter(a -> a.getValoracionMedia() >= minRating)
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         return resultados;
