@@ -47,6 +47,6 @@ public class AlojamientoApiController {
 
                 return alojamientosEncontrados.stream()
                                 .map(AlojamientoSearchResultDTO::fromEntity)
-                                .collect(Collectors.toList());
+                                .toList();
         }
 }
