@@ -69,7 +69,7 @@ El sistema integra perfiles de **Propietario** e **Inquilino** en una única cue
 
 ## 🛠️ Stack Tecnológico
 
-El proyecto sigue una arquitectura **por funcionalidades**.
+El proyecto sigue una arquitectura **MVC (Modelo-Vista-Controlador) agrupado por funcionalidades**.
 
 * **Backend:** Java, Spring Boot (Web, Data JPA, Security).
 
@@ -98,7 +98,7 @@ Realizadas con **SonarQube** para evaluar métricas de *Reliability*, *Security*
 
 * Manejo correcto de excepciones y eliminación de `Thread.sleep()` en tests.
 
-* Reducción de la Deuda Técnica.
+* Gestión de la Deuda Técnica.
 
 ### 2. Pruebas Dinámicas (Unitarias e Integración)
 
@@ -116,9 +116,9 @@ El proyecto cuenta con un plan de mantenimiento clasificado en cuatro categoría
 
 Líneas de trabajo futuro (Roadmap):
 
-* [ ] Mejora visual: Centrar alojamientos en el Index y refinar el CSS global.
+* [ ] Funcoinalidad: Añadir un botón de favoritos
 * [ ] Funcionalidad: Añadir más filtros avanzados en la búsqueda.
-* [ ] UX: Optimización del footer y visualización de detalles del alojamiento.
+* [ ] Funcionalidad: Implementar un sistema de notificaciones.
 
 ---
 
@@ -144,6 +144,7 @@ cd ISO2-Lab/negocio
 ./mvnw test
 
 # Los reportes se generarán en negocio/target/surefire-report
+
 ```
 
 
@@ -156,4 +157,10 @@ cd ISO2-Lab/negocio
 4. **Acceder a la aplicación desde:**
 ```bash
 http://localhost:8080
+
 ```
+---
+
+* Ver [Documentación del proyecto](https://docs.google.com/document/d/1WYdRqaKpLokZI2UAyOUoG7wVif8BfM0WYjm3txiifJ8/edit?tab=t.0 "Documentación del proyecto")
+
+* Ver [Kanban del proyecto](https://trello.com/b/7v8fO0r8/mi-tablero-de-trello "Kanban del proyecto")
