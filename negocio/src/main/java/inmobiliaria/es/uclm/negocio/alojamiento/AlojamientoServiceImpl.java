@@ -7,7 +7,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,6 +113,8 @@ public class AlojamientoServiceImpl implements AlojamientoService {
         return disponibles.stream().map(Alojamiento::getId).toList();
     }
 
+    // --- INICIO REFACTORIZACIÓN (REDUCCIÓN COMPLEJIDAD COGNITIVA) ---
+
     private Specification<Alojamiento> crearSpecification(
             String ciudad, BigDecimal maxPrice, Double minRating,
             List<String> types, int capacity, List<Long> ids) {
@@ -118,39 +122,54 @@ public class AlojamientoServiceImpl implements AlojamientoService {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            // Solo aplicamos el filtro IN si la lista tiene IDs
-            // Si está vacía (porque no hubo fechas), se ignora y el flujo sigue a "Ciudad"
-            if (ids != null && !ids.isEmpty()) {
-                predicates.add(root.get("id").in(ids));
-            }
-
-            if (ciudad != null && !ciudad.isEmpty()) {
-                predicates.add(cb.like(cb.lower(root.get(FIELD_CITY)), "%" + ciudad.toLowerCase() + "%"));
-            }
-
-            // 3. Filtro de Precio (ESTO FALTABA)
-            if (maxPrice != null && maxPrice.compareTo(BigDecimal.ZERO) > 0) {
-                predicates.add(cb.lessThanOrEqualTo(root.get(FIELD_PRICE), maxPrice));
-            }
-
-            // 4. Filtro de Puntuación (ESTO FALTABA)
-            if (minRating != null && minRating > 0) {
-                predicates.add(cb.greaterThanOrEqualTo(root.get("puntuacion"), minRating));
-            }
-
-            // 5. Filtro de Capacidad (ESTO FALTABA)
-            if (capacity > 0) {
-                predicates.add(cb.greaterThanOrEqualTo(root.get(FIELD_CAPACITY), capacity));
-            }
-
-            // 6. Filtro de Tipos (ESTO FALTABA)
-            if (types != null && !types.isEmpty()) {
-                predicates.add(root.get("tipo").in(types));
-            }
+            addIdAndCityPredicates(predicates, cb, root, ids, ciudad);
+            addMetricsPredicates(predicates, cb, root, maxPrice, minRating, capacity);
+            addTypePredicate(predicates, root, types);
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
+
+    private void addIdAndCityPredicates(List<Predicate> predicates, CriteriaBuilder cb,
+                                        Root<Alojamiento> root, List<Long> ids, String ciudad) {
+        // 1. Filtro de IDs (Disponibilidad)
+        if (ids != null && !ids.isEmpty()) {
+            predicates.add(root.get("id").in(ids));
+        }
+
+        // 2. Filtro de Ciudad
+        if (ciudad != null && !ciudad.isEmpty()) {
+            predicates.add(cb.like(cb.lower(root.get(FIELD_CITY)), "%" + ciudad.toLowerCase() + "%"));
+        }
+    }
+
+    private void addMetricsPredicates(List<Predicate> predicates, CriteriaBuilder cb,
+                                      Root<Alojamiento> root, BigDecimal maxPrice,
+                                      Double minRating, int capacity) {
+        // 3. Filtro de Precio
+        if (maxPrice != null && maxPrice.compareTo(BigDecimal.ZERO) > 0) {
+            predicates.add(cb.lessThanOrEqualTo(root.get(FIELD_PRICE), maxPrice));
+        }
+
+        // 4. Filtro de Puntuación
+        if (minRating != null && minRating > 0) {
+            predicates.add(cb.greaterThanOrEqualTo(root.get("puntuacion"), minRating));
+        }
+
+        // 5. Filtro de Capacidad
+        if (capacity > 0) {
+            predicates.add(cb.greaterThanOrEqualTo(root.get(FIELD_CAPACITY), capacity));
+        }
+    }
+
+    private void addTypePredicate(List<Predicate> predicates, Root<Alojamiento> root, List<String> types) {
+        // 6. Filtro de Tipos
+        if (types != null && !types.isEmpty()) {
+            predicates.add(root.get("tipo").in(types));
+        }
+    }
+    
+    // --- FIN REFACTORIZACIÓN ---
 
     private Sort determinarOrdenacion(String sortBy) {
         if ("price_asc".equals(sortBy)) {

@@ -243,12 +243,11 @@ class UserServiceTest {
         // --- LÍNEA 2: if (o == null ... ) ---
         // Se prueba pasando null explícitamente.
         // Usamos assertFalse llamando directamente al método para asegurar que entra en TU código
-        assertFalse(u1.equals(null));
+        assertNotEquals(u1, null);
 
         // --- LÍNEA 2: ... || getClass() != o.getClass()) ---
         // Se prueba pasando un objeto de otra clase (ej. un String o un Object)
-        assertFalse(u1.equals(new Object()));
-
+        assertNotEquals(u1, new Object());
         // --- LÍNEA 3: if (!super.equals(o)) return false; ---
         // ESTA ES LA DIFÍCIL. Necesitamos:
         // - Misma clase (CustomUserDetails)
