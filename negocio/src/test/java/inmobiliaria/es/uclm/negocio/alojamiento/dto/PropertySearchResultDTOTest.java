@@ -11,64 +11,75 @@ import static org.junit.jupiter.api.Assertions.*;
 class PropertySearchResultDTOTest {
 
     @Test
-    @DisplayName("shouldMapFullEntityToDto_Correctly 🗺️")
-    void shouldMapFullEntityToDto() {
-        // 1. GIVEN: Una entidad con TODOS los datos rellenos
-        Alojamiento entidad = new Alojamiento();
-        entidad.setId(1L);
-        entidad.setNombre("Casa Playa");
-        entidad.setCiudad("Valencia");
-        entidad.setTipo("Apartamento");
-        entidad.setPrecio(new BigDecimal("150.50"));
-        entidad.setFotoUrl("http://foto.com/img.jpg");
-        entidad.setValoracionMedia(4.8);
-        entidad.setCapacidad(4);
-        entidad.setDistanciaCentro(new BigDecimal("2.5"));
+    @DisplayName("fromEntity: Maps full entity to DTO correctly 🗺️")
+    void fromEntity_FullData_MapsCorrectly() {
+        // 1. GIVEN
+        Alojamiento entity = new Alojamiento();
+        entity.setId(1L);
+        entity.setNombre("Casa Playa");
+        entity.setCiudad("Valencia");
+        entity.setTipo("Apartamento");
+        entity.setPrecio(new BigDecimal("150.50"));
+        entity.setFotoUrl("http://foto.com/img.jpg");
+        entity.setValoracionMedia(4.8);
+        entity.setCapacidad(4);
+        entity.setDistanciaCentro(new BigDecimal("2.5"));
 
-        // 2. WHEN: Convertimos a DTO
-        // Nota: Seguimos usando tu clase AlojamientoSearchResultDTO, solo cambia el nombre del Test
-        AlojamientoSearchResultDTO dto = AlojamientoSearchResultDTO.fromEntity(entidad);
+        // 2. WHEN
+        AlojamientoSearchResultDTO dto = AlojamientoSearchResultDTO.fromEntity(entity);
 
-        // 3. THEN: Verificamos que todo coincide
+        // 3. THEN
         assertEquals(1L, dto.id());
         assertEquals("Casa Playa", dto.title());
         assertEquals("Valencia", dto.ciudad());
         assertEquals("Apartamento", dto.type());
         assertEquals(new BigDecimal("150.50"), dto.price());
-
-        // Verificamos que la foto única se ha metido en una lista
         assertEquals(1, dto.images().size());
         assertEquals("http://foto.com/img.jpg", dto.images().getFirst());
-
         assertEquals(4.8, dto.rating());
         assertEquals(4, dto.capacity());
         assertEquals(new BigDecimal("2.5"), dto.distance());
     }
 
     @Test
-    @DisplayName("shouldHandleNullValues_WithDefaults 🛡️")
-    void shouldHandleNullValues_WithDefaults() {
-        // 1. GIVEN: Una entidad con valores NULOS (casos peligrosos)
-        Alojamiento entidad = new Alojamiento();
-        entidad.setId(2L);
-        entidad.setNombre("Casa Vacía");
-        // Dejamos fotoUrl, valoracionMedia y distanciaCentro como NULL
+    @DisplayName("fromEntity: Handles NULL values with defaults 🛡️")
+    void fromEntity_NullValues_UsesDefaults() {
+        // 1. GIVEN: Entity with null dangerous fields
+        Alojamiento entity = new Alojamiento();
+        entity.setId(2L);
+        entity.setNombre("Casa Vacía");
+        // Implicitly: fotoUrl=null, valoracionMedia=null, distanciaCentro=null
 
         // 2. WHEN
-        AlojamientoSearchResultDTO dto = AlojamientoSearchResultDTO.fromEntity(entidad);
+        AlojamientoSearchResultDTO dto = AlojamientoSearchResultDTO.fromEntity(entity);
 
-        // 3. THEN: Verificamos que el DTO aplica los valores por defecto
-
-        // Foto debe ser la de defecto
+        // 3. THEN
+        // Image default
         assertFalse(dto.images().isEmpty());
         assertEquals("/images/no-image.png", dto.images().getFirst());
 
-        // Valoración debe ser 0.0 (no null)
+        // Rating default
         assertNotNull(dto.rating());
         assertEquals(0.0, dto.rating());
 
-        // Distancia debe ser 0 (no null)
+        // Distance default
         assertNotNull(dto.distance());
         assertEquals(BigDecimal.ZERO, dto.distance());
+    }
+
+    // ESTE ES EL TEST NUEVO QUE TE FALTA PARA EL 100%
+    @Test
+    @DisplayName("fromEntity: Handles EMPTY string image with default 🖼️")
+    void fromEntity_EmptyImageString_UsesDefault() {
+        // 1. GIVEN
+        Alojamiento entity = new Alojamiento();
+        entity.setFotoUrl(""); // NO es null, pero está VACÍO
+
+        // 2. WHEN
+        AlojamientoSearchResultDTO dto = AlojamientoSearchResultDTO.fromEntity(entity);
+
+        // 3. THEN
+        // Debe entrar en el 'else' porque !isEmpty() es falso
+        assertEquals("/images/no-image.png", dto.images().getFirst());
     }
 }
