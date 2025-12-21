@@ -124,13 +124,15 @@ class PropertyControllerTest {
         mockProperty.setNombre("Casa Test");
         mockProperty.setPrecio(new java.math.BigDecimal("100.00"));
 
-        // Mocking del usuario principal para Thymeleaf
-        var principalConId = new Object() {
-            public Long getId() { return 123L; }
-            public String getUsername() { return "usuario@test.com"; }
-        };
+        // CORRECCIÓN: Usamos Mockito en lugar de 'new Object()'.
+        // Esto elimina los avisos de "Method never used" y es más robusto.
+        inmobiliaria.es.uclm.negocio.user.User principalMock = mock(inmobiliaria.es.uclm.negocio.user.User.class);
+        when(principalMock.getId()).thenReturn(123L);
+        // Asumiendo que tu User usa getEmail() como username, o si tiene getUsername() úsalo
+        when(principalMock.getEmail()).thenReturn("usuario@test.com");
+
         var auth = new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                principalConId, "password", java.util.Collections.emptyList()
+                principalMock, "password", java.util.Collections.emptyList()
         );
 
         when(propertyService.findById(1L)).thenReturn(mockProperty);
