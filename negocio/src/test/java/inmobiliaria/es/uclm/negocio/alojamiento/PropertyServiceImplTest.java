@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import jakarta.persistence.criteria.*;
+import org.mockito.ArgumentCaptor;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -175,6 +177,154 @@ class PropertyServiceImplTest {
         verify(repo).save(newProperty); // La casa se guarda
         // VERIFICACIÓN CLAVE: No se debe llamar a save del usuario porque no cambió nada
         verify(userRepo, never()).save(ownerUser);
+    }
+
+    @Test
+    @DisplayName("Specification Coverage: Verify all filters are applied 🧩")
+    void searchWithFilters_FullCoverage_ExecutesSpecification() {
+        // 1. GIVEN: Preparamos los mocks de JPA
+        Root<Alojamiento> root = mock(Root.class);
+        CriteriaQuery<?> query = mock(CriteriaQuery.class);
+        CriteriaBuilder cb = mock(CriteriaBuilder.class);
+        Path<Object> pathMock = mock(Path.class);
+
+        // Mock Predicate para evitar que se devuelvan NULLs y rompan el array
+        Predicate dummyPredicate = mock(Predicate.class);
+
+        // STUBBING: Configuramos el comportamiento para devolver el predicado dummy
+        when(root.get(anyString())).thenReturn(pathMock);
+
+        // Importante: Hacemos que like, lessThan, etc. devuelvan algo que no sea null
+        when(cb.like(any(), anyString())).thenReturn(dummyPredicate);
+        when(cb.lessThanOrEqualTo(any(), any(BigDecimal.class))).thenReturn(dummyPredicate);
+        when(cb.greaterThanOrEqualTo(any(), anyDouble())).thenReturn(dummyPredicate);
+        when(cb.greaterThanOrEqualTo(any(), anyInt())).thenReturn(dummyPredicate);
+
+        // Simulamos el .in()
+        CriteriaBuilder.In<Object> inClause = mock(CriteriaBuilder.In.class);
+        when(pathMock.in(anyCollection())).thenReturn(inClause);
+
+        // 2. WHEN
+        String ciudad = "Madrid";
+        BigDecimal precio = BigDecimal.TEN;
+        Double rating = 4.5;
+        List<String> tipos = List.of("Casa");
+        int capacidad = 3;
+
+        service.buscarConFiltros(ciudad, precio, rating, tipos, capacidad, "price_asc");
+
+        // 3. CAPTURA
+        ArgumentCaptor<Specification<Alojamiento>> captor = ArgumentCaptor.forClass(Specification.class);
+        verify(repo).findAll(captor.capture(), any(Sort.class));
+
+        Specification<Alojamiento> specCapturada = captor.getValue();
+
+        // 4. EJECUCIÓN MANUAL
+        specCapturada.toPredicate(root, query, cb);
+
+        // 5. THEN: Verificaciones
+        verify(cb).like(any(), contains("madrid"));
+        verify(cb).lessThanOrEqualTo(any(), eq(precio));
+
+        // Verifica llamadas numéricas (usamos any() en el primer arg para simplificar)
+        verify(cb, atLeastOnce()).greaterThanOrEqualTo(any(), eq(rating));
+        verify(cb, atLeastOnce()).greaterThanOrEqualTo(any(), eq(capacidad));
+
+        verify(pathMock).in(tipos);
+
+        // CORRECCIÓN FINAL: Usamos any(Predicate[].class) para soportar VarArgs
+        verify(cb).and(any(Predicate[].class));
+    }
+
+    @Test
+    @DisplayName("Specification Coverage: Verify NULL filters skip logic (Branch Coverage) 🔀")
+    void searchWithFilters_NullFilters_SkipsAllPredicates() {
+        // 1. GIVEN: Mocks básicos
+        Root<Alojamiento> root = mock(Root.class);
+        CriteriaQuery<?> query = mock(CriteriaQuery.class);
+        CriteriaBuilder cb = mock(CriteriaBuilder.class);
+
+        // Aunque no añadamos nada, al final se llama a cb.and(), así que devolvemos un dummy
+        Predicate dummyPredicate = mock(Predicate.class);
+        when(cb.and(any(Predicate[].class))).thenReturn(dummyPredicate);
+
+        // 2. WHEN: Llamamos con TODOS los valores en NULL / Vacío / 0
+        service.buscarConFiltros(
+                null,   // ciudad null
+                null,   // precio null
+                null,   // rating null
+                null,   // tipos null
+                0,      // capacidad 0 (tu if dice > 1)
+                "none"
+        );
+
+        // 3. CAPTURA
+        ArgumentCaptor<Specification<Alojamiento>> captor = ArgumentCaptor.forClass(Specification.class);
+        verify(repo).findAll(captor.capture(), any(Sort.class));
+        Specification<Alojamiento> specCapturada = captor.getValue();
+
+        // 4. EJECUCIÓN MANUAL
+        specCapturada.toPredicate(root, query, cb);
+
+        // 5. THEN: Verificamos que NUNCA se llamaron a los constructores de filtros
+        // Esto confirma que los 'if' evaluaron a FALSE y saltaron el código
+
+        verify(cb, never()).like(any(), anyString());            // if (ciudad...) saltado
+        verify(cb, never()).lessThanOrEqualTo(any(), any(BigDecimal.class)); // if (maxPrice...) saltado
+        verify(cb, never()).greaterThanOrEqualTo(any(), anyDouble()); // if (rating...) saltado
+        // Nota: para capacidad usamos anyInt() porque es primitivo
+        verify(cb, never()).greaterThanOrEqualTo(any(), anyInt());    // if (capacity...) saltado
+
+        // Verifica que NO se llamó a root.get("tipo") ni .in(...)
+        // (Asumiendo que no mockeamos root.get para este test específico o verificamos in)
+
+        // Al final, se debe llamar a cb.and() pero con un array vacío
+        verify(cb).and(any(Predicate[].class));
+    }
+
+    @Test
+    @DisplayName("Specification Coverage: Edge Cases (Empty Strings, Empty Lists, Zero) ⚠️")
+    void searchWithFilters_EdgeCases_EmptyValues_SkipsPredicates() {
+        // 1. GIVEN: Mocks básicos necesarios para que no explote
+        Root<Alojamiento> root = mock(Root.class);
+        CriteriaQuery<?> query = mock(CriteriaQuery.class);
+        CriteriaBuilder cb = mock(CriteriaBuilder.class);
+
+        // Mock para el return final
+        Predicate dummyPredicate = mock(Predicate.class);
+        when(cb.and(any(Predicate[].class))).thenReturn(dummyPredicate);
+
+        // 2. WHEN: Llamamos con valores que NO son null, pero son "vacíos" o insuficientes
+        service.buscarConFiltros(
+                "",                     // ciudad: No es null, pero es Empty -> Falla el &&
+                null,                   // maxPrice
+                0.0,                    // minRating: No es null, pero no es > 0 -> Falla el &&
+                Collections.emptyList(),// types: No es null, pero es Empty -> Falla el &&
+                1,                      // capacity: Es 1, pero la condición pide > 1 -> Falla
+                "none"
+        );
+
+        // 3. CAPTURA
+        ArgumentCaptor<Specification<Alojamiento>> captor = ArgumentCaptor.forClass(Specification.class);
+        verify(repo).findAll(captor.capture(), any(Sort.class));
+        Specification<Alojamiento> specCapturada = captor.getValue();
+
+        // 4. EJECUCIÓN MANUAL
+        specCapturada.toPredicate(root, query, cb);
+
+        // 5. THEN: Verificamos que NO se añadieron filtros
+        // Aunque las variables no eran null, no cumplían la segunda condición
+
+        verify(cb, never()).like(any(), anyString());
+        verify(cb, never()).greaterThanOrEqualTo(any(), anyDouble());
+        verify(cb, never()).greaterThanOrEqualTo(any(), anyInt());
+
+        // Verifica que NO se intentó acceder a "tipo" ni hacer .in()
+        // (Esto confirma que !types.isEmpty() funcionó correctamente)
+        verify(root, never()).get("tipo");
+
+        // Al final siempre se llama a and() con lista vacía
+        verify(cb).and(any(Predicate[].class));
     }
 
     // ==========================================
