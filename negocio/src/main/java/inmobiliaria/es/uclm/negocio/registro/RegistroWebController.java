@@ -40,12 +40,6 @@ public class RegistroWebController {
 
     /**
      * Maneja la petición GET para mostrar la página de registro.
-     *
-     * Prepara el modelo asegurando que exista un objeto 'user' vacío
-     * para ser vinculado con los campos del formulario en la vista.
-     *
-     * @param model El modelo de Spring MVC utilizado para pasar datos a la vista.
-     * @return El nombre de la plantilla HTML a renderizar ("register").
      */
     @GetMapping("/register")
     public String showRegisterPage(Model model) {
@@ -58,13 +52,6 @@ public class RegistroWebController {
 
     /**
      * Procesa la petición POST con los datos del formulario de registro.
-     *
-     * Recibe los datos del usuario, intenta realizar el registro a través del servicio
-     * y gestiona los mensajes de éxito o error mediante atributos flash (que sobreviven a la redirección).
-     *
-     * @param user Objeto User poblado automáticamente con los datos del formulario.
-     * @param redirectAttrs Utilidad para añadir atributos que persisten tras la redirección.
-     * @return Una cadena de redirección a la página de registro ("/register").
      */
     @PostMapping("/register")
     public String registerUser(@ModelAttribute("user") User user, RedirectAttributes redirectAttrs) {

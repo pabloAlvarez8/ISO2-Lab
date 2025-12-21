@@ -18,8 +18,8 @@ public class PagoService {
 
         // Simulamos conexión con API de PayPal...
         // Simulamos que tarda un poco...
-        try { 
-            Thread.sleep(500); 
+        try {
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             // Compliant: Restore the interrupted status so the thread knows it should stop
             Thread.currentThread().interrupt();

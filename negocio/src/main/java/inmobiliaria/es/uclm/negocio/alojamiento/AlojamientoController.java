@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 
 import inmobiliaria.es.uclm.negocio.valoracion.ValoracionService;
 import inmobiliaria.es.uclm.negocio.valoracion.ValoracionInmueble;
+import inmobiliaria.es.uclm.negocio.user.UserService;
 
 import java.util.List;
 
