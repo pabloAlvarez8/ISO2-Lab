@@ -15,13 +15,13 @@ import java.util.List;
 @RequestMapping("/alojamientos")
 public class AlojamientoController {
 
-    private final AlojamientoService_Interfaz alojamientoService;
+    private final AlojamientoService alojamientoService;
     private final UserService userService;
     private final ValoracionService valoracionService;
 
-    public AlojamientoController(AlojamientoService_Interfaz alojamientoService,
-            UserService userService,
-            ValoracionService valoracionService) {
+    public AlojamientoController(AlojamientoService alojamientoService,
+                                 UserService userService,
+                                 ValoracionService valoracionService) {
         this.alojamientoService = alojamientoService;
         this.userService = userService;
         this.valoracionService = valoracionService;

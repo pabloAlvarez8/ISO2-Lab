@@ -1,7 +1,7 @@
 package inmobiliaria.es.uclm.negocio.perfil;
 
 import inmobiliaria.es.uclm.negocio.alojamiento.Alojamiento;
-import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService_Interfaz;
+import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService;
 import inmobiliaria.es.uclm.negocio.reserva.Reserva;
 import inmobiliaria.es.uclm.negocio.reserva.ReservaRepository;
 import inmobiliaria.es.uclm.negocio.user.User;
@@ -22,14 +22,14 @@ public class PerfilWebController {
     // 1. Declaramos las dependencias como 'final'.
     // Esto asegura que no se puedan modificar una vez creado el controlador.
     private final UserService userService;
-    private final AlojamientoService_Interfaz alojamientoService;
+    private final AlojamientoService alojamientoService;
     private final ReservaRepository reservaRepository;
 
     // 2. Inyección por Constructor.
     // Spring inyectará automáticamente todas las dependencias aquí al iniciar.
     @Autowired
     public PerfilWebController(UserService userService, 
-                               AlojamientoService_Interfaz alojamientoService, 
+                               AlojamientoService alojamientoService,
                                ReservaRepository reservaRepository) {
         this.userService = userService;
         this.alojamientoService = alojamientoService;

@@ -17,11 +17,11 @@ import java.util.stream.Collectors;
 public class AlojamientoApiController {
 
         // 1. Ponemos 'final' para asegurar que no cambia
-        private final AlojamientoService_Interfaz alojamientoService;
+        private final AlojamientoService alojamientoService;
 
         // 2. CONSTRUCTOR
         @Autowired
-        public AlojamientoApiController(AlojamientoService_Interfaz alojamientoService) {
+        public AlojamientoApiController(AlojamientoService alojamientoService) {
             this.alojamientoService = alojamientoService;
         }
         

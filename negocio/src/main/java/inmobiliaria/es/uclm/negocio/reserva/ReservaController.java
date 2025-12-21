@@ -1,7 +1,7 @@
 package inmobiliaria.es.uclm.negocio.reserva;
 
 import inmobiliaria.es.uclm.negocio.alojamiento.Alojamiento;
-import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService_Interfaz;
+import inmobiliaria.es.uclm.negocio.alojamiento.AlojamientoService;
 import inmobiliaria.es.uclm.negocio.user.User;
 import inmobiliaria.es.uclm.negocio.user.UserService;
 import org.springframework.security.core.Authentication;
@@ -17,12 +17,9 @@ import org.springframework.ui.Model; // Importante para pasar datos a la vista
 import java.util.Optional;
 import java.util.List;
 import java.math.BigDecimal;
-import java.security.Principal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.stream.Collectors;
-import org.springframework.ui.Model;
-import java.util.Optional;
 
 
 @Controller
@@ -30,13 +27,13 @@ import java.util.Optional;
 public class ReservaController {
 
     private final ReservaService reservaService; // Asumo que tienes este servicio
-    private final AlojamientoService_Interfaz alojamientoService;
+    private final AlojamientoService alojamientoService;
     private final UserService userService;
     private final ReservaRepository reservaRepository;
 
     // Constructor para inyección de dependencias
     public ReservaController(ReservaService reservaService,
-                             AlojamientoService_Interfaz alojamientoService,
+                             AlojamientoService alojamientoService,
                              UserService userService,
                              ReservaRepository reservaRepository) {
         this.reservaService = reservaService;

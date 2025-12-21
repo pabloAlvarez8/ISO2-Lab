@@ -32,7 +32,7 @@ class PropertyRestControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private AlojamientoService_Interfaz alojamientoService;
+    private AlojamientoService alojamientoService;
 
     @MockitoBean(name = "userService")
     private UserService userService;
