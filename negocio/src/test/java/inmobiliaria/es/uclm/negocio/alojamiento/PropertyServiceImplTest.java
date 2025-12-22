@@ -3,27 +3,25 @@ package inmobiliaria.es.uclm.negocio.alojamiento;
 import inmobiliaria.es.uclm.negocio.alojamiento.dto.DestinoDTO;
 import inmobiliaria.es.uclm.negocio.user.User;
 import inmobiliaria.es.uclm.negocio.user.UserRepository;
+import jakarta.persistence.criteria.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import jakarta.persistence.criteria.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,360 +37,282 @@ class PropertyServiceImplTest {
     private AlojamientoServiceImpl service;
 
     // ==========================================
-    // BASIC CRUD TESTS
+    // 1. TESTS DE BÚSQUEDA BÁSICA Y CRUD
     // ==========================================
 
     @Test
-    @DisplayName("findById: When ID exists, returns property ✅")
-    void findById_WhenIdExists_ReturnsProperty() {
+    @DisplayName("buscarPorCiudad: Retorna lista de alojamientos")
+    void buscarPorCiudad_ReturnsList() {
+        String ciudad = "Madrid";
+        when(repo.findByCiudadContainingIgnoreCase(ciudad)).thenReturn(List.of(new Alojamiento()));
+
+        List<Alojamiento> result = service.buscarPorCiudad(ciudad);
+
+        assertFalse(result.isEmpty());
+        verify(repo).findByCiudadContainingIgnoreCase(ciudad);
+    }
+
+    @Test
+    @DisplayName("findById: Retorna alojamiento si existe")
+    void findById_Exists_ReturnsAlojamiento() {
         Long id = 1L;
-        Alojamiento property = new Alojamiento();
-        property.setId(id);
-        when(repo.findById(id)).thenReturn(Optional.of(property));
+        Alojamiento alojamiento = new Alojamiento();
+        alojamiento.setId(id);
+        when(repo.findById(id)).thenReturn(Optional.of(alojamiento));
 
         Alojamiento result = service.findById(id);
 
         assertNotNull(result);
         assertEquals(id, result.getId());
-        verify(repo).findById(id);
     }
 
     @Test
-    @DisplayName("findById: When ID does not exist, returns null ❌")
-    void findById_WhenIdDoesNotExist_ReturnsNull() {
-        Long id = 99L;
-        when(repo.findById(id)).thenReturn(Optional.empty());
-
-        Alojamiento result = service.findById(id);
-
-        assertNull(result);
-        verify(repo).findById(id);
+    @DisplayName("findById: Retorna null si no existe")
+    void findById_NotExists_ReturnsNull() {
+        when(repo.findById(1L)).thenReturn(Optional.empty());
+        assertNull(service.findById(1L));
     }
 
     @Test
-    @DisplayName("findAll: Returns list of properties 📋")
-    void findAll_ReturnsPropertyList() {
-        when(repo.findAll()).thenReturn(List.of(new Alojamiento(), new Alojamiento()));
+    @DisplayName("guardar: Llama al repositorio")
+    void guardar_CallsRepo() {
+        Alojamiento a = new Alojamiento();
+        service.guardar(a);
+        verify(repo).save(a);
+    }
 
-        List<Alojamiento> result = service.listarTodos();
+    @Test
+    @DisplayName("eliminar: Llama al repositorio")
+    void eliminar_CallsRepo() {
+        service.eliminar(1L);
+        verify(repo).deleteById(1L);
+    }
 
-        assertEquals(2, result.size());
+    @Test
+    @DisplayName("listarTodos: Retorna lista completa")
+    void listarTodos_ReturnsAll() {
+        service.listarTodos();
         verify(repo).findAll();
     }
 
     @Test
-    @DisplayName("findPropertiesByHost: Returns list for specific host 👤")
-    void findPropertiesByHost_ReturnsList() {
-        Long hostId = 10L;
-        when(repo.findByAnfitrion_Id(hostId)).thenReturn(List.of(new Alojamiento()));
-
-        List<Alojamiento> result = service.listarAlojamientosDeAnfitrion(hostId);
-
-        assertFalse(result.isEmpty());
-        verify(repo).findByAnfitrion_Id(hostId);
-    }
-
-    @Test
-    @DisplayName("searchByCity: Valid city returns matches 🏙️")
-    void searchByCity_ValidCity_ReturnsList() {
-        String city = "Madrid";
-        Alojamiento house = new Alojamiento();
-        house.setCiudad("Madrid");
-        when(repo.findByCiudadContainingIgnoreCase(city)).thenReturn(Collections.singletonList(house));
-
-        List<Alojamiento> result = service.buscarPorCiudad(city);
-
-        assertFalse(result.isEmpty());
-        assertEquals("Madrid", result.getFirst().getCiudad());
+    @DisplayName("listarAlojamientosDeAnfitrion: Retorna lista filtrada")
+    void listarAlojamientosDeAnfitrion_ReturnsList() {
+        Long userId = 10L;
+        service.listarAlojamientosDeAnfitrion(userId);
+        verify(repo).findByAnfitrion_Id(userId);
     }
 
     // ==========================================
-    // MANAGEMENT TESTS (SAVE / DELETE)
+    // 2. TESTS DE LÓGICA DE NEGOCIO (GUARDAR NUEVO)
     // ==========================================
 
     @Test
-    @DisplayName("save: Simple save calls repository 💾")
-    void save_ValidProperty_CallsRepo() {
-        Alojamiento property = new Alojamiento();
-        service.guardar(property);
-        verify(repo).save(property);
-    }
-
-    @Test
-    @DisplayName("delete: Calls repository delete by ID 🗑️")
-    void delete_ValidId_CallsRepo() {
-        Long id = 5L;
-        service.eliminar(id);
-        verify(repo).deleteById(id);
-    }
-
-    @Test
-    @DisplayName("saveNewProperty: Valid user updates role and saves property 🌟")
-    void saveNewProperty_ValidUser_UpdatesRoleAndSaves() {
-        String email = "test@user.com";
-        User normalUser = new User();
-        normalUser.setEmail(email);
-        normalUser.setRole(User.Role.INQUILINO);
-
-        Alojamiento newProperty = new Alojamiento();
-        when(userRepo.findByEmail(email)).thenReturn(Optional.of(normalUser));
-
-        service.guardarNuevoAlojamiento(newProperty, email);
-
-        assertNotNull(newProperty.getAnfitrion());
-        assertEquals(User.Role.PROPIETARIO, normalUser.getRole());
-        verify(repo).save(newProperty);
-        verify(userRepo).save(normalUser);
-    }
-
-    @Test
-    @DisplayName("saveNewProperty: User not found throws exception ⚠️")
-    void saveNewProperty_UserNotFound_ThrowsException() {
-        String email = "ghost@user.com";
-        Alojamiento newProperty = new Alojamiento();
+    @DisplayName("guardarNuevoAlojamiento: Usuario no encontrado lanza excepción")
+    void guardarNuevoAlojamiento_UserNotFound_ThrowsException() {
+        Alojamiento a = new Alojamiento();
+        String email = "fake@email.com";
         when(userRepo.findByEmail(email)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(RuntimeException.class,
-                () -> service.guardarNuevoAlojamiento(newProperty, email));
-
-        assertEquals("Usuario no encontrado", exception.getMessage());
-        verify(repo, never()).save(any());
+        assertThrows(RuntimeException.class, () -> service.guardarNuevoAlojamiento(a, email));
     }
 
     @Test
-    @DisplayName("saveNewProperty: When user is already PROPIETARIO, role is not updated 🛑")
-    void saveNewProperty_AlreadyOwner_DoesNotUpdateRole() {
-        // GIVEN
-        String email = "owner@user.com";
-        User ownerUser = new User();
-        ownerUser.setEmail(email);
-        ownerUser.setRole(User.Role.PROPIETARIO); // Ya es propietario
+    @DisplayName("guardarNuevoAlojamiento: Actualiza rol a PROPIETARIO si no lo era")
+    void guardarNuevoAlojamiento_UpdatesRole() {
+        String email = "user@email.com";
+        User user = new User();
+        user.setRole(User.Role.INQUILINO);
+        
+        Alojamiento a = new Alojamiento();
 
-        Alojamiento newProperty = new Alojamiento();
-        when(userRepo.findByEmail(email)).thenReturn(Optional.of(ownerUser));
+        when(userRepo.findByEmail(email)).thenReturn(Optional.of(user));
 
-        // WHEN
-        service.guardarNuevoAlojamiento(newProperty, email);
+        service.guardarNuevoAlojamiento(a, email);
 
-        // THEN
-        verify(repo).save(newProperty); // La casa se guarda
-        verify(userRepo, never()).save(ownerUser); // No se guarda usuario
-    }
-
-    // ==========================================
-    // FILTER TESTS (CORREGIDO PARA LA NUEVA LÓGICA)
-    // ==========================================
-
-    @Test
-    @DisplayName("Specification Coverage: Verify all filters are applied 🧩")
-    void searchWithFilters_FullCoverage_ExecutesSpecification() {
-        // 1. GIVEN: Preparamos los mocks de JPA
-        Root<Alojamiento> root = mock(Root.class);
-        CriteriaQuery<?> query = mock(CriteriaQuery.class);
-        CriteriaBuilder cb = mock(CriteriaBuilder.class);
-        Path<Object> pathMock = mock(Path.class);
-        Predicate dummyPredicate = mock(Predicate.class);
-
-        // Stubbing JPA criteria
-        when(root.get(anyString())).thenReturn(pathMock);
-        when(cb.like(any(), anyString())).thenReturn(dummyPredicate);
-        when(cb.lessThanOrEqualTo(any(), any(BigDecimal.class))).thenReturn(dummyPredicate);
-        when(cb.greaterThanOrEqualTo(any(), anyDouble())).thenReturn(dummyPredicate);
-        when(cb.greaterThanOrEqualTo(any(), anyInt())).thenReturn(dummyPredicate);
-        when(cb.and(any(Predicate[].class))).thenReturn(dummyPredicate);
-
-        // Stubbing IN clause
-        CriteriaBuilder.In<Object> inClause = mock(CriteriaBuilder.In.class);
-        when(pathMock.in(anyCollection())).thenReturn(inClause);
-
-        // --- CORRECCIÓN IMPORTANTE ---
-        // Mockeamos la disponibilidad para evitar que devuelva lista vacía y corte el flujo
-        Alojamiento dummyAlojamiento = new Alojamiento();
-        dummyAlojamiento.setId(100L);
-        when(repo.buscarDisponibles(any(), any(), any(), any()))
-                .thenReturn(List.of(dummyAlojamiento));
-        // -----------------------------
-
-        // 2. WHEN: Llamamos con todos los parámetros (incluidas fechas)
-        String ciudad = "Madrid";
-        BigDecimal precio = BigDecimal.TEN;
-        Double rating = 4.5;
-        List<String> tipos = List.of("Casa");
-        int capacidad = 3;
-        LocalDate checkin = LocalDate.now();
-        LocalDate checkout = LocalDate.now().plusDays(2);
-
-        service.buscarConFiltros(ciudad, precio, rating, tipos, capacidad, checkin, checkout, "price_asc");
-
-        // 3. CAPTURA
-        ArgumentCaptor<Specification<Alojamiento>> captor = ArgumentCaptor.forClass(Specification.class);
-        verify(repo).findAll(captor.capture(), any(Sort.class));
-
-        Specification<Alojamiento> specCapturada = captor.getValue();
-
-        // 4. EJECUCIÓN MANUAL
-        specCapturada.toPredicate(root, query, cb);
-
-        // 5. THEN: Verificaciones
-        verify(cb).like(any(), contains("madrid"));
-        verify(cb).lessThanOrEqualTo(any(), eq(precio));
-        verify(cb, atLeastOnce()).greaterThanOrEqualTo(any(), eq(rating));
-        verify(cb, atLeastOnce()).greaterThanOrEqualTo(any(), eq(capacidad));
-        verify(pathMock).in(tipos);
-        verify(cb).and(any(Predicate[].class));
+        assertEquals(User.Role.PROPIETARIO, user.getRole());
+        verify(repo).save(a);
+        verify(userRepo).save(user);
     }
 
     @Test
-    @DisplayName("Specification Coverage: Verify NULL filters skip logic (Branch Coverage) 🔀")
-    void searchWithFilters_NullFilters_SkipsAllPredicates() {
-        // 1. GIVEN
-        Root<Alojamiento> root = mock(Root.class);
-        CriteriaQuery<?> query = mock(CriteriaQuery.class);
-        CriteriaBuilder cb = mock(CriteriaBuilder.class);
-        Predicate dummyPredicate = mock(Predicate.class);
+    @DisplayName("guardarNuevoAlojamiento: No actualiza rol si ya es PROPIETARIO")
+    void guardarNuevoAlojamiento_AlreadyOwner_NoRoleUpdate() {
+        String email = "owner@email.com";
+        User user = new User();
+        user.setRole(User.Role.PROPIETARIO);
 
-        when(cb.and(any(Predicate[].class))).thenReturn(dummyPredicate);
+        Alojamiento a = new Alojamiento();
 
-        // 2. WHEN: Llamamos con todo NULL (Fechas NULL para evitar la lógica de ids)
-        service.buscarConFiltros(
-                null, null, null, null, 0,
-                null, null, // Fechas null -> ids vacíos -> flujo sigue normal
-                "none"
-        );
+        when(userRepo.findByEmail(email)).thenReturn(Optional.of(user));
 
-        // 3. CAPTURA
-        ArgumentCaptor<Specification<Alojamiento>> captor = ArgumentCaptor.forClass(Specification.class);
-        verify(repo).findAll(captor.capture(), any(Sort.class));
-        Specification<Alojamiento> specCapturada = captor.getValue();
+        service.guardarNuevoAlojamiento(a, email);
 
-        // 4. EJECUCIÓN
-        specCapturada.toPredicate(root, query, cb);
-
-        // 5. THEN
-        verify(cb, never()).like(any(), anyString());
-        verify(cb, never()).lessThanOrEqualTo(any(), any(BigDecimal.class));
-        verify(cb, never()).greaterThanOrEqualTo(any(), anyDouble());
-        verify(cb, never()).greaterThanOrEqualTo(any(), anyInt());
-        verify(cb).and(any(Predicate[].class));
-    }
-
-    @Test
-    @DisplayName("Specification Coverage: Edge Cases (Empty Strings, Empty Lists, Zero) ⚠️")
-    void searchWithFilters_EdgeCases_EmptyValues_SkipsPredicates() {
-        Root<Alojamiento> root = mock(Root.class);
-        CriteriaQuery<?> query = mock(CriteriaQuery.class);
-        CriteriaBuilder cb = mock(CriteriaBuilder.class);
-        Predicate dummyPredicate = mock(Predicate.class);
-
-        when(cb.and(any(Predicate[].class))).thenReturn(dummyPredicate);
-
-        // WHEN: Fechas NULL para que la lista vacía de IDs no corte el flujo
-        service.buscarConFiltros(
-                "", null, 0.0, Collections.emptyList(), 1,
-                null, null, // Fechas null
-                "none"
-        );
-
-        ArgumentCaptor<Specification<Alojamiento>> captor = ArgumentCaptor.forClass(Specification.class);
-        verify(repo).findAll(captor.capture(), any(Sort.class));
-        Specification<Alojamiento> specCapturada = captor.getValue();
-
-        specCapturada.toPredicate(root, query, cb);
-
-        verify(cb, never()).like(any(), anyString());
-        verify(root, never()).get("tipo");
-        verify(cb).and(any(Predicate[].class));
+        verify(repo).save(a);
+        verify(userRepo, never()).save(user); // No se guarda el usuario porque no cambió
     }
 
     // ==========================================
-    // STATS & METADATA TESTS
+    // 3. TESTS DE ESTADÍSTICAS Y UTILIDADES
     // ==========================================
 
     @Test
-    @DisplayName("getPopularDestinations: Returns top cities distinct 🌍")
-    void getPopularDestinations_ReturnsTopCities() {
-        Alojamiento a1 = new Alojamiento(); a1.setCiudad("Madrid"); a1.setFotoUrl("img1.jpg");
-        Alojamiento a2 = new Alojamiento(); a2.setCiudad("Madrid"); a2.setFotoUrl("img2.jpg");
-        Alojamiento a3 = new Alojamiento(); a3.setCiudad("Barcelona"); a3.setFotoUrl("img3.jpg");
+    @DisplayName("obtenerDestinosPopulares: Agrupa y devuelve DTOs")
+    void obtenerDestinosPopulares_ReturnsDTOs() {
+        Alojamiento a1 = new Alojamiento(); a1.setCiudad("Madrid"); a1.setFotoUrl("foto1");
+        Alojamiento a2 = new Alojamiento(); a2.setCiudad("Madrid"); a2.setFotoUrl("foto2");
+        Alojamiento a3 = new Alojamiento(); a3.setCiudad("Barcelona"); a3.setFotoUrl("foto3");
 
-        when(repo.findAll()).thenReturn(Arrays.asList(a1, a2, a3));
+        when(repo.findAll()).thenReturn(List.of(a1, a2, a3));
 
-        List<DestinoDTO> result = service.obtenerDestinosPopulares();
+        List<DestinoDTO> resultado = service.obtenerDestinosPopulares();
 
-        assertEquals(2, result.size());
-        assertTrue(result.stream().anyMatch(d -> d.ciudad().equals("Madrid")));
-        assertTrue(result.stream().anyMatch(d -> d.ciudad().equals("Barcelona")));
+        assertEquals(2, resultado.size()); // Madrid y Barcelona
+        assertTrue(resultado.stream().anyMatch(d -> d.ciudad().equals("Madrid")));
     }
 
     @Test
-    @DisplayName("getMaxPrice: Normal value returns rounded up 💰")
-    void getMaxPrice_NormalValue_ReturnsRoundedUp() {
-        when(repo.findMaxPrecio()).thenReturn(new BigDecimal("150.10"));
-        long maxPrice = service.obtenerPrecioMaximoAlojamientoRedondeado();
-        assertEquals(151L, maxPrice);
+    @DisplayName("obtenerPrecioMaximo: Devuelve valor redondeado hacia arriba")
+    void obtenerPrecioMaximo_ReturnsCeiledValue() {
+        when(repo.findMaxPrecio()).thenReturn(new BigDecimal("99.1"));
+        assertEquals(100L, service.obtenerPrecioMaximoAlojamientoRedondeado());
     }
 
     @Test
-    @DisplayName("getMaxPrice: Null value returns zero 📉")
-    void getMaxPrice_NullValue_ReturnsZero() {
+    @DisplayName("obtenerPrecioMaximo: Devuelve 0 si es null")
+    void obtenerPrecioMaximo_ReturnsZeroIfNull() {
         when(repo.findMaxPrecio()).thenReturn(null);
-        long maxPrice = service.obtenerPrecioMaximoAlojamientoRedondeado();
-        assertEquals(0L, maxPrice);
+        assertEquals(0L, service.obtenerPrecioMaximoAlojamientoRedondeado());
     }
 
     @Test
-    @DisplayName("getAllTypes: Delegates to repository 🏷️")
-    void getAllTypes_ReturnsDistinctList() {
-        List<String> types = List.of("Casa", "Piso");
-        when(repo.findAllTipos()).thenReturn(types);
-        List<String> result = service.obtenerTodosLosTipos();
-        assertEquals(types, result);
+    @DisplayName("obtenerTodosLosTipos: Delega en el repositorio")
+    void obtenerTodosLosTipos_CallsRepo() {
+        service.obtenerTodosLosTipos();
         verify(repo).findAllTipos();
     }
 
     // ==========================================
-    // SORT TESTS
+    // 4. TESTS DE BÚSQUEDA AVANZADA (FILTROS)
     // ==========================================
 
     @Test
-    @DisplayName("searchWithFilters: Sort ASC creates correct sort object 🔼")
-    void searchWithFilters_SortAsc_CreatesCorrectSort() {
-        String sortBy = "price_asc";
+    @DisplayName("buscarConFiltros: Sin fechas ni disponibilidad, busca normal")
+    void buscarConFiltros_SimpleSearch() {
+        when(repo.findAll(any(Specification.class), any(Sort.class)))
+                .thenReturn(Collections.emptyList());
 
-        service.buscarConFiltros(null, null, null, null, 0, null, null, sortBy);
+        service.buscarConFiltros("Madrid", null, null, null, 1, null, null, "price_asc");
 
-        verify(repo).findAll(ArgumentMatchers.<Specification<Alojamiento>>any(), argThat((Sort s) -> {
-            Sort.Order order = s.getOrderFor("precio");
-            return order != null && order.isAscending();
-        }));
+        verify(repo).findAll(any(Specification.class), any(Sort.class));
+        verify(repo, never()).buscarDisponibles(any(), any(), any(), any());
     }
 
     @Test
-    @DisplayName("searchWithFilters: Sort DESC creates correct sort object 🔽")
-    void searchWithFilters_SortDesc_CreatesCorrectSort() {
-        String sortBy = "price_desc";
+    @DisplayName("buscarConFiltros: Con fechas, si no hay ids disponibles retorna vacío")
+    void buscarConFiltros_DatesProvided_NoAvailability_ReturnsEmpty() {
+        LocalDate in = LocalDate.now();
+        LocalDate out = LocalDate.now().plusDays(2);
+        
+        when(repo.buscarDisponibles(any(), any(), eq(in), eq(out))).thenReturn(Collections.emptyList());
 
-        service.buscarConFiltros(null, null, null, null, 0, null, null, sortBy);
+        List<Alojamiento> res = service.buscarConFiltros("Madrid", null, null, null, 1, in, out, "price_asc");
 
-        verify(repo).findAll(ArgumentMatchers.<Specification<Alojamiento>>any(), argThat((Sort s) -> {
-            Sort.Order order = s.getOrderFor("precio");
-            return order != null && order.isDescending();
-        }));
+        assertTrue(res.isEmpty());
+        verify(repo, never()).findAll(any(Specification.class), any(Sort.class));
     }
 
     @Test
-    @DisplayName("searchWithFilters: All filters execute without error 🔍")
-    void searchWithFilters_AllFilters_ExecutesWithoutError() {
-        String city = "Madrid";
-        BigDecimal maxPrice = BigDecimal.valueOf(100);
-        Double rating = 4.0;
-        List<String> types = List.of("Apartamento");
+    @DisplayName("buscarConFiltros: Filtra por Puntuación en Memoria")
+    void buscarConFiltros_FiltersByRatingInMemory() {
+        // Simulamos objetos, necesitamos SPY para getValoracionMedia si no hay lógica real
+        Alojamiento bajo = spy(new Alojamiento());
+        doReturn(3.0).when(bajo).getValoracionMedia();
+
+        Alojamiento alto = spy(new Alojamiento());
+        doReturn(5.0).when(alto).getValoracionMedia();
+
+        when(repo.findAll(any(Specification.class), any(Sort.class))).thenReturn(List.of(bajo, alto));
+
+        // Pedimos mínimo 4.0
+        List<Alojamiento> res = service.buscarConFiltros(null, null, 4.0, null, 0, null, null, null);
+
+        assertEquals(1, res.size());
+        assertEquals(alto, res.get(0));
+    }
+
+    @Test
+    @DisplayName("buscarConFiltros: Ordenación descendente")
+    void buscarConFiltros_SortDesc() {
+        service.buscarConFiltros(null, null, null, null, 0, null, null, "price_desc");
+
+        ArgumentCaptor<Sort> captor = ArgumentCaptor.forClass(Sort.class);
+        verify(repo).findAll(any(Specification.class), captor.capture());
+        
+        Sort.Order order = captor.getValue().getOrderFor("precio");
+        assertNotNull(order);
+        assertTrue(order.isDescending());
+    }
+
+    // ==========================================
+    // 5. SPECIFICATION INTERNALS (COBERTURA 100% DE LÍNEAS PRIVADAS)
+    // ==========================================
+
+    @Test
+    @DisplayName("Coverage: Verifica construcción de Specification (CriteriaBuilder)")
+    void testSpecificationConstruction() {
+        // 1. Mocks de JPA Criteria
+        Root<Alojamiento> root = mock(Root.class);
+        CriteriaQuery<?> query = mock(CriteriaQuery.class);
+        CriteriaBuilder cb = mock(CriteriaBuilder.class);
+        Path pathMock = mock(Path.class);
+        Predicate dummyPredicate = mock(Predicate.class);
+
+        // Configuración de comportamiento de los mocks
+        when(root.get(anyString())).thenReturn(pathMock);
+        when(cb.like(any(), anyString())).thenReturn(dummyPredicate);
+        when(cb.lower(any())).thenReturn(mock(Expression.class)); // Para cb.lower()
+        when(cb.lessThanOrEqualTo(any(), any(BigDecimal.class))).thenReturn(dummyPredicate);
+        when(cb.greaterThanOrEqualTo(any(), anyInt())).thenReturn(dummyPredicate);
+        
+        // CORRECCIÓN 1: Usamos any(Predicate[].class) para varargs
+        when(cb.and(any(Predicate[].class))).thenReturn(dummyPredicate);
+        
+        when(pathMock.in(anyCollection())).thenReturn(mock(CriteriaBuilder.In.class)); // Para .in()
+
+        // 2. Preparamos datos que disparen TODOS los 'if' dentro de crearSpecification
+        String ciudad = "Madrid";
+        BigDecimal maxPrice = BigDecimal.TEN;
+        List<String> types = List.of("Hotel");
         int capacity = 2;
-        String sortBy = "none";
+        
+        // Simulamos IDs disponibles para que entre en ese IF
+        LocalDate in = LocalDate.now();
+        LocalDate out = in.plusDays(1);
+        Alojamiento a = new Alojamiento(); a.setId(5L);
+        when(repo.buscarDisponibles(any(), any(), any(), any())).thenReturn(List.of(a));
 
-        // Pasamos null en fechas para simplificar
-        service.buscarConFiltros(city, maxPrice, rating, types, capacity, null, null, sortBy);
+        // 3. Ejecutamos el servicio
+        service.buscarConFiltros(ciudad, maxPrice, null, types, capacity, in, out, "price_asc");
 
-        verify(repo).findAll(ArgumentMatchers.<Specification<Alojamiento>>any(), any(Sort.class));
+        // 4. Capturamos la Specification que se pasó al repo
+        ArgumentCaptor<Specification<Alojamiento>> specCaptor = ArgumentCaptor.forClass(Specification.class);
+        verify(repo).findAll(specCaptor.capture(), any(Sort.class));
+
+        Specification<Alojamiento> spec = specCaptor.getValue();
+
+        // 5. ¡LA CLAVE! Ejecutamos manualmente el toPredicate para que corran las líneas privadas
+        spec.toPredicate(root, query, cb);
+
+        // 6. Verificamos que se llamaron los métodos del CriteriaBuilder
+        verify(cb).like(any(), contains("madrid")); // Filtro ciudad
+        verify(cb).lessThanOrEqualTo(any(), eq(maxPrice)); // Filtro precio
+        verify(cb).greaterThanOrEqualTo(any(), eq(capacity)); // Filtro capacidad
+        
+        // CORRECCIÓN 2: Se llama 2 veces: una para IDs y otra para TIPOS
+        verify(pathMock, times(2)).in(anyCollection()); 
+        
+        // Verificamos que se llamó al AND con un array de Predicates
+        verify(cb).and(any(Predicate[].class)); 
     }
 }

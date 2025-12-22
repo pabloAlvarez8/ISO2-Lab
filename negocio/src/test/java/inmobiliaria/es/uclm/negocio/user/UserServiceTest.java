@@ -243,7 +243,7 @@ class UserServiceTest {
         // --- LÍNEA 2: if (o == null ... ) ---
         // Se prueba pasando null explícitamente.
         // Usamos assertFalse llamando directamente al método para asegurar que entra en TU código
-        assertFalse(u1.equals(null));
+        assertNotEquals(null, u1);
 
         // --- LÍNEA 2: ... || getClass() != o.getClass()) ---
         // Se prueba pasando un objeto de otra clase (ej. un String o un Object)

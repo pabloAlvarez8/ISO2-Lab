@@ -3,27 +3,34 @@ package inmobiliaria.es.uclm.negocio.alojamiento.dto;
 import inmobiliaria.es.uclm.negocio.alojamiento.Alojamiento;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-class PropertySearchResultDTOTest {
+@ExtendWith(MockitoExtension.class)
+class AlojamientoSearchResultDTOTest {
 
     @Test
     @DisplayName("fromEntity: Maps full entity to DTO correctly 🗺️")
     void fromEntity_FullData_MapsCorrectly() {
         // 1. GIVEN
-        Alojamiento entity = new Alojamiento();
+        // Usamos SPY para poder simular getValoracionMedia() sin rellenar la lista de valoraciones
+        Alojamiento entity = spy(new Alojamiento()); 
         entity.setId(1L);
         entity.setNombre("Casa Playa");
         entity.setCiudad("Valencia");
         entity.setTipo("Apartamento");
         entity.setPrecio(new BigDecimal("150.50"));
         entity.setFotoUrl("http://foto.com/img.jpg");
-        entity.setValoracionMedia(4.8);
         entity.setCapacidad(4);
         entity.setDistanciaCentro(new BigDecimal("2.5"));
+
+        // Forzamos que la media sea 4.8 (ignorando la lógica interna de la lista vacía)
+        doReturn(4.8).when(entity).getValoracionMedia();
 
         // 2. WHEN
         AlojamientoSearchResultDTO dto = AlojamientoSearchResultDTO.fromEntity(entity);
@@ -44,11 +51,12 @@ class PropertySearchResultDTOTest {
     @Test
     @DisplayName("fromEntity: Handles NULL values with defaults 🛡️")
     void fromEntity_NullValues_UsesDefaults() {
-        // 1. GIVEN: Entity with null dangerous fields
-        Alojamiento entity = new Alojamiento();
+        // 1. GIVEN
+        Alojamiento entity = new Alojamiento(); // Aquí objeto normal, la media será 0.0 por defecto
         entity.setId(2L);
         entity.setNombre("Casa Vacía");
-        // Implicitly: fotoUrl=null, valoracionMedia=null, distanciaCentro=null
+        // Dejamos nulos: fotoUrl, distanciaCentro.
+        // valoracionMedia será 0.0 porque la lista de valoraciones está vacía.
 
         // 2. WHEN
         AlojamientoSearchResultDTO dto = AlojamientoSearchResultDTO.fromEntity(entity);
@@ -67,19 +75,17 @@ class PropertySearchResultDTOTest {
         assertEquals(BigDecimal.ZERO, dto.distance());
     }
 
-    // ESTE ES EL TEST NUEVO QUE TE FALTA PARA EL 100%
     @Test
     @DisplayName("fromEntity: Handles EMPTY string image with default 🖼️")
     void fromEntity_EmptyImageString_UsesDefault() {
         // 1. GIVEN
         Alojamiento entity = new Alojamiento();
-        entity.setFotoUrl(""); // NO es null, pero está VACÍO
+        entity.setFotoUrl(""); // Vacío pero no null
 
         // 2. WHEN
         AlojamientoSearchResultDTO dto = AlojamientoSearchResultDTO.fromEntity(entity);
 
         // 3. THEN
-        // Debe entrar en el 'else' porque !isEmpty() es falso
         assertEquals("/images/no-image.png", dto.images().getFirst());
     }
 }
