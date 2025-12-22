@@ -1,7 +1,0 @@
-{
-    
-"java.configuration.annotationProcessing.enabled": true,
-"java.compile.nullAnalysis.mode": "automatic"
-
-
-}

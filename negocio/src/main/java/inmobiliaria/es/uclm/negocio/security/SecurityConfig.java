@@ -11,6 +11,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
+    public static final String LOGIN_URL = "/login";
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         // Correcto: lo necesitas para que el login pueda verificar el hash
@@ -27,18 +29,23 @@ public class SecurityConfig {
                 // 2. DEFINE QUÉ ES PÚBLICO Y QUÉ ES PRIVADO:
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                        "/",
-                                "/login", // <-- Ruta de tu LoginWebController
-                                "/register", // <-- Ruta de tu RegistroWebController
-                                "/css/**", "/js/**")
+                        "/","/index",
+                                "/error",
+                                LOGIN_URL, // <-- Ruta de tu LoginWebController
+                                "/register",
+                                "/buscador",
+                                "/alojamientos/detalleAlojamientos",
+                                "/alojamientos/**",
+                                "/api/alojamientos/**",
+                                "/css/**", "/js/**", "/images/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         // ▼▼▼ AÑADE ESTA LÍNEA ▼▼▼
-                        .loginPage("/login") // Le dice a Spring que use tu @GetMapping("/login")
+                        .loginPage(LOGIN_URL) // Le dice a Spring que use tu @GetMapping("/login")
 
                         // Esta es la URL que Spring intercepta para el POST
-                        .loginProcessingUrl("/login")
+                        .loginProcessingUrl(LOGIN_URL)
 
                         // A dónde ir si el login es exitoso
                         .defaultSuccessUrl("/dashboard", true)

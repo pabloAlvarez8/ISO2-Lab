@@ -1,69 +1,74 @@
 package inmobiliaria.es.uclm.negocio.pago;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
+import inmobiliaria.es.uclm.negocio.reserva.Reserva;
+import inmobiliaria.es.uclm.negocio.reserva.ReservaService;
+import jakarta.persistence.EntityNotFoundException;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
-/**
- * Controlador REST para simular pagos con tarjeta y PayPal.
- */
-@RestController
-@RequestMapping("/api/pagos")
+@Controller
+@RequestMapping("/pagos")
 public class PagoController {
 
-    private final PagoServicio pagoServicio;
-    private final String modo;
+    private final ReservaService reservaService;
+    private final PagoService pagoService;
 
-    public PagoController(PagoServicio pagoServicio,
-            @Value("${pagos.modo:SIMULADO}") String modo) {
-        this.pagoServicio = pagoServicio;
-        this.modo = modo;
+    public PagoController(ReservaService reservaService, PagoService pagoService) {
+        this.reservaService = reservaService;
+        this.pagoService = pagoService;
     }
 
-    private void verificarModoSimulado() {
-        if (!"SIMULADO".equalsIgnoreCase(modo)) {
-            throw new IllegalStateException("El sistema no está en modo SIMULADO");
+    // 1. MOSTRAR PANTALLA
+    @GetMapping("/pago/{idReserva}")
+    public String mostrarPasarela(@PathVariable Long idReserva, Model model) {
+        // CORRECCIÓN: Ya no usamos .orElseThrow() porque findById devuelve la Reserva directa
+        Reserva reserva = reservaService.findById(idReserva);
+
+        // Comprobación manual: Si es null, lanzamos el error
+        if (reserva == null) {
+            throw new EntityNotFoundException("Reserva no encontrada");
         }
+
+        model.addAttribute("reserva", reserva);
+        model.addAttribute("precioAPagar", reserva.getPrecioTotal());
+        return "pago";
     }
 
-    // ---------- TARJETA ----------
+    // 2. PROCESAR PAGO (TARJETA O PAYPAL)
+    @PostMapping("/procesar")
+    public String procesarPago(
+            @RequestParam Long idReserva,
+            @RequestParam String metodoPago, 
+            @RequestParam(required = false) String numeroTarjeta,
+            @RequestParam(required = false) String emailPaypal,
+            Model model) {
 
-    @PostMapping("/tarjeta/crear")
-    public ResponseEntity<Map<String, Object>> crearPagoTarjeta(@RequestBody Map<String, Object> body) {
-        verificarModoSimulado();
-        long importe = Long.parseLong(body.getOrDefault("importe", 1999).toString());
-        String moneda = body.getOrDefault("moneda", "eur").toString();
-        Map<String, Object> resp = pagoServicio.crearPagoTarjeta(importe, moneda);
-        return ResponseEntity.ok(resp);
-    }
+        // CORRECCIÓN: Igual aquí, quitamos .orElseThrow()
+        Reserva reserva = reservaService.findById(idReserva);
 
-    @PostMapping("/tarjeta/confirmar")
-    public ResponseEntity<Map<String, Object>> confirmarPagoTarjeta(@RequestBody Map<String, Object> body) {
-        verificarModoSimulado();
-        String clientSecret = body.get("clientSecret").toString();
-        boolean forzarFallo = Boolean.parseBoolean(body.getOrDefault("forzarFallo", "false").toString());
-        Map<String, Object> resp = pagoServicio.confirmarPagoTarjeta(clientSecret, forzarFallo);
-        return ResponseEntity.ok(resp);
-    }
+        if (reserva == null) {
+            throw new EntityNotFoundException("Reserva no encontrada");
+        }
 
-    // ---------- PAYPAL ----------
+        boolean pagoExitoso = false;
 
-    @PostMapping("/paypal/crear")
-    public ResponseEntity<Map<String, Object>> crearOrdenPayPal(@RequestBody Map<String, Object> body) {
-        verificarModoSimulado();
-        long importe = Long.parseLong(body.getOrDefault("importe", 1999).toString());
-        String moneda = body.getOrDefault("moneda", "EUR").toString();
-        Map<String, Object> resp = pagoServicio.crearOrdenPayPal(importe, moneda);
-        return ResponseEntity.ok(resp);
-    }
+        // Lógica de pago
+        if ("tarjeta".equals(metodoPago)) {
+            pagoExitoso = pagoService.procesarPagoTarjeta(numeroTarjeta, "12/25", "123");
+        } else if ("paypal".equals(metodoPago)) {
+            pagoExitoso = pagoService.procesarPagoPayPal(emailPaypal);
+        }
 
-    @PostMapping("/paypal/capturar")
-    public ResponseEntity<Map<String, Object>> capturarOrdenPayPal(@RequestBody Map<String, Object> body) {
-        verificarModoSimulado();
-        String idOrden = body.get("idOrden").toString();
-        Map<String, Object> resp = pagoServicio.capturarOrdenPayPal(idOrden);
-        return ResponseEntity.ok(resp);
+        // RESULTADO
+        if (pagoExitoso) {
+            reserva.setEstado("PAGADO");
+            reservaService.guardar(reserva);
+            // Redirigimos al perfil para que veas la reserva actualizada
+            return "redirect:/perfil"; 
+        } else {
+            return "redirect:/pagos/pago/" + idReserva + "?error=true";
+        }
     }
 }

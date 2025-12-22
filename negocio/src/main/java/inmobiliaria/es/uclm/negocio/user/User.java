@@ -1,44 +1,52 @@
 package inmobiliaria.es.uclm.negocio.user;
 
 import jakarta.persistence.*;
-import lombok.Getter; // Usando Lombok para getters/setters (opcional)
+import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "usuario") // ¡Que coincida con el nombre real de la tabla (la renombraste!)
-@Getter // Anotación Lombok
-@Setter // Anotación Lombok
+@Table(name = "usuario") // "usuario" evita conflictos con la palabra reservada "USER" de Derby
+@Getter
+@Setter
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Usa 'email' para coincidir con tu código anterior, mapea a columna 'correo'
-    @Column(name = "correo", nullable = false, unique = true)
+    @Column(name = "correo", nullable = false, unique = true, length = 191)
     private String email;
 
-    // Usa 'password', mapea a columna 'contrasena'
     @Column(name = "contrasena", nullable = false)
     private String password;
 
-    // El nombre del campo Java coincide con la columna si se llaman igual
     @Column(nullable = false)
     private String nombre;
 
     @Column(nullable = false)
     private String apellido;
 
+    @Column(name = "telefono", unique = true)
+    private String telefono;
+
     private String direccion;
 
     @Column(name = "url_foto_perfil")
     private String urlFotoPerfil;
 
-    // Usa un Enum para el Rol
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role = Role.INQUILINO; // Valor por defecto
+    private Role role = Role.INQUILINO;
+
+    @Column(name = "dni")
+    private String dni;
+
+    @Column(name = "cuenta_bancaria")
+    private String cuentaBancaria;
+
+    // --- TIMESTAMPS ---
+    // Hibernate mapeará esto automáticamente a TIMESTAMP en Derby
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -46,40 +54,27 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // --- Timestamps (Marcas de tiempo) ---
-    @PrePersist // Antes de guardar por primera vez
+    // Estos métodos se ejecutan automáticamente antes de guardar en la BD
+    @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
+        // Inicializamos ambos al crear
+        if (updatedAt == null) {
+            updatedAt = LocalDateTime.now();
+        }
     }
 
-    @PreUpdate // Antes de actualizar
+    @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
 
-    // --- Enum para el Rol ---
     public enum Role {
         INQUILINO, PROPIETARIO
     }
 
-    // ... dentro de tu clase User.java ...
-
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", nombre='" + nombre + '\'' +
-                ", apellido='" + apellido + '\'' +
-                ", email='" + email + '\'' +
-                // ¡NUNCA incluyas la contraseña en el log!
-                ", password='[PROTEGIDO]'" +
-                ", direccion='" + direccion + '\'' +
-                ", role=" + role +
-                ", urlFotoPerfil='" + urlFotoPerfil + '\'' +
-                '}';
+        return "User{id=" + id + ", email='" + email + "', role=" + role + "}";
     }
-    // --- Opcional: Constructores, toString ---
-    // Puedes añadir constructores o un método toString si los necesitas
-    // Lombok a menudo se encarga de esto, o puedes generarlos
 }

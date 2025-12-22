@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>¡Ups! Algo salió mal</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body style="text-align: center; padding: 50px;">
+
+<h1 style="color: #d9534f;">¡Ups!</h1>
+<h2>Algo ha salido mal o la página no existe.</h2>
+
+<p>Código de error: <span th:text="${status}">404</span></p>
+<p th:text="${error}">Not Found</p>
+
+<br>
+<a th:href="@{/}" class="btn">Volver al Inicio</a>
+
+</body>
+</html>

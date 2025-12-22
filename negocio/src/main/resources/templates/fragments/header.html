@@ -1,41 +1,84 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 
-    <header th:fragment="navbar">
-        <div class="container">
-            
-            <div
-                class="logo"
-                role="link" 
-                tabindex="0" 
-                aria-label="Ir a inicio" 
-                onclick="location.href='/'"
-                onkeydown="if(event.key==='Enter'||event.key===' '){location.href='/';}"
-            >
-                Inmobiliarias Paqui
-            </div>
+<header th:fragment="navbar(showSearch)">
 
-            <div sec:authorize="!isAuthenticated()">
-                <button class="btn-register" onclick="window.location.href='/login'">
-                    Iniciar sesión o registrarse
-                </button>
-            </div>
+    <a th:href="@{/}" class="logo" aria-label="Volver a inicio">
+        <img th:src="@{/images/logo_2.png}"
+             alt="Inmobiliarias Paqui"
+             class="logo-img" />
+    </a>
 
-            <div class="dropdown-container" sec:authorize="isAuthenticated()">
-                <button class="btn-dropdown">Mi Cuenta</button>
-                
-                <div class="dropdown-content">
-                    <a th:href="@{/perfil}">Ver Perfil</a>
-                    
-                    <form th:action="@{/logout}" method="POST" style="margin: 0;">
-                        <button type="submit" class="logout-button-dropdown">Cerrar Sesión</button>
-                    </form>
-                </div>
+    <div class="search-bar" role="search" th:if="${showSearch}">
+        <input id="q" type="text" placeholder="Ciudad" aria-label="Ciudad"
+               th:value="${filtroCiudad}" />
+
+        <input id="checkin-index" name="checkin" type="text" placeholder="Llegada" aria-label="Fecha de entrada" readonly
+               th:value="${filtroCheckin}" />
+
+        <input id="checkout-index" name="checkout" type="text" placeholder="Salida" aria-label="Fecha de salida" readonly
+               th:value="${filtroCheckout}" />
+
+        <div class="people-counter" aria-label="Personas">
+            <button type="button" id="minusPerson" class="btn btn-ghost" style="padding: 0 10px; min-width: 30px;" aria-label="Quitar persona">
+                -
+            </button>
+            <span id="peopleCount" aria-live="polite" th:text="${filtroCapacidad ?: 2}">2</span>
+
+            <button type="button" id="plusPerson" class="btn btn-ghost" style="padding: 0 10px; min-width: 30px;" aria-label="Añadir persona">
+                +
+            </button>
+        </div>
+
+        <button id="searchBtn" type="submit" class="btn btn-primary">Buscar</button>
+    </div>
+
+    <div th:style="${showSearch} ? '' : 'margin-left: auto;'">
+
+        <div sec:authorize="!isAuthenticated()">
+            <button class="btn btn-ghost-secondary" onclick="window.location.href='/login'">
+                Iniciar sesión o registrarse
+            </button>
+        </div>
+
+        <div sec:authorize="isAuthenticated()" class="dropdown-container">
+            <button class="btn btn-secondary btn-sm" th:with="usuarioOptional=${@userService.findByEmail(#authentication.name)}">
+
+                <span th:if="${usuarioOptional.present}"
+                      th:text="${usuarioOptional.get().nombre}">
+                    Nombre
+                </span>
+
+                <span th:unless="${usuarioOptional.present}"
+                      sec:authentication="name">
+                        Email
+                </span>
+
+                <span style="margin-left:5px;">&#9662;</span>
+            </button>
+
+            <div class="dropdown-content">
+                <a th:href="@{/perfil}">Mi Perfil</a>
+
+                <form th:action="@{/logout}" method="post" style="margin: 0;">
+                    <button type="submit" class="logout-button-dropdown">
+                        Cerrar sesión
+                    </button>
+                </form>
             </div>
-            </div>
-    </header>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/rangePlugin.js"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+
+    <script th:src="@{/js/header.js}" defer></script>
+</header>
 
 </body>
 </html>

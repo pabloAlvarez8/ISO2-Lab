@@ -1,173 +1,224 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* Limpieza básica */
+* { box-sizing: border-box; }
 
 body {
-  font-family: "Inter", sans-serif;
-  background-color: #ffffff;
-  color: #222;
+    font-family: "Circular", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    background-color: #ffffff;
+    color: #222;
+    padding-top: 120px;
+    margin: 0;
+    scroll-behavior: smooth;
 }
 
-main {
-  max-width: 1000px;
-  margin: 40px auto;
-  background: #fff;
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+/* =========================================
+   LAYOUT PRINCIPAL (Escritorio)
+   ========================================= */
+.airbnb-layout {
+    max-width: 1120px;
+    margin: 0 auto 40px auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 80px;
 }
 
-header {
-  background-color: #fff;
-  border-bottom: 1px solid #eee;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.container {
-  margin: 0 auto;
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 80px;
-}
-
-.btn-register {
-  background-color: transparent;
-  border: none;
-  border-radius: 20px;
-  padding: 10px 20px;
-  color: #333;
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-.btn-register:hover {
-  background: rgba(0, 0, 0, 0.05);
-  color: #111;
-}
-
-.btn-register:active {
-  background: rgba(0, 0, 0, 0.1);
-  transform: scale(0.97);
-}
-.logo {
-  font-size: 22px;
-  font-weight: 700;
-  color: #4b8fe7;
-  cursor: pointer;
-  padding: 10px 20px;
-}
-
-/* Carrusel */
-.carousel {
-  position: relative;
-  width: 100%;
-  max-width: 600px;
-  margin-bottom: 20px;
+.content-column {
+    min-width: 0;
 }
 
 .carousel img {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
-  border-radius: 10px;
-  transition: transform 0.3s ease;
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: block;
 }
 
-.carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
-  border: none;
-  font-size: 24px;
-  padding: 8px 12px;
-  cursor: pointer;
-  border-radius: 50%;
+.divider { height: 1px; background-color: #dddddd; margin: 32px 0; }
+
+/* STICKY COLUMN (Lateral) */
+.sidebar-column {
+    position: relative;
+    height: 100%;
 }
 
-.carousel-btn.prev {
-  left: 10px;
-}
-.carousel-btn.next {
-  right: 10px;
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.carousel-btn:hover {
-  background: rgba(0, 0, 0, 0.7);
+.reservation-card-sticky {
+    position: sticky;
+    top: 140px;
+    border: 1px solid #dddddd;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    background: white;
+    z-index: 10;
+    animation: fadeInUp 0.8s ease-out;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-.price-reserve {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
+.reservation-card-sticky:hover {
+    box-shadow: 0 12px 24px rgba(0,0,0,0.18);
+    transform: translateY(-2px);
 }
 
-#detallePrecio {
-  font-size: 20px;
-  font-weight: 700;
-  color: #0071c2;
+.card-header-price {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 24px;
 }
 
-.btn-reserve {
-  background-color: #0071c2;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-.btn-reserve:hover {
-  background-color: #005b9a;
+.price-big { font-size: 22px; font-weight: 600; }
+.price-suffix { font-size: 16px; color: #717171; }
+
+.input-dates-wrapper {
+    border: 1px solid #b0b0b0;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 16px;
+    cursor: pointer;
 }
 
-.info-section,
-.comments {
-  margin-top: 40px;
+.airbnb-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    color: #222;
+    background: transparent;
+    cursor: pointer;
 }
 
-#lodgingDescription {
-  margin-top: 10px;
-  line-height: 1.6;
-  color: #444;
+/* =========================================
+   BOTONES
+   ========================================= */
+.btn-reservar-final {
+    width: 100%;
+    background-color: #0071c2;
+    color: white;
+    border: none;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.2s, transform 0.1s;
 }
 
-.comment {
-  border-top: 1px solid #ddd;
-  padding: 15px 0;
+.btn-reservar-final:hover {
+    background-color: #005a9c;
+    transform: scale(1.02);
 }
 
-.comment strong {
-  font-size: 15px;
-  color: #333;
+.btn-reservar-login {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background-color: #666;
+    color: white;
+    padding: 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 10px;
+    transition: background 0.2s;
 }
-.comment span {
-  color: #888;
-  margin-left: 8px;
+.btn-reservar-login:hover { background-color: #444; }
+
+.btn-login-comment {
+    background-color: #0071c2;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 600;
 }
 
+/* AQUÍ ESTÁN LOS ESTILOS DEL BOTÓN VOLVER (GLOBALES) */
+/* Se aplicarán tanto en móvil como en escritorio */
 .btn-volver {
-  display: inline-block;
-  margin-top: 40px;
-  background: #eee;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s;
+    margin-top: 40px;
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
 }
 .btn-volver:hover {
-  background: #ddd;
+    background-color: #f7f7f7;
+}
+
+/* Valoraciones */
+.rating-container { display: flex; align-items: center; }
+.star-widget { display: inline-block; font-size: 2rem; cursor: pointer; position: relative; }
+.star-wrapper { position: relative; display: inline-block; }
+.stars-gray { color: #e0e0e0; }
+.stars-gold { color: #f5a623; position: absolute; top: 0; left: 0; white-space: nowrap; overflow: hidden; width: 0%; pointer-events: none; }
+
+
+/* =========================================
+   RESPONSIVE (MÓVIL)
+   ========================================= */
+@media (max-width: 900px) {
+    /* 1. Cambiamos Grid a Flex Columna */
+    .airbnb-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    /* 2. Truco para reordenar contenido interior */
+    .content-column {
+        display: contents; /* Desaparece la caja contenedora, quedan los hijos sueltos */
+    }
+
+    /* 3. ORDEN DE ELEMENTOS */
+
+    /* Imagen */
+    .carousel { order: 1; }
+
+    /* Título y detalles */
+    .content-column > div:nth-child(2) {
+        order: 2;
+        margin-bottom: 20px;
+    }
+
+    .divider:nth-of-type(1) { order: 3; }
+
+    /* Descripción */
+    .description-section { order: 4; }
+
+    /* TARJETA RESERVA (SIDEBAR) - AQUÍ VA EN MEDIO */
+    .sidebar-column {
+        order: 5;
+        width: 100%;
+        margin: 30px 0;
+    }
+
+    .reservation-card-sticky {
+        position: static; /* Ya no flota */
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        animation: none;
+    }
+
+    /* Valoraciones */
+    .divider:nth-of-type(2) { order: 6; }
+    .valoraciones-container { order: 7; }
+
+    /* BOTÓN VOLVER (Móvil) */
+    .btn-volver {
+        order: 8;
+        width: 100%; /* Solo añadimos ancho completo, el resto de estilos se heredan de arriba */
+        margin-bottom: 20px;
+    }
 }

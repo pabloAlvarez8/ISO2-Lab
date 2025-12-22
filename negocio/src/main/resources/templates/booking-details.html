@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalles de tu Reserva — Inmobiliarias Paqui</title>
+
+    <link rel="stylesheet" th:href="@{/css/buttons.css}" />
+    <link rel="stylesheet" th:href="@{/css/styleHeader.css}" />
+    <link rel="stylesheet" th:href="@{/css/styleDetalleReserva.css}" />
+    <link rel="stylesheet" th:href="@{/css/booking-details.css}" />
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: navbar(true)}"></div>
+
+<main>
+    <div class="booking-container">
+
+        <div class="booking-header">
+            <span th:text="${reserva.estado}"
+                  th:class="'booking-status ' +
+                  (${reserva.estado} == 'PENDIENTE_PAGO' ? 'status-pendiente' :
+                  (${reserva.estado} == 'CANCELADA' ? 'status-cancelado' : 'status-pagado'))">
+                ESTADO
+            </span>
+            <h1 th:text="'Reserva #' + ${reserva.id}">Reserva #000</h1>
+        </div>
+
+        <img th:src="${reserva.alojamiento.fotoUrl != null && !reserva.alojamiento.fotoUrl.isEmpty() ? reserva.alojamiento.fotoUrl : '/images/no-image.png'}"
+             alt="Foto Alojamiento" class="mini-thumb">
+
+        <div class="details-grid">
+
+            <div class="info-group">
+                <h3>🏠 Alojamiento</h3>
+                <div class="info-item">
+                    <span class="info-label">Nombre:</span>
+                    <span th:text="${reserva.alojamiento.nombre}">Nombre Casa</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Dirección:</span>
+                    <span th:text="${reserva.alojamiento.direccion} + ', ' + ${reserva.alojamiento.ciudad}">Dirección</span>
+                </div>
+
+                <h3 style="margin-top: 25px;">📅 Fechas</h3>
+                <div class="info-item">
+                    <span class="info-label">Entrada:</span>
+                    <span th:text="${#temporals.format(reserva.fechaEntrada, 'dd-MM-yyyy')}">01-01-2025</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Salida:</span>
+                    <span th:text="${#temporals.format(reserva.fechaSalida, 'dd-MM-yyyy')}">05-01-2025</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Duración:</span>
+                    <span th:text="${diasEstancia} + ' noches'">4 noches</span>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <h3>👤 Datos de la Reserva</h3>
+
+                <div class="info-item">
+                    <span class="info-label">Titular:</span>
+                    <span th:text="${reserva.inquilino.nombre} + ' ' + ${reserva.inquilino.apellido}">Nombre Usuario</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Email:</span>
+                    <span th:text="${reserva.inquilino.email}">email@test.com</span>
+                </div>
+
+                <h3 style="margin-top: 25px;">🔑 Anfitrión</h3>
+                <div class="info-item">
+                    <span class="info-label">Nombre:</span>
+                    <span th:text="${reserva.alojamiento.anfitrion.nombre} + ' ' + ${reserva.alojamiento.anfitrion.apellido}">Nombre Anfitrión</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Teléfono:</span>
+                    <span th:text="${reserva.alojamiento.anfitrion.telefono != null ? reserva.alojamiento.anfitrion.telefono : 'No disponible'}">600...</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Email:</span>
+                    <span th:text="${reserva.alojamiento.anfitrion.email}">host@test.com</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="total-price-box">
+            <span class="total-label">Importe Total</span>
+            <span class="total-amount" th:text="${reserva.precioTotal} + ' €'">0 €</span>
+        </div>
+
+        <div class="action-buttons">
+
+            <a th:if="${reserva.estado == 'PENDIENTE_PAGO'}"
+               th:href="@{/pagos/pago/{id}(id=${reserva.id})}"
+               class="btn btn-primary btn-lg">
+                💳 Ir a Pagar
+            </a>
+
+            <button onclick="window.print()" class="btn btn-secondary">
+                🖨️ Imprimir Comprobante
+            </button>
+
+            <a href="/perfil" class="btn btn-ghost">
+                Volver a mi Perfil
+            </a>
+        </div>
+
+    </div>
+</main>
+
+<footer>
+    © 2025 Inmobiliarias Paqui
+</footer>
+</body>
+</html>

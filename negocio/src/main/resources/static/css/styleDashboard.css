@@ -1,32 +1,33 @@
+/* Reseteo global para asegurar consistencia en el modelo de caja y fuentes en todos los navegadores */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "arial";
+  font-family: "arial", sans-serif;
 }
 
-/* 1. Usamos la misma base del .container del login */
+/* Contenedor principal tipo tarjeta.
+   Se reutilizan los estilos del login para mantener coherencia visual en la aplicación.
+   Centrado automático y límites de anchura para diseño responsive. */
 .container {
   width: 468px;
   max-width: 568px;
   min-width: 200px;
   background: #ffffff;
   padding: 30px;
-  margin: auto;
-  margin-top: 100px;
+  margin: 100px auto 0 auto; /* Margen superior fijo, centrado horizontal */
   border-radius: 20px;
-  font-family: Arial;
-  color: rgb(0, 0, 0);
+  color: #000;
   text-align: center;
-  box-shadow: 0 4px 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Sombra suave para dar profundidad */
   overflow: hidden;
 }
 
+/* Títulos y textos descriptivos dentro de la tarjeta */
 .container h2 {
   font-size: 20px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  color: rgb(0, 0, 0);
+  margin: 20px 0;
+  color: #000;
   font-weight: bold;
 }
 
@@ -35,43 +36,13 @@
   font-size: 16px;
 }
 
-/* 2. Un contenedor para los botones */
-/* Usamos Flexbox para controlar el espaciado */
+/* Contenedor flexible para apilar los botones de acción.
+   El uso de 'gap' simplifica el espaciado vertical. */
 .dashboard-actions {
   display: flex;
   flex-direction: column;
-  gap: 15px; /* <- ¡ESTO SOLUCIONA TU PROBLEMA DE MÁRGENES! */
-            /* Es el espacio entre cada botón */
+  gap: 15px;
 }
 
-/* 3. Clase de botón UNIFICADA para <a> y <button> */
-.btn {
-  display: block; /* Hace que el enlace <a> ocupe todo el ancho */
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  color: white;
-  background-color: rgb(0, 132, 255); /* Azul por defecto */
-  font-size: 16px;
-  font-weight: bold;
-  text-decoration: none;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-
-.btn:hover {
-  background-color: #0056b3;
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4);
-  transform: translateY(-2px);
-}
-
-/* 4. Modificador de color para el botón de logout */
-.btn-logout {
-  background-color: #6c757d;
-}
-
-.btn-logout:hover {
-  background-color: #5a6268;
-}
+/* CLASES ELIMINADAS: .btn, .btn:hover, .btn-logout, .btn-logout:hover */
+/* Ahora se usan las clases globales de buttons.css */

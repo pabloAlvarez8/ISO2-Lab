@@ -1,100 +1,112 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <title>Confirmar reserva - Inmobiliarias Paqui</title>
-    <link rel="stylesheet" th:href="@{/css/stylePago.css}" />
-  </head>
 
-  <body>
-    <header>
-      <div class="container">
-        <div
-          class="logo"
-          role="link"
-          tabindex="0"
-          aria-label="Ir a inicio"
-          onclick="location.href='/'"
-          onkeydown="if(event.key==='Enter'||event.key===' '){location.href='/';}"
-        >
-          Inmobiliarias Paqui
-        </div>
-        <button class="btn-register" onclick="window.location.href='/register'">
-          Mi cuenta
-        </button>
-      </div>
-    </header>
+    <link rel="stylesheet" th:href="@{/css/buttons.css}"/>
+    <link rel="stylesheet" th:href="@{/css/stylePago.css}"/>
+    <link rel="stylesheet" th:href="@{/css/styleHeader.css}"/>
+</head>
 
-    <main>
-      <section class="hero">
+<body>
+
+<div th:replace="~{fragments/header :: navbar(false)}"></div>
+
+<main>
+    <section class="hero">
         <h1>Confirmar reserva</h1>
         <p>Revisa los detalles y completa tu pago de forma segura.</p>
-      </section>
+    </section>
 
-      <section class="payment-section">
+    <section class="payment-section">
         <div class="payment-container">
-          <!-- Bloque izquierda: Resumen -->
-          <div class="resumen-box">
-            <h2>Resumen de reserva</h2>
-            <div id="resumen-reserva">
-              <h3 id="nombreAlojamiento">Cargando...</h3>
-              <p id="precioAlojamiento"></p>
 
-              <img id="fotoAlojamiento" src="" alt="Imagen del alojamiento" />
+            <div class="resumen-box">
+                <h2>Resumen de reserva</h2>
+                <div id="resumen-reserva">
+                    <h3 th:text="${reserva.alojamiento.nombre}">Nombre Alojamiento</h3>
+
+                    <p>
+                        <strong>Entrada:</strong> <span th:text="${reserva.fechaEntrada}"></span><br>
+                        <strong>Salida:</strong> <span th:text="${reserva.fechaSalida}"></span>
+                    </p>
+
+                    <p id="precioAlojamiento" style="font-size: 1.5em; color: green; font-weight: bold;">
+                        Total: <span th:text="${precioAPagar} + ' €'">0 €</span>
+                    </p>
+
+                    <img id="fotoAlojamiento"
+                         th:src="${reserva.alojamiento.fotoUrl}"
+                         alt="Imagen del alojamiento"
+                         style="width: 100%; border-radius: 8px; margin-top: 10px;"
+                         th:if="${reserva.alojamiento.fotoUrl != null}"/>
+                </div>
             </div>
-          </div>
 
-          <!-- Bloque derecha: Método de pago -->
-          <div class="metodo-box">
-            <h2>Método de pago</h2>
-            <!-- Botones -->
-            <button id="btnTarjeta" class="btn-pago active">
-              💳 Tarjeta de crédito/débito
-            </button>
-            <button id="btnPayPal" class="btn-pago btn-paypal">
-              🅿️ PayPal
-            </button>
+            <div class="metodo-box">
+                <h2>Método de pago</h2>
 
-            <!-- Formulario Tarjeta -->
-            <form id="formTarjeta" class="form-pago active">
-              <input type="text" placeholder="Titular de la tarjeta" required />
-              <input
-                type="text"
-                placeholder="Número de la tarjeta"
-                maxlength="16"
-                required
-              />
-              <div class="flex-row">
-                <input type="text" placeholder="CVV" maxlength="3" required />
-                <input type="month" placeholder="Fecha de caducidad" required />
-              </div>
-              <button type="button" class="btn-pago" id="btnEnviarTarjeta">
-                Enviar
-              </button>
-            </form>
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button id="btnSelectTarjeta" type="button" class="btn-fifth active"
+                            onclick="cambiarMetodo('tarjeta')">
+                        💳 Tarjeta
+                    </button>
+                    <button id="btnSelectPayPal" type="button" class="btn-fifth"
+                            onclick="cambiarMetodo('paypal')">
+                        🅿️ PayPal
+                    </button>
+                </div>
 
-            <!-- Formulario PayPal -->
-            <form id="formPayPal" class="form-pago">
-              <input type="email" placeholder="Email de PayPal" required />
-              <input type="password" placeholder="Contraseña" required />
-              <button
-                type="button"
-                class="btn-pago btn-paypal"
-                id="btnEnviarPayPal"
-              >
-                Enviar
-              </button>
-            </form>
+                <form th:action="@{/pagos/procesar}" method="post" id="formTarjeta" class="form-pago active">
 
-            <p id="mensaje" class="mensaje"></p>
-          </div>
+                    <input type="hidden" name="idReserva" th:value="${reserva.id}"/>
+                    <input type="hidden" name="metodoPago" value="tarjeta"/>
+
+                    <input type="text" placeholder="Titular de la tarjeta" required/>
+                    <input
+                            type="text"
+                            name="numeroTarjeta"
+                            placeholder="Número de la tarjeta"
+                            minlength="13" maxlength="19"
+                            required
+                    />
+                    <div class="flex-row" style="display: flex; gap: 10px;">
+                        <input type="text" placeholder="CVV" maxlength="3" required style="width: 50%;"/>
+                        <input type="text" placeholder="MM/AA" required style="width: 50%;"/>
+                    </div>
+
+                    <button type="submit" class="btn-fifth" style="margin-top: 15px; opacity: 1;">
+                        Pagar con Tarjeta
+                    </button>
+                </form>
+
+                <form th:action="@{/pagos/procesar}" method="post" id="formPayPal" class="form-pago">
+
+                    <input type="hidden" name="idReserva" th:value="${reserva.id}"/>
+                    <input type="hidden" name="metodoPago" value="paypal"/>
+
+                    <input type="email" name="emailPaypal" placeholder="Email de PayPal" required/>
+                    <input type="password" placeholder="Contraseña PayPal" required/>
+
+                    <button type="submit" class="btn-paypal btn-fifth" style="margin-top: 15px; opacity: 1;">
+                        Pagar con PayPal
+                    </button>
+                </form>
+
+                <div th:if="${param.error}" class="alert" style="background-color: #f8d7da; color: #721c24; margin-top: 15px;">
+                    Hubo un problema con el pago. Inténtalo de nuevo.
+                </div>
+
+            </div>
         </div>
-      </section>
-    </main>
+    </section>
+</main>
 
-    <footer>© 2025 Inmobiliarias Paqui</footer>
+<footer>© 2025 Inmobiliarias Paqui</footer>
 
-    <script src="/js/pago.js"></script>
-  </body>
+<script src="/js/pago.js"></script>
+
+</body>
 </html>

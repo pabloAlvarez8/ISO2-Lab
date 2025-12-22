@@ -1,64 +1,46 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Botones
-  const btnTarjeta = document.getElementById("btnTarjeta");
-  const btnPayPal = document.getElementById("btnPayPal");
+
+  // --- REFERENCIAS A ELEMENTOS DEL DOM ---
+  // Botones de selección (Asegúrate que los IDs coinciden con el HTML)
+  const btnTarjeta = document.getElementById("btnSelectTarjeta");
+  const btnPayPal = document.getElementById("btnSelectPayPal");
 
   // Formularios
   const formTarjeta = document.getElementById("formTarjeta");
   const formPayPal = document.getElementById("formPayPal");
 
-  // Mensaje
-  const mensaje = document.getElementById("mensaje");
-
-  // Mostrar info del alojamiento desde localStorage
-  const reserva = JSON.parse(localStorage.getItem("reservaSeleccionada"));
-  if (reserva) {
-    document.getElementById("nombreAlojamiento").textContent = `🏠 ${reserva.title}`;
-    document.getElementById("precioAlojamiento").textContent = `💰 ${reserva.price} € / noche`;
-  } else {
-    document.getElementById("resumen-reserva").innerHTML = "<p>No se encontró información de la reserva.</p>";
-  }
-
-  // Función para mostrar un formulario y ocultar el otro
-  function mostrarFormulario(tipo) {
+  // --- LÓGICA DE CAMBIO DE PESTAÑA ---
+  function cambiarMetodo(tipo) {
     if (tipo === "tarjeta") {
+      // Mostrar Tarjeta
       formTarjeta.classList.add("active");
       formPayPal.classList.remove("active");
+
+      // Estilo Botones
       btnTarjeta.classList.add("active");
       btnPayPal.classList.remove("active");
-      mensaje.textContent = "";
+
     } else if (tipo === "paypal") {
+      // Mostrar PayPal
       formPayPal.classList.add("active");
       formTarjeta.classList.remove("active");
+
+      // Estilo Botones
       btnPayPal.classList.add("active");
       btnTarjeta.classList.remove("active");
-      mensaje.textContent = "";
     }
   }
 
-  // Eventos botones
-  btnTarjeta.addEventListener("click", () => mostrarFormulario("tarjeta"));
-  btnPayPal.addEventListener("click", () => mostrarFormulario("paypal"));
-
-  // Aquí se pueden poner los eventos de envío si quieres simular pago
-  document.getElementById("btnEnviarTarjeta").addEventListener("click", () => {
-    mensaje.textContent = "✅ Formulario de tarjeta enviado (simulado)";
-  });
-
-  document.getElementById("btnEnviarPayPal").addEventListener("click", () => {
-    mensaje.textContent = "✅ Formulario de PayPal enviado (simulado)";
-  });
-
-  // Recuperar la reserva seleccionada
-  const selected = JSON.parse(localStorage.getItem("reservaSeleccionada"));
-
-  if (selected) {
-    // Mostrar datos
-    document.getElementById("nombreAlojamiento").textContent = selected.title;
-    document.getElementById("precioAlojamiento").textContent = selected.price + " € / noche";
-
-    // Imagen (misma que detalleAlojamiento)
-    document.getElementById("fotoAlojamiento").src = selected.images ? selected.images[0] : selected.img;
+  // --- EVENT LISTENERS ---
+  // Si usas este JS, puedes quitar los 'onclick="..."' del HTML
+  if (btnTarjeta && btnPayPal) {
+    btnTarjeta.addEventListener("click", () => cambiarMetodo("tarjeta"));
+    btnPayPal.addEventListener("click", () => cambiarMetodo("paypal"));
   }
 
+  // NOTA:
+  // Hemos borrado la parte de 'localStorage' porque Thymeleaf ya escribe
+  // el nombre y el precio directamente en el HTML.
+  // También hemos borrado los eventos de "Enviar simulado" porque ahora
+  // los botones son type="submit" y envían el formulario real al servidor.
 });

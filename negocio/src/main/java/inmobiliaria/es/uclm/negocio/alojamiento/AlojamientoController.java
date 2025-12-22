@@ -1,99 +1,145 @@
 package inmobiliaria.es.uclm.negocio.alojamiento;
 
-// Imports para el controlador
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-// Imports para la autenticación y el guardado
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
-import inmobiliaria.es.uclm.negocio.user.User;
-import inmobiliaria.es.uclm.negocio.user.UserService;
+import org.springframework.format.annotation.DateTimeFormat; // IMPORTANTE: Necesario para recibir fechas
+
+import inmobiliaria.es.uclm.negocio.valoracion.ValoracionService;
+import inmobiliaria.es.uclm.negocio.valoracion.ValoracionInmueble;
+
+import java.time.LocalDate; // IMPORTANTE
+import java.util.List;
 
 @Controller
 @RequestMapping("/alojamientos")
 public class AlojamientoController {
 
-    private final AlojamientoService_Interfaz alojamientoService;
-    private final UserService userService;
+    private static final String ATTR_ALOJAMIENTO = "alojamiento";
+    private static final String REDIRECT_PERFIL = "redirect:/perfil";
 
-    // Constructor para inyectar los servicios
-    public AlojamientoController(AlojamientoService_Interfaz alojamientoService, UserService userService) {
+    private final AlojamientoService alojamientoService;
+    private final ValoracionService valoracionService;
+
+    public AlojamientoController(AlojamientoService alojamientoService,
+                                 ValoracionService valoracionService) {
         this.alojamientoService = alojamientoService;
-        this.userService = userService;
+        this.valoracionService = valoracionService;
     }
 
     /**
      * Muestra la página de resultados de búsqueda (Buscador.html).
-     * Esta versión NO busca en la BD. Simplemente sirve el HTML.
-     * El JavaScript dentro de "Buscador.html" se encargará de
-     * leer los parámetros de la URL y llamar a la API (/api/alojamientos).
+     * ACTUALIZADO: Ahora recibe y pasa las fechas al modelo.
      */
     @GetMapping
     public String mostrarPaginaDeBusqueda(
-            // (Opcional) Pasamos los filtros al modelo para que los <input>
-            // puedan mostrar los valores que venían en la URL.
             @RequestParam(value = "q", required = false) String ciudad,
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "people", required = false, defaultValue = "1") int capacity,
+
+            // --- NUEVOS PARÁMETROS DE FECHA ---
+            @RequestParam(value = "checkin", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkin,
+
+            @RequestParam(value = "checkout", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkout,
+            // ----------------------------------
+
             Model model) {
 
-        // Ya NO se llama a alojamientoService.buscarConFiltros() aquí.
+        // 1. Obtenemos el precio máximo para el slider del buscador
+        long precioMax = alojamientoService.obtenerPrecioMaximoAlojamientoRedondeado();
+        model.addAttribute("precioMaximo", precioMax);
 
-        // Solo pasamos los filtros iniciales de la URL al HTML
+        // 2. Obtenemos los tipos de alojamiento para los checkboxes
+        List<String> listaTipos = alojamientoService.obtenerTodosLosTipos();
+        model.addAttribute("listaTipos", listaTipos);
+
+        // 3. Pasamos los filtros iniciales de la URL al HTML
         model.addAttribute("filtroCiudad", ciudad);
         model.addAttribute("filtroTipo", type);
         model.addAttribute("filtroCapacidad", capacity);
 
-        return "Buscador"; // Devuelve la plantilla 'Buscador.html'
+        // --- PASAMOS LAS FECHAS AL MODELO ---
+        model.addAttribute("filtroCheckin", checkin);
+        model.addAttribute("filtroCheckout", checkout);
+        // ------------------------------------
+
+        return "Buscador";
     }
 
-    /**
-     * Muestra el formulario para crear un nuevo alojamiento.
-     */
+    // Muestra el formulario
     @GetMapping("/nuevo")
     public String mostrarFormulario(Model model) {
-        model.addAttribute("alojamiento", new Alojamiento());
-        return "form-alojamiento";
+        model.addAttribute(ATTR_ALOJAMIENTO, new Alojamiento());
+        return "nuevoAlojamiento";
     }
 
     /**
-     * Procesa el guardado del nuevo alojamiento desde el formulario.
+     * Procesa el guardado del nuevo alojamiento.
      */
     @PostMapping("/guardar")
     public String guardar(@ModelAttribute Alojamiento alojamiento, Authentication authentication) {
+        if (authentication == null) {
+            return "redirect:/login";
+        }
 
-        // Busca al usuario propietario que ha iniciado sesión
         String userEmail = authentication.getName();
-        User anfitrion = userService.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Asigna el anfitrión al alojamiento antes de guardarlo
-        alojamiento.setAnfitrion(anfitrion);
-        alojamientoService.guardar(alojamiento);
+        // Delegamos TODA la lógica al servicio
+        alojamientoService.guardarNuevoAlojamiento(alojamiento, userEmail);
 
-        return "redirect:/alojamientos"; // Redirige a la página de búsqueda
+        return REDIRECT_PERFIL;
     }
 
-    /**
-     * Elimina un alojamiento.
-     */
+    // ELIMINAR
     @GetMapping("/eliminar/{id}")
     public String eliminar(@PathVariable Long id) {
         alojamientoService.eliminar(id);
-        return "redirect:/alojamientos";
+        return REDIRECT_PERFIL;
     }
 
     /**
-     * Muestra la página de detalle (que cargará datos desde el localStorage).
+     * Muestra la página de detalle.
      */
     @GetMapping("/detalleAlojamientos")
-    public String detalleAlojamientos() {
+    public String detalleAlojamientos(@RequestParam Long id, Model model) {
+        // 1. Validar ID
+        if (id == null) {
+            return "redirect:/alojamientos";
+        }
+
+        // 2. Buscar alojamiento
+        Alojamiento alojamiento = alojamientoService.findById(id);
+
+        if (alojamiento == null) {
+            return "redirect:/alojamientos";
+        }
+
+        // 3. Pasar el alojamiento a la vista
+        model.addAttribute(ATTR_ALOJAMIENTO, alojamiento);
+
+        // 4. Obtener valoraciones y media
+        List<ValoracionInmueble> valoraciones = valoracionService.obtenerPorAlojamiento(id);
+        Double media = valoracionService.obtenerMedia(id);
+
+        model.addAttribute("valoraciones", valoraciones);
+        model.addAttribute("mediaValoracion", media);
+
         return "detalleAlojamientos";
+    }
+
+    // EDITAR ALOJAMIENTO
+    @GetMapping("/editar/{id}")
+    public String editarAlojamiento(@PathVariable Long id, Model model) {
+        Alojamiento alojamiento = alojamientoService.findById(id);
+
+        if (alojamiento != null) {
+            model.addAttribute(ATTR_ALOJAMIENTO, alojamiento);
+            return "nuevoAlojamiento";
+        }
+
+        return REDIRECT_PERFIL;
     }
 }

@@ -1,0 +1,210 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --header-height: 100px;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    background-color: #f9f9f9;
+    color: #222;
+    padding-top: var(--header-height);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1; /* Empuja el footer abajo */
+    width: 100%;
+}
+
+/* CONTENEDOR PRINCIPAL */
+.booking-container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+/* CABECERA DE LA RESERVA */
+.booking-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.booking-header h1 {
+    font-size: 28px;
+    color: #2c5394;
+    margin-top: 10px;
+}
+
+/* BADGES DE ESTADO */
+.booking-status {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.status-pendiente {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.status-pagado,
+.status-aceptada {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-cancelado {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* IMAGEN */
+.mini-thumb {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* GRID DE DETALLES */
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+.info-group h3 {
+    color: #2c5394;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.info-item {
+    margin-bottom: 12px;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #f9f9f9;
+    padding-bottom: 4px;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #555;
+}
+
+/* PRECIO TOTAL */
+.total-price-box {
+    background-color: #f8f9fa;
+    padding: 25px;
+    text-align: center;
+    border-radius: 16px;
+    margin-top: 40px;
+    border: 1px solid #eee;
+}
+
+.total-label {
+    display: block;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.total-amount {
+    font-size: 28px;
+    font-weight: 800;
+    color: #2c5394;
+}
+
+/* BOTONES DE ACCIÓN */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+/* FOOTER */
+footer {
+    background: #f7f7f7;
+    color: #555;
+    text-align: center;
+    padding: 30px 10px;
+    font-size: 14px;
+    border-top: 1px solid #eee;
+    margin-top: auto;
+}
+
+/* RESPONSIVE */
+@media (max-width: 700px) {
+    .details-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    .booking-container {
+        padding: 20px;
+        margin: 20px;
+    }
+}
+
+/* ESTILOS DE IMPRESIÓN (Cuando le das a Imprimir) */
+@media print {
+    /* Ocultar elementos innecesarios */
+    header, footer, .action-buttons, .btn {
+        display: none !important;
+    }
+
+    body {
+        padding-top: 0;
+        background: white;
+    }
+
+    .booking-container {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        margin: 0;
+        padding: 0;
+        max-width: 100%;
+    }
+
+    .mini-thumb {
+        height: 200px;
+        border: 1px solid #eee;
+    }
+
+    .info-group h3 {
+        color: black !important;
+        border-bottom: 1px solid #000;
+    }
+
+    .total-amount {
+        color: black !important;
+    }
+}

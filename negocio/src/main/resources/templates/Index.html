@@ -1,83 +1,107 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Inmobiliarias Paqui - Inicio</title>
-    <link rel="stylesheet" th:href="@{/css/styleIndex.css}" />
-  </head>
+<head>
 
-  <body>
-    
-    <div th:replace="~{fragments/header :: navbar}"></div>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <main>
-      <section class="hero">
-        <h1>Encuentra tu alojamiento ideal en España</h1>
-        <p>Hoteles, apartamentos y mucho más… ¡a un clic!</p>
+  <title>Inmobiliarias Paqui - Inicio</title>
 
-        <div class="search-bar">
-          <input type="text" placeholder="¿A dónde vas?" aria-label="Destino" />
-          <input type="date" aria-label="Fecha de entrada" />
-          <input type="date" aria-label="Fecha de salida" />
-          <div class="people-counter" aria-label="Personas">
-            <button type="button" aria-label="Quitar persona">-</button>
-            <span aria-live="polite">2</span>
-            <button type="button" aria-label="Añadir persona">+</button>
-          </div>
-          <button class="btn-search">Buscar</button>
-        </div>
-      </section>
+  <link rel="stylesheet" th:href="@{/css/buttons.css}" />
 
-      <section class="types">
-        <h2>Explora por tipo de alojamiento</h2>
-        <div class="type-grid">
-          <div
-            class="type-card"
-            data-type="apartamento"
-            role="button"
-            tabindex="0"
-            aria-label="Ver apartamentos"
-          >
-            🏠 <span>Apartamentos</span>
-          </div>
-          <div
-            class="type-card"
-            data-type="hotel"
-            role="button"
-            tabindex="0"
-            aria-label="Ver hoteles"
-          >
-            🏨 <span>Hoteles</span>
-          </div>
-        </div>
-      </section>
+  <link rel="stylesheet" th:href="@{/css/styleIndex.css}" />
+  <link rel="stylesheet" th:href="@{/css/styleHeader.css}" />
+</head>
 
-      <section class="popular">
-        <h2>Destinos populares en España</h2>
+<body>
 
-        <div class="destinos-grid" th:if="${!destinosPopulares.isEmpty()}">
-          <div
-            class="destino"
-            th:each="destino : ${destinosPopulares}"
-            th:data-city="${destino.ciudad}"
-            role="button"
-            tabindex="0"
-            th:aria-label="'Buscar en ' + ${destino.ciudad}"
-          >
-            <img th:src="${destino.fotoUrl}" th:alt="${destino.ciudad}" />
-            <span th:text="${destino.ciudad}">Ciudad Ejemplo</span>
-          </div>
-        </div>
+<div th:replace="~{fragments/header :: navbar(false)}"></div>
 
-        <div th:if="${destinosPopulares.isEmpty()}">
-          <p>No hay destinos populares en este momento.</p>
-        </div>
-      </section>
-    </main>
+<main>
 
-    <footer>© 2025 Inmobiliarias Paqui</footer>
+  <section class="hero">
+    <h1>Encuentra tu alojamiento ideal en España</h1>
+    <p>Hoteles, apartamentos y mucho más… ¡a un clic!</p>
 
-    <script th:src="@{/js/index.js}" defer></script>
-  </body>
+    <div class="search-bar">
+      <input type="text" placeholder="¿A dónde vas?" aria-label="Destino" />
+
+      <input id="checkin-index" type="text" placeholder="Llegada" aria-label="Fecha de entrada" readonly
+             th:value="${filtroCheckin}" />
+
+      <input id="checkout-index" type="text" placeholder="Salida" aria-label="Fecha de salida" readonly
+             th:value="${filtroCheckout}" />
+
+      <div class="people-counter" aria-label="Personas">
+        <button type="button" class="btn btn-ghost" style="padding: 0 10px; min-width: 30px;" aria-label="Quitar persona">-</button>
+        <span aria-live="polite">2</span>
+        <button type="button" class="btn btn-ghost" style="padding: 0 10px; min-width: 30px;" aria-label="Añadir persona">+</button>
+      </div>
+
+      <button class="btn-search btn btn-primary">Buscar</button>
+    </div>
+  </section>
+
+  <section class="types">
+    <h2>Explora por tipo de alojamiento</h2>
+
+    <div class="type-grid">
+
+      <div
+              class="type-card"
+              data-type="apartamento"
+              role="button"
+              tabindex="0"
+              aria-label="Ver apartamentos"
+      >
+        🏠 <span>Apartamentos</span>
+      </div>
+
+      <div
+              class="type-card"
+              data-type="hotel"
+              role="button"
+              tabindex="0"
+              aria-label="Ver hoteles"
+      >
+        🏨 <span>Hoteles</span>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="popular">
+    <h2>Destinos populares en España</h2>
+
+    <div class="destinos-grid" th:if="${!destinosPopulares.isEmpty()}">
+
+      <div
+              class="destino"
+              th:each="destino : ${destinosPopulares}"
+              th:data-city="${destino.ciudad}"
+              role="button"
+              tabindex="0"
+              th:aria-label="'Buscar en ' + ${destino.ciudad}"
+      >
+        <img th:src="${destino.fotoUrl}" th:alt="${destino.ciudad}" />
+        <span th:text="${destino.ciudad}">Ciudad Ejemplo</span>
+      </div>
+    </div>
+
+    <div th:if="${destinosPopulares.isEmpty()}">
+      <p>No hay destinos populares en este momento.</p>
+    </div>
+  </section>
+</main>
+
+<footer>© 2025 Inmobiliarias Paqui</footer>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/rangePlugin.js"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+
+<script th:src="@{/js/index.js}" defer></script>
+
+</body>
 </html>

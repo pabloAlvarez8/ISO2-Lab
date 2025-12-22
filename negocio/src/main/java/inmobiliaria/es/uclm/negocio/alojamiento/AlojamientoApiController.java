@@ -2,41 +2,58 @@ package inmobiliaria.es.uclm.negocio.alojamiento;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
-// 1. Importa el DTO de búsqueda
+import org.springframework.format.annotation.DateTimeFormat; // IMPORTANTE: Necesario para las fechas
 import inmobiliaria.es.uclm.negocio.alojamiento.dto.AlojamientoSearchResultDTO;
 
-import java.math.BigDecimal; // 2. Importa BigDecimal
+import java.math.BigDecimal;
+import java.time.LocalDate; // IMPORTANTE
 import java.util.List;
-import java.util.stream.Collectors;
 
+/**
+ * Controlador REST que expone los endpoints para la gestión y
+ * búsqueda de Alojamientos.
+ * Toda la API de esta clase se sirve bajo la ruta /api/alojamientos.
+ */
 @RestController
 @RequestMapping("/api/alojamientos")
 public class AlojamientoApiController {
 
-    @Autowired
-    private AlojamientoService_Interfaz alojamientoService;
+        private final AlojamientoService alojamientoService;
 
-    @GetMapping
-    // 3. Devuelve una lista del DTO de BÚSQUEDA
-    public List<AlojamientoSearchResultDTO> buscarAlojamientosConFiltros(
+        @Autowired
+        public AlojamientoApiController(AlojamientoService alojamientoService) {
+                this.alojamientoService = alojamientoService;
+        }
 
-            // 4. Arregla los tipos de parámetro.
-            // Se quitan los 'defaultValue' para que sean 'null' si no se envían.
-            @RequestParam(value = "q", required = false) String ciudad,
-            @RequestParam(value = "maxPrice", required = false) BigDecimal maxPrice, // <-- ARREGLADO
-            @RequestParam(value = "minRating", required = false) Double minRating, // <-- ARREGLADO
-            @RequestParam(value = "types", required = false) List<String> types,
-            @RequestParam(value = "capacity", required = false, defaultValue = "1") int capacity,
-            @RequestParam(value = "sortBy", required = false, defaultValue = "recommend") String sortBy) {
+        /**
+         * Endpoint principal (GET /)
+         */
+        @GetMapping
+        public List<AlojamientoSearchResultDTO> buscarAlojamientosConFiltros(
 
-        // 5. Llama al servicio (ahora los tipos coinciden perfectamente)
-        List<Alojamiento> alojamientosEncontrados = alojamientoService.buscarConFiltros(
-                ciudad, maxPrice, minRating, types, capacity, sortBy);
+                @RequestParam(value = "q", required = false) String ciudad,
+                @RequestParam(value = "maxPrice", required = false) BigDecimal maxPrice,
+                @RequestParam(value = "minRating", required = false) Double minRating,
+                @RequestParam(value = "types", required = false) List<String> types,
+                @RequestParam(value = "capacity", required = false, defaultValue = "1") int capacity,
 
-        // 6. Convierte la lista de Entidades a una lista de DTOs
-        // (Esto evita errores de LazyInitializationException y bucles infinitos)
-        return alojamientosEncontrados.stream()
-                .map(AlojamientoSearchResultDTO::fromEntity)
-                .collect(Collectors.toList());
-    }
+                // --- NUEVOS PARÁMETROS PARA FECHAS ---
+                // Usamos @DateTimeFormat para entender formato YYYY-MM-DD
+                @RequestParam(value = "checkin", required = false)
+                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkin,
+
+                @RequestParam(value = "checkout", required = false)
+                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkout,
+                // -------------------------------------
+
+                @RequestParam(value = "sortBy", required = false, defaultValue = "recommend") String sortBy) {
+
+                // Llamada actualizada al servicio pasando las fechas (ahora son 8 argumentos)
+                List<Alojamiento> alojamientosEncontrados = alojamientoService.buscarConFiltros(
+                        ciudad, maxPrice, minRating, types, capacity, checkin, checkout, sortBy);
+
+                return alojamientosEncontrados.stream()
+                        .map(AlojamientoSearchResultDTO::fromEntity)
+                        .toList();
+        }
 }
