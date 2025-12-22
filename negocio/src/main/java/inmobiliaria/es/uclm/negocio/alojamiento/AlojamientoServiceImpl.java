@@ -86,6 +86,9 @@ public class AlojamientoServiceImpl implements AlojamientoService {
 
         List<Long> idsDisponibles = obtenerIdsDisponibles(checkin, checkout, maxPrice, capacity);
 
+        // LÓGICA DE CORTE PRECISA:
+        // Solo devolvemos vacío si el usuario BUSCÓ fechas (checkin/out != null)
+        // Y el repositorio confirmó que no hay nada libre (lista vacía).
         if (checkin != null && checkout != null && idsDisponibles.isEmpty()) {
             return Collections.emptyList();
         }
